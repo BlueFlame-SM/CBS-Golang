@@ -1,1 +1,1 @@
-# CBS-Go
+# CBS-Golang
