@@ -1,0 +1,7 @@
+Language "Golang"
+
+#4 Blocks
+
+Syntax
+  block ::= '{' statementList '}'
+  statementList ::= (statement ';')*

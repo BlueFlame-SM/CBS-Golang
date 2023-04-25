@@ -1,0 +1,11 @@
+Language "Golang"
+
+[ #1 Source code representation
+  #2 Lexical elements
+  #3 Types
+  #4 Blocks
+  #5 Declarations and scope
+  #A Packages
+]
+
+Syntax START:start ::= sourceFile

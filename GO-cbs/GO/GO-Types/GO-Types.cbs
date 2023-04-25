@@ -1,0 +1,131 @@
+Language "Golang"
+
+#3 Types
+
+Syntax
+  type     ::= typeName typeArgs? | typeLit | '(' type ')'
+  typeName ::= identifier | qualifiedIdent
+  typeArgs ::= '[' typeList ','? ']'
+  typeList ::= type (',' type)*
+  typeLit  ::= arrayType | structType | pointerType | functionType
+             | interfaceType | sliceType | mapType | channelType
+
+
+## Boolean types
+
+/*
+  Predeclared type:      bool
+  Predeclared constants: true, false
+*/
+
+
+## Numeric types
+
+/*
+  Architecture-independent:
+  uint8       the set of all unsigned  8-bit integers (0 to 255)
+  uint16      the set of all unsigned 16-bit integers (0 to 65535)
+  uint32      the set of all unsigned 32-bit integers (0 to 4294967295)
+  uint64      the set of all unsigned 64-bit integers (0 to 18446744073709551615)
+
+  int8        the set of all signed  8-bit integers (-128 to 127)
+  int16       the set of all signed 16-bit integers (-32768 to 32767)
+  int32       the set of all signed 32-bit integers (-2147483648 to 2147483647)
+  int64       the set of all signed 64-bit integers (-9223372036854775808 to 9223372036854775807)
+
+  float32     the set of all IEEE-754 32-bit floating-point numbers
+  float64     the set of all IEEE-754 64-bit floating-point numbers
+
+  complex64   the set of all complex numbers with float32 real and imaginary parts
+  complex128  the set of all complex numbers with float64 real and imaginary parts
+
+  byte        alias for uint8
+  rune        alias for int32
+
+  Implementation-specific (NOT AN ALIAS):
+  uint     either 32 or 64 bits
+  int      same size as uint
+  uintptr  an unsigned integer large enough to store the uninterpreted bits of a pointer value
+*/
+
+
+## String types
+
+/*
+  Predeclared type: string
+*/
+
+
+## Array types
+
+Syntax
+  arrayType   ::= '[' arrayLength ']' elementType
+  arrayLength ::= expression
+  elementType ::= type
+
+
+## Slice types
+
+Syntax
+  sliceType ::= '[' ']' elementType
+
+
+## Struct types
+
+Syntax
+  structType    ::= 'struct' '{' (fieldDecl ';')* '}'
+  fieldDecl     ::= (identifierList type | embeddedField) tag?
+  embeddedField ::= '*'? typeName typeArgs?
+  tag           ::= string-lit
+
+
+## Pointer types
+
+Syntax
+  pointerType ::= '*' baseType
+  baseType    ::= type
+
+
+## Function types
+
+Syntax
+  functionType  ::= 'func' signature
+  signature     ::= parameters result?
+  result        ::= parameters | type
+  parameters    ::= '(' (parameterList ','?)? ')'
+  parameterList ::= parameterDecl (',' parameterDecl)*
+  parameterDecl ::= identifierList? '...'? type
+
+
+## Interface types
+
+Syntax
+  interfaceType  ::= 'interface' '{' (interfaceElem ';')* '}'
+  interfaceElem  ::= methodElem | typeElem
+  methodElem     ::= methodName signature
+  methodName     ::= identifier
+  typeElem       ::= typeTerm ('|' typeTerm)*
+  typeTerm       ::= type | underlyingType
+  underlyingType ::= '~' type
+
+
+## Map types
+
+Syntax
+  mapType ::= 'map' '[' keyType ']' elementType
+  keyType ::= type
+
+
+## Channel types
+
+Syntax
+  channelType ::= ('chan' | 'chan' '<-' | '<-' 'chan') elementType
+  
+  
+
+
+
+
+
+
+

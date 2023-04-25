@@ -1,0 +1,85 @@
+Language "Golang"
+
+#5 Declarations and scope
+
+Syntax
+  declaration  ::= constDecl | typeDecl | varDecl
+  topLevelDecl ::= declaration | functionDecl | methodDecl
+
+
+## Constant declarations
+
+Syntax
+  constDecl      ::= 'const' (constSpec | '(' (constSpec ';')* ')')
+  constSpec      ::= identifierList (type? '=' expressionList)?
+
+  identifierList ::= identifier (',' identifier)*
+  expressionList ::= expression (',' expression)*
+
+
+## Type declarations
+
+Syntax
+  typeDecl ::= 'type' (typeSpec | '(' (typeSpec ';')* ')' )
+  typeSpec ::= aliasDecl | typeDef
+
+
+## Alias declarations
+
+Syntax
+  aliasDecl ::= identifier '=' type
+
+
+## Type definitions
+
+Syntax
+  typeDef ::= identifier typeParameters? type
+
+
+## Type parameter declarations
+
+Syntax
+  typeParameters ::= '[' typeParamList ','? ']'
+  typeParamList  ::= typeParamDecl (',' typeParamDecl)*
+  typeParamDecl  ::= identifierList typeConstraint
+
+
+## Type constraints
+
+Syntax
+  typeConstraint ::= typeElem
+
+
+## Variable declarations
+
+Syntax
+  varDecl ::= 'var' (varSpec | '(' (varSpec ';')* ')')
+  varSpec ::= identifierList (type ('=' expressionList)? | '=' expressionList)
+
+
+## Short variable declarations
+
+Syntax
+  shortVarDecl ::= identifierList ':=' expressionList
+
+
+## Function declarations
+
+Syntax
+  functionDecl ::= 'func' functionName typeParameters? signature functionBody?
+  functionName ::= identifier
+  functionBody ::= block
+
+
+## Method declarations
+
+Syntax
+  methodDecl ::= 'func' receiver methodName signature functionBody?
+  receiver   ::= parameters
+
+
+
+
+
+
+

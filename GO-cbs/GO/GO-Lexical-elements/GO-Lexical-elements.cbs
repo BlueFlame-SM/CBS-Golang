@@ -1,0 +1,129 @@
+Language "Golang"
+
+#2 Lexical elements
+
+## Comments
+
+/*
+  Go uses default CBS comments.
+  A comment cannot start in inside a rune or string literal, or inside a comment.
+*/
+
+
+## Tokens
+
+/*
+  A newline or end of file may trigger theinsertion of a semicolon.
+*/
+
+
+## Semicolons
+
+/*
+  Semicolons may be omited
+  1.  after a line's final token if that token is
+      -   an identifier
+      -   an integer, floating-piont, imaginary, rune, or string literal
+      -   one of the keywords break, continue, fallthrough, or return
+      -   one of the operators and punctuation ++, --, ), ], or }
+  2.  before a closing ")" or "]".
+*/
+
+
+## Identifiers
+
+Lexis
+  identifier ::= letter ( letter | unicode-digit )*
+
+
+## Keywords
+
+/*
+  break        default      func         interface    select
+  case         defer        go           map          struct
+  chan         else         goto         package      switch
+  const        fallthrough  if           range        type
+  continue     for          import       return       var
+*/
+
+
+## Operators and puncutation
+
+/*
+  +    &     +=    &=     &&    ==    !=    (    )
+  -    |     -=    |=     ||    <     <=    [    ]
+  *    ^     *=    ^=     <-    >     >=    {    }
+  /    <<    /=    <<=    ++    =     :=    ,    ;
+  %    >>    %=    >>=    --    !     ...   .    :
+       &^          &^=          ~
+*/
+
+
+## Integer literals
+
+Lexis
+  int-lit        ::= decimal-lit | binary-lit | octal-lit | hex-lit
+  decimal-lit    ::= '0' | '1'-'9' ('_'? decimal-digits)?
+  binary-lit     ::= '0' ('b' | 'B') '_'? binary-digits
+  octal-lit      ::= '0' ('o' | 'O')? '_'? octal-digits
+  hex-lit        ::= '0' ('x' | 'X') '_'? hex-digits
+
+  decimal-digits ::= decimal-digit ('_'? decimal-digit)*
+  binary-digits  ::= binary-digit ('_'? binary-digit)*
+  octal-digits   ::= octal-digit ('_'? octal-digit)*
+  hex-digits     ::= hex-digit ('_'? hex-digit)*
+
+
+## Floating-point literals
+
+Lexis
+  float-lit         ::= decimal-float-lit | hex-float-lit
+
+  decimal-float-lit ::= decimal-digits '.' decimal-digits? decimal-exponent?
+                      | decimal-digits decimal-exponent
+                      | '.' decimal-digits decimal-exponent?
+  decimal-exponent  ::= ('e' | 'E') ('+' | '-')? decimal-digits
+
+  hex-float-lit     ::= '0' ('x' | 'X') hex-mantissa hex-exponent
+  hex-mantissa      ::= '_'? hex-digits '.' hex-digits?
+                      | '_'? hex-digits
+                      | '.' hex-digits
+  hex-exponent      ::= ('p' | 'P') ('+' | '-')? decimal-digits
+
+
+## Imaginary literals
+
+Lexis
+  imaginary-lit ::= (decimal-digits | int-lit | float-lit) 'i'
+
+
+## Rune literals
+
+Lexis
+  rune-lit         ::= '\'' (unicode-value | byte-value) '\''
+  unicode-value    ::= unicode-char | little-u-value | big-u-value | escaped-char
+  byte-value       ::= octal-byte-value | hex-byte-value
+  octal-byte-value ::= '\\' octal-digit octal-digit octal-digit
+  hex-byte-value   ::= '\\x' hex-digit hex-digit
+  little-u-value   ::= '\\u' hex-digit hex-digit hex-digit hex-digit
+  big-u-value      ::= '\\U' hex-digit hex-digit hex-digit hex-digit
+                             hex-digit hex-digit hex-digit hex-digit
+  escaped-char     ::= '\\' ('a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v' | '\\' | '\'' | '"')
+
+
+## String literals
+
+Lexis
+  string-lit             ::= raw-string-lit | interpreted-string-lit
+  raw-string-lit         ::= '`' (unicode-char | newline)* '`'
+  interpreted-string-lit ::= '"' (unicode-value | byte-value)* '"'
+
+
+
+
+
+
+
+
+
+

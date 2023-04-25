@@ -1,0 +1,15 @@
+Language "Golang"
+
+#A Packages
+
+## Source file organization
+
+Syntax
+  sourceFile ::= packageClause ';' importDecl* (topLevelDecl ';')*
+
+
+## Package clause
+
+Syntax
+  packageClause ::= 'package' packageName
+  packageName ::= identifier
