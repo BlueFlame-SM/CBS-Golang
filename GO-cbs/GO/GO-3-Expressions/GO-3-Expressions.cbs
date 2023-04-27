@@ -1,0 +1,69 @@
+Language "Golang"
+
+#3 Expressions
+
+Syntax
+  Op : operand
+    ::= int-lit
+      | float-lit
+//      | imaginary-lit  // TODO: imaginary numbers
+//      | rune-lit  // TODO: runes
+//      | string-lit  // TODO: strings
+      | identifier // typeArgs?  // TODO: types
+//      | qualifiedIdent typeArgs?  // TODO: packages
+      | '(' expression ')'
+
+Syntax
+  PExpr : primaryExpr
+    ::= operand
+//      | type '(' expression ','? ')'  // TODO: types
+//      | methodExpr  // TODO: methods
+      // Selector
+//      | primaryExpr '.' identifier  // TODO: structs
+      // Index
+//      | primaryExpr '[' expression ','? ']'  // TODO: arrays
+      // Slice
+//      | primaryExpr '[' expression? ':' expression? ']'  // TODO: slices
+//      | primaryExpr '[' expression? ':' expression ':' expression ']'  // TODO: slices
+      // TypeAssertion
+//      | primaryExpr '.' '(' type ')'  // TODO: types
+      // Arguments
+//      | primaryExpr '(' ((expressionList | type (',' expressionList)?) '...'? ','?)? ')'  // TODO: functions
+
+Syntax
+  UExpr : unaryExpr
+    ::= primaryExpr
+      | '+' unaryExpr
+      | '-' unaryExpr
+      | '!' unaryExpr
+      | '^' unaryExpr
+      | '*' unaryExpr
+      | '&' unaryExpr
+      | '<-' unaryExpr
+
+Syntax
+  Expr : expression
+    ::= unaryExpr
+      | expression '||' expression
+      | expression '&&' expression
+      // rel_op
+      | expression '==' expression
+      | expression '!=' expression
+      | expression '<' expression
+      | expression '<=' expression
+      | expression '>' expression
+      | expression '>=' expression
+      // add_op
+      | expression '+' expression
+      | expression '-' expression
+      | expression '|' expression
+      | expression '^' expression
+      // mul_op
+      | expression '*' expression
+      | expression '/' expression
+      | expression '%' expression
+      | expression '<<' expression
+      | expression '>>' expression
+      | expression '&' expression
+      | expression '&^' expression
+

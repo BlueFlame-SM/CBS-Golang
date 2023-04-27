@@ -1,0 +1,21 @@
+Language "Golang"
+
+#2 Types
+
+//Syntax
+//  T : type
+//    ::= '(' type ')'
+////      | arrayType  // TODO: arrays
+////      | structType  // TODO: structs
+////      | pointerType  // TODO: pointers
+////      | functionType  // TODO: functions
+////      | interfaceType  // TODO: interfaces
+////      | sliceType  // TODO: slices
+////      | mapType  // TODO: maps
+////      | channelType // TODO: channels
+//      | identifier typeArgs?
+////      | qualifiedIdent typeArgs?
+//
+//Syntax
+//  typeArgs ::= '[' typeList ','? ']'
+//  typeList ::= type (',' type)*
