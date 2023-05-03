@@ -1,0 +1,11 @@
+module Stratego-GO
+
+imports 
+  Stratego 
+  GO
+exports context-free syntax
+    Module            -> Start
+    "|[" FCT-SEQ "]|" -> Term {cons("ToTerm"),prefer}
+
+  variables
+    "START" -> L-start {prefer}

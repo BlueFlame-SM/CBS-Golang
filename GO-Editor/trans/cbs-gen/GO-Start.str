@@ -1,0 +1,20 @@
+module GO-Start
+
+imports
+  libstratego-gpp
+  signatures/-
+  pp/GO-parenthesize
+  pp/GO-pp
+
+imports
+  cbs-gen/GO-1-Lexemes
+  cbs-gen/GO-3-Expressions
+  cbs-gen/GO-A-Disambiguation
+
+// Language "Golang"
+
+rules
+to-funcons:
+  |[ start[: (:Expression:) :] ]| ->
+  |[ finalise-failing evaluate[: (:Expression:) :] ]|
+

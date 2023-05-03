@@ -1,0 +1,25 @@
+module GO-1-Lexemes
+
+imports
+  libstratego-gpp
+  signatures/-
+  pp/GO-parenthesize
+  pp/GO-pp
+
+imports
+  
+
+// Language "Golang"
+
+rules
+
+// #1 Lexemes
+              
+
+to-funcons-lex: 
+  FCTDoubleQuoted(L-int-lit(LEX-int-lit(str))) -> 
+  FCTString(<double-quote> str)
+to-funcons:
+  |[ integer-value[: (:IL:) :] ]| ->
+  |[ decimal-natural \"(:IL:)\" ]|
+

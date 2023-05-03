@@ -1,0 +1,19 @@
+module GO-A-Disambiguation
+
+imports
+  libstratego-gpp
+  signatures/-
+  pp/GO-parenthesize
+  pp/GO-pp
+
+imports
+  cbs-gen/GO-3-Expressions
+
+// Language "Golang"
+
+rules
+
+// #A Disambiguation
+              
+
+

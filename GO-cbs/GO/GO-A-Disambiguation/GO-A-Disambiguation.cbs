@@ -1,0 +1,50 @@
+Language "Golang"
+
+#A Disambiguation
+
+Syntax SDF
+/*
+context-free syntax
+
+``expression ::= expression '||' expression``   {left}
+``expression ::= expression '&&' expression``   {left}
+
+// rel_op
+``expression ::= expression '==' expression``   {left}
+``expression ::= expression '!=' expression``   {left}
+``expression ::= expression '<' expression``    {left}
+``expression ::= expression '<=' expression``   {left}
+``expression ::= expression '>' expression``    {left}
+``expression ::= expression '>=' expression``   {left}
+
+// add_op
+``expression ::= expression '+' expression``    {left}
+``expression ::= expression '-' expression``    {left}
+
+// mul_op
+``expression ::= expression '*' expression``    {left}
+``expression ::= expression '/' expression``    {left}
+``expression ::= expression '%' expression``    {left}
+
+context-free priorities
+
+{
+  ``expression ::= expression '*' expression``
+  ``expression ::= expression '/' expression``
+  ``expression ::= expression '%' expression``
+} > {
+  ``expression ::= expression '+' expression``
+  ``expression ::= expression '-' expression``
+} > {
+  ``expression ::= expression '==' expression``
+  ``expression ::= expression '!=' expression``
+  ``expression ::= expression '<' expression``
+  ``expression ::= expression '<=' expression``
+  ``expression ::= expression '>' expression``
+  ``expression ::= expression '>=' expression``
+} > {
+  ``expression ::= expression '&&' expression``
+} > {
+  ``expression ::= expression '||' expression``
+}
+*/

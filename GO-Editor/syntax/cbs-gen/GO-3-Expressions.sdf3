@@ -1,0 +1,340 @@
+module GO-3-Expressions
+            
+imports 
+  GO-1-Lexemes
+  Funcons
+
+// Language "Golang"
+    
+lexical syntax // Language
+  
+  // #3 Expressions
+                
+  
+  
+  // ## Operand
+                   
+  
+  
+  // ## Primary
+                   
+  
+  
+  // ## Unary
+                   
+  
+  
+  // ## Binary
+                   
+  
+  
+  // ### Boolean
+                   
+  
+  
+  // ### Comparison
+                   
+  
+  
+  // ### Additive
+                   
+  
+  
+  // ### Multiplicative
+                   
+  
+  
+syntax // Language
+  
+  // #3 Expressions
+                
+  
+  
+  // ## Operand
+                   
+  
+  
+  // ## Primary
+                   
+  
+  
+  // ## Unary
+                   
+  
+  
+  // ## Binary
+                   
+  
+  
+  // ### Boolean
+                   
+  
+  
+  // ### Comparison
+                   
+  
+  
+  // ### Additive
+                   
+  
+  
+  // ### Multiplicative
+                   
+  
+  
+context-free syntax // Language
+  
+  // #3 Expressions
+                
+  
+  
+  // ## Operand
+                   
+  
+  L-operand.L-operand--L-int-lit =
+    L-int-lit
+  L-operand.L-operand--LPAREN-L-expression-RPAREN =
+    "(" L-expression ")"
+  
+  
+  // ## Primary
+                   
+  
+  L-primaryExpr.L-primaryExpr--L-operand =
+    L-operand
+  
+  
+  // ## Unary
+                   
+  
+  L-unaryExpr.L-unaryExpr--L-primaryExpr =
+    L-primaryExpr
+  L-unaryExpr.L-unaryExpr--PLUS-L-unaryExpr =
+    "+" L-unaryExpr
+  L-unaryExpr.L-unaryExpr--DASH-L-unaryExpr =
+    "-" L-unaryExpr
+  L-unaryExpr.L-unaryExpr--BANG-L-unaryExpr =
+    "!" L-unaryExpr
+  
+  
+  // ## Binary
+                   
+  
+  L-expression.L-expression--L-unaryExpr =
+    L-unaryExpr
+  L-expression.L-expression--L-expression-BAR-BAR-L-expression =
+    L-expression "||" L-expression
+  L-expression.L-expression--L-expression-AMPERSAND-AMPERSAND-L-expression =
+    L-expression "&&" L-expression
+  L-expression.L-expression--L-expression-EQUALS-EQUALS-L-expression =
+    L-expression "==" L-expression
+  L-expression.L-expression--L-expression-BANG-EQUALS-L-expression =
+    L-expression "!=" L-expression
+  L-expression.L-expression--L-expression-LESS-L-expression =
+    L-expression "<" L-expression
+  L-expression.L-expression--L-expression-LESS-EQUALS-L-expression =
+    L-expression "<=" L-expression
+  L-expression.L-expression--L-expression-GREATER-L-expression =
+    L-expression ">" L-expression
+  L-expression.L-expression--L-expression-GREATER-EQUALS-L-expression =
+    L-expression ">=" L-expression
+  L-expression.L-expression--L-expression-PLUS-L-expression =
+    L-expression "+" L-expression
+  L-expression.L-expression--L-expression-DASH-L-expression =
+    L-expression "-" L-expression
+  L-expression.L-expression--L-expression-STAR-L-expression =
+    L-expression "*" L-expression
+  L-expression.L-expression--L-expression-SLASH-L-expression =
+    L-expression "/" L-expression
+  L-expression.L-expression--L-expression-PERCENT-L-expression =
+    L-expression "%" L-expression
+  
+  
+  // ### Boolean
+                   
+  
+  
+  // ### Comparison
+                   
+  
+  
+  // ### Additive
+                   
+  
+  
+  // ### Multiplicative
+                   
+  
+  
+context-free syntax // Semantics
+  
+  // #3 Expressions
+                
+  
+  
+  // ## Operand
+                   
+  
+  
+  // ## Primary
+                   
+  
+  
+  // ## Unary
+                   
+  
+  
+  // ## Binary
+                   
+  
+  FCT.T-evaluate =
+    "evaluate" "[:" L-expression ":]"
+  
+  // ### Boolean
+                   
+  
+  
+  // ### Comparison
+                   
+  
+  
+  // ### Additive
+                   
+  
+  
+  // ### Multiplicative
+                   
+  
+  
+context-free syntax // Desugaring
+  
+  // #3 Expressions
+                
+  
+  
+  // ## Operand
+                   
+  
+  
+  // ## Primary
+                   
+  
+  
+  // ## Unary
+                   
+  
+  
+  // ## Binary
+                   
+  
+  
+  // ### Boolean
+                   
+  
+  
+  // ### Comparison
+                   
+  
+  
+  // ### Additive
+                   
+  
+  
+  // ### Multiplicative
+                   
+  
+  
+variables // Meta-variables
+  
+  // #3 Expressions
+                
+  
+  
+  // ## Operand
+                   
+  
+  L-operand = "(:Operand" [1-9]? ":)" {prefer}
+  L-operand? = "(:Operand" [1-9]? "?:)" {prefer}
+  L-operand* = "(:Operand" [1-9]? "*:)" {prefer}
+  L-operand+ = "(:Operand" [1-9]? "+:)" {prefer}
+  
+  // ## Primary
+                   
+  
+  L-primaryExpr = "(:PrimaryExpr" [1-9]? ":)" {prefer}
+  L-primaryExpr? = "(:PrimaryExpr" [1-9]? "?:)" {prefer}
+  L-primaryExpr* = "(:PrimaryExpr" [1-9]? "*:)" {prefer}
+  L-primaryExpr+ = "(:PrimaryExpr" [1-9]? "+:)" {prefer}
+  
+  // ## Unary
+                   
+  
+  L-unaryExpr = "(:UnaryExpr" [1-9]? ":)" {prefer}
+  L-unaryExpr? = "(:UnaryExpr" [1-9]? "?:)" {prefer}
+  L-unaryExpr* = "(:UnaryExpr" [1-9]? "*:)" {prefer}
+  L-unaryExpr+ = "(:UnaryExpr" [1-9]? "+:)" {prefer}
+  
+  // ## Binary
+                   
+  
+  L-expression = "(:Expression" [1-9]? ":)" {prefer}
+  L-expression? = "(:Expression" [1-9]? "?:)" {prefer}
+  L-expression* = "(:Expression" [1-9]? "*:)" {prefer}
+  L-expression+ = "(:Expression" [1-9]? "+:)" {prefer}
+  
+  // ### Boolean
+                   
+  
+  
+  // ### Comparison
+                   
+  
+  
+  // ### Additive
+                   
+  
+  
+  // ### Multiplicative
+                   
+  
+  
+// SDF comments
+  
+  // #3 Expressions
+                
+  
+  
+  // ## Operand
+                   
+  
+  
+  // ## Primary
+                   
+  
+  
+  // ## Unary
+                   
+  
+  
+  // ## Binary
+                   
+  
+  
+  // ### Boolean
+                   
+  
+  
+  // ### Comparison
+                   
+  
+  
+  // ### Additive
+                   
+  
+  
+  // ### Multiplicative
+                   
+  
+  
+sorts // ASTs
+  T-start

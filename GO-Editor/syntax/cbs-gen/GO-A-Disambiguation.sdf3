@@ -1,0 +1,148 @@
+module GO-A-Disambiguation
+            
+imports 
+  GO-3-Expressions
+  Funcons
+
+// Language "Golang"
+    
+lexical syntax // Language
+  
+  // #A Disambiguation
+                
+  
+  
+syntax // Language
+  
+  // #A Disambiguation
+                
+  
+  
+context-free syntax // Language
+  
+  // #A Disambiguation
+                
+  
+  
+context-free syntax // Semantics
+  
+  // #A Disambiguation
+                
+  
+  
+context-free syntax // Desugaring
+  
+  // #A Disambiguation
+                
+  
+  
+variables // Meta-variables
+  
+  // #A Disambiguation
+                
+  
+  
+// SDF comments
+  
+  // #A Disambiguation
+                
+  
+  
+  context-free syntax
+  
+  L-expression.L-expression--L-expression-BAR-BAR-L-expression =
+    L-expression "||" L-expression
+     {left}
+  L-expression.L-expression--L-expression-AMPERSAND-AMPERSAND-L-expression =
+    L-expression "&&" L-expression
+     {left}
+  
+  // rel_op
+  L-expression.L-expression--L-expression-EQUALS-EQUALS-L-expression =
+    L-expression "==" L-expression
+     {left}
+  L-expression.L-expression--L-expression-BANG-EQUALS-L-expression =
+    L-expression "!=" L-expression
+     {left}
+  L-expression.L-expression--L-expression-LESS-L-expression =
+    L-expression "<" L-expression
+      {left}
+  L-expression.L-expression--L-expression-LESS-EQUALS-L-expression =
+    L-expression "<=" L-expression
+     {left}
+  L-expression.L-expression--L-expression-GREATER-L-expression =
+    L-expression ">" L-expression
+      {left}
+  L-expression.L-expression--L-expression-GREATER-EQUALS-L-expression =
+    L-expression ">=" L-expression
+     {left}
+  
+  // add_op
+  L-expression.L-expression--L-expression-PLUS-L-expression =
+    L-expression "+" L-expression
+      {left}
+  L-expression.L-expression--L-expression-DASH-L-expression =
+    L-expression "-" L-expression
+      {left}
+  
+  // mul_op
+  L-expression.L-expression--L-expression-STAR-L-expression =
+    L-expression "*" L-expression
+      {left}
+  L-expression.L-expression--L-expression-SLASH-L-expression =
+    L-expression "/" L-expression
+      {left}
+  L-expression.L-expression--L-expression-PERCENT-L-expression =
+    L-expression "%" L-expression
+      {left}
+  
+  context-free priorities
+  
+  {
+    L-expression.L-expression--L-expression-STAR-L-expression =
+    L-expression "*" L-expression
+  
+    L-expression.L-expression--L-expression-SLASH-L-expression =
+    L-expression "/" L-expression
+  
+    L-expression.L-expression--L-expression-PERCENT-L-expression =
+    L-expression "%" L-expression
+  
+  } > {
+    L-expression.L-expression--L-expression-PLUS-L-expression =
+    L-expression "+" L-expression
+  
+    L-expression.L-expression--L-expression-DASH-L-expression =
+    L-expression "-" L-expression
+  
+  } > {
+    L-expression.L-expression--L-expression-EQUALS-EQUALS-L-expression =
+    L-expression "==" L-expression
+  
+    L-expression.L-expression--L-expression-BANG-EQUALS-L-expression =
+    L-expression "!=" L-expression
+  
+    L-expression.L-expression--L-expression-LESS-L-expression =
+    L-expression "<" L-expression
+  
+    L-expression.L-expression--L-expression-LESS-EQUALS-L-expression =
+    L-expression "<=" L-expression
+  
+    L-expression.L-expression--L-expression-GREATER-L-expression =
+    L-expression ">" L-expression
+  
+    L-expression.L-expression--L-expression-GREATER-EQUALS-L-expression =
+    L-expression ">=" L-expression
+  
+  } > {
+    L-expression.L-expression--L-expression-AMPERSAND-AMPERSAND-L-expression =
+    L-expression "&&" L-expression
+  
+  } > {
+    L-expression.L-expression--L-expression-BAR-BAR-L-expression =
+    L-expression "||" L-expression
+  
+  }
+  
+sorts // ASTs
+  T-start

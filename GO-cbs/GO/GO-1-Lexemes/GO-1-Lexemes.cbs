@@ -1,0 +1,43 @@
+Language "Golang"
+
+#1 Lexemes
+
+Lexis
+  letter        ::= 'A'-'Z' | 'a'-'z' | '_'
+  decimal-digit ::= '0'-'9'
+  binary-digit  ::= '0'-'1'
+  octal-digit   ::= '0'-'7'
+  hex-digit     ::= '0'-'9' | 'A'-'F' | 'a'-'f'
+
+Lexis
+  identifier ::= letter (letter | decimal-digit)*
+
+Lexis
+  IL : int-lit ::= decimal-digit+ // decimal-lit | binary-lit | octal-lit | hex-lit  // TODO: advanced integer literals
+//  decimal-lit      ::= '0' | '0'-'9' ('_'? decimal-digits)?
+//  binary-lit       ::= '0' ('b' | 'B') '_'? binary-digits
+//  octal-lit        ::= '0' ('o' | 'O')? '_'? octal-digits
+//  hex-lit          ::= '0' ('x' | 'X') '_'? hex-digits
+//
+//  decimal-digits ::= decimal-digit ('_'? decimal-digit)*
+//  binary-digits  ::= binary-digit ('_'? binary-digit)*
+//  octal-digits   ::= octal-digit ('_'? octal-digit)*
+//  hex-digits     ::= hex-digit ('_'? hex-digit)*
+
+Semantics
+  integer-value[[IL:int-lit]] : =>natural-numbers =
+    decimal-natural \"IL\"
+
+//Lexis
+//  float-lit         ::= decimal-float-lit | hex-float-lit
+//
+//  decimal-float-lit ::= decimal-digits '.' decimal-digits? decimal-exponent?
+//                      | decimal-digits decimal-exponent
+//                      | '.' decimal-digits decimal-exponent?
+//  decimal-exponent  ::= ('e' | 'E') ('+' | '-')? decimal-digits
+//
+//  hex-float-lit     ::= '0' ('x' | 'X') hex-mantissa hex-exponent
+//  hex-mantissa      ::= '_'? hex-digits '.' hex-digits?
+//                      | '_'? hex-digits
+//                      | '.' hex-digits
+//  hex-exponent      ::= ('p' | 'P') ('+' | '-')? decimal-digits

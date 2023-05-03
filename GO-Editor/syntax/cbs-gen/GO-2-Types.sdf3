@@ -1,0 +1,52 @@
+module GO-2-Types
+            
+imports 
+  
+  Funcons
+
+// Language "Golang"
+    
+lexical syntax // Language
+  
+  // #2 Types
+                
+  
+  
+syntax // Language
+  
+  // #2 Types
+                
+  
+  
+context-free syntax // Language
+  
+  // #2 Types
+                
+  
+  
+context-free syntax // Semantics
+  
+  // #2 Types
+                
+  
+  
+context-free syntax // Desugaring
+  
+  // #2 Types
+                
+  
+  
+variables // Meta-variables
+  
+  // #2 Types
+                
+  
+  
+// SDF comments
+  
+  // #2 Types
+                
+  
+  
+sorts // ASTs
+  T-start
