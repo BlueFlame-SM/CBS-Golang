@@ -2,19 +2,34 @@ Language "Golang"
 
 #3 Expressions
 
+
+## Operand
+
 Syntax
-  Op : operand
+  Operand : operand
     ::= int-lit
-      | float-lit
-//      | imaginary-lit  // TODO: imaginary numbers
+//      | float-lit  // TODO: float
+//      | imaginary-lit  // TODO: imaginary
 //      | rune-lit  // TODO: runes
 //      | string-lit  // TODO: strings
-      | identifier // typeArgs?  // TODO: types
+//      | identifier // typeArgs?  // TODO: types
 //      | qualifiedIdent typeArgs?  // TODO: packages
       | '(' expression ')'
 
+Rule
+  evaluate[[IL]] =
+    integer-value[[IL]]
+
+
+Rule
+  evaluate[['(' Expression ')']] =
+    evaluate[[Expression]]
+
+
+## Primary
+
 Syntax
-  PExpr : primaryExpr
+  PrimaryExpr : primaryExpr
     ::= operand
 //      | type '(' expression ','? ')'  // TODO: types
 //      | methodExpr  // TODO: methods
@@ -30,19 +45,37 @@ Syntax
       // Arguments
 //      | primaryExpr '(' ((expressionList | type (',' expressionList)?) '...'? ','?)? ')'  // TODO: functions
 
+
+## Unary
+
 Syntax
-  UExpr : unaryExpr
+  UnaryExpr : unaryExpr
     ::= primaryExpr
       | '+' unaryExpr
       | '-' unaryExpr
       | '!' unaryExpr
-      | '^' unaryExpr
-      | '*' unaryExpr
-      | '&' unaryExpr
-      | '<-' unaryExpr
+//      | '^' unaryExpr  // TODO: bitwise
+//      | '*' unaryExpr  // TODO: pointers
+//      | '&' unaryExpr  // TODO: pointers
+//      | '<-' unaryExpr  // TODO: concurrency
+
+Rule
+  evaluate[['+' UnaryExpr]] =
+    evaluate[[UnaryExpr]]
+
+Rule
+  evaluate[['-' UnaryExpr]] =
+    integer-negate evaluate[[UnaryExpr]]
+
+Rule
+  evaluate[['!' UnaryExpr]] =
+    not evaluate[[UnaryExpr]]
+
+
+## Binary
 
 Syntax
-  Expr : expression
+  Expression : expression
     ::= unaryExpr
       | expression '||' expression
       | expression '&&' expression
@@ -56,14 +89,80 @@ Syntax
       // add_op
       | expression '+' expression
       | expression '-' expression
-      | expression '|' expression
-      | expression '^' expression
+//      | expression '|' expression  // TODO: bitwise
+//      | expression '^' expression  // TODO: bitwise
       // mul_op
       | expression '*' expression
       | expression '/' expression
       | expression '%' expression
-      | expression '<<' expression
-      | expression '>>' expression
-      | expression '&' expression
-      | expression '&^' expression
+//      | expression '<<' expression  // TODO: bitwise
+//      | expression '>>' expression  // TODO: bitwise
+//      | expression '&' expression  // TODO: bitwise
+//      | expression '&^' expression  //TODO: bitwise
 
+Semantics
+  evaluate[[Expression:expression]] : =>values
+
+
+### Boolean
+
+Rule
+  evaluate[[Expression1 '||' Expression2]] =
+    if-else(evaluate[[Expression1]], true, evaluate[[Expression2]])
+
+Rule
+  evaluate[[Expression1 '&&' Expression2]] =
+    if-else(evaluate[[Expression1]], evaluate[[Expression2]], false)
+
+
+### Comparison
+
+Rule
+  evaluate[[Expression1 '==' Expression2]] =
+    is-eq l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+Rule
+  evaluate[[Expression1 '!=' Expression2]] =
+    not is-eq l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+Rule
+  evaluate[[Expression1 '<' Expression2]] =
+    is-less l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+Rule
+  evaluate[[Expression1 '<=' Expression2]] =
+    is-less-or-equal l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+Rule
+  evaluate[[Expression1 '>' Expression2]] =
+    is-greater l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+Rule
+  evaluate[[Expression1 '>=' Expression2]] =
+    is-greater-or-equal l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+
+### Additive
+
+Rule
+  evaluate[[Expression1 '+' Expression2]] =
+    int-add l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+Rule
+  evaluate[[Expression1 '-' Expression2]] =
+    int-sub l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+
+### Multiplicative
+
+Rule
+  evaluate[[Expression1 '*' Expression2]] =
+    int-mul l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+Rule
+  evaluate[[Expression1 '/' Expression2]] =
+    checked int-div l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+
+Rule
+  evaluate[[Expression1 '%' Expression2]] =
+    checked int-mod l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])

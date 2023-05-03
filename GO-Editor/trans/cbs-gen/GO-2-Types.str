@@ -1,0 +1,19 @@
+module GO-2-Types
+
+imports
+  libstratego-gpp
+  signatures/-
+  pp/GO-parenthesize
+  pp/GO-pp
+
+imports
+  
+
+// Language "Golang"
+
+rules
+
+// #2 Types
+              
+
+

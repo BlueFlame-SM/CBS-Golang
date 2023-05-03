@@ -2,12 +2,18 @@ Language "Golang"
 
 [
   #1 Lexical
-  #2 Types
+//  #2 Types
   #3 Expressions
+  #A Disambiguation
 ]
 
 Syntax
   START : start ::= expression
 
 Semantics
-  start[[_:start]] : =>values
+  start[[START:start]] : =>values
+
+Rule
+  start[[Expression]] =
+    finalise-failing
+      evaluate[[Expression]]

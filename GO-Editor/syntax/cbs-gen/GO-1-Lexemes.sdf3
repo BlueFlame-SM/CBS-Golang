@@ -1,0 +1,86 @@
+module GO-1-Lexemes
+            
+imports 
+  
+  Funcons
+
+// Language "Golang"
+    
+lexical syntax // Language
+  
+  // #1 Lexemes
+                
+  
+  LEX-letter = [A-Za-z\_]
+  LEX-decimal-digit = [0-9]
+  LEX-binary-digit = [0-1]
+  LEX-octal-digit = [0-7]
+  LEX-hex-digit = [0-9A-Fa-f]
+  LEX-identifier = LEX-letter ( LEX-letter | LEX-decimal-digit )*
+  LEX-int-lit = LEX-decimal-digit+
+  
+syntax // Language
+  
+  // #1 Lexemes
+                
+  
+  
+context-free syntax // Language
+  
+  // #1 Lexemes
+                
+  
+  L-letter.LEX-letter = 
+    LEX-letter
+  L-decimal-digit.LEX-decimal-digit = 
+    LEX-decimal-digit
+  L-binary-digit.LEX-binary-digit = 
+    LEX-binary-digit
+  L-octal-digit.LEX-octal-digit = 
+    LEX-octal-digit
+  L-hex-digit.LEX-hex-digit = 
+    LEX-hex-digit
+  L-identifier.LEX-identifier = 
+    LEX-identifier
+  L-int-lit.LEX-int-lit = 
+    LEX-int-lit
+  
+context-free syntax // Semantics
+  
+  // #1 Lexemes
+                
+  
+  FCT-Quoted.LEX-letter = LEX-letter
+  FCT-Quoted.LEX-decimal-digit = LEX-decimal-digit
+  FCT-Quoted.LEX-binary-digit = LEX-binary-digit
+  FCT-Quoted.LEX-octal-digit = LEX-octal-digit
+  FCT-Quoted.LEX-hex-digit = LEX-hex-digit
+  FCT-Quoted.LEX-identifier = LEX-identifier
+  FCT-Quoted.L-int-lit = L-int-lit
+  FCT.T-integer-value =
+    "integer-value" "[:" L-int-lit ":]"
+  
+context-free syntax // Desugaring
+  
+  // #1 Lexemes
+                
+  
+  
+variables // Meta-variables
+  
+  // #1 Lexemes
+                
+  
+  L-int-lit = "(:IL" [1-9]? ":)" {prefer}
+  L-int-lit? = "(:IL" [1-9]? "?:)" {prefer}
+  L-int-lit* = "(:IL" [1-9]? "*:)" {prefer}
+  L-int-lit+ = "(:IL" [1-9]? "+:)" {prefer}
+  
+// SDF comments
+  
+  // #1 Lexemes
+                
+  
+  
+sorts // ASTs
+  T-start

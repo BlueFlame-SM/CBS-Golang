@@ -1,0 +1,35 @@
+module GO-Start
+            
+imports 
+  GO-1-Lexemes
+  GO-3-Expressions
+  GO-A-Disambiguation
+  Funcons
+
+// Language "Golang"
+    
+lexical syntax // Language
+  
+syntax // Language
+  
+context-free syntax // Language
+  L-start.L-start--L-expression =
+    L-expression
+  
+  
+context-free syntax // Semantics
+  FCT.T-start =
+    "start" "[:" L-start ":]"
+  
+context-free syntax // Desugaring
+  
+variables // Meta-variables
+  L-start = "(:START" [1-9]? ":)" {prefer}
+  L-start? = "(:START" [1-9]? "?:)" {prefer}
+  L-start* = "(:START" [1-9]? "*:)" {prefer}
+  L-start+ = "(:START" [1-9]? "+:)" {prefer}
+  
+// SDF comments
+  
+sorts // ASTs
+  T-start
