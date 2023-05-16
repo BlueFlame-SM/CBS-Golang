@@ -13,7 +13,7 @@ Syntax
 //      | continueStmt  // TODO: loops
 //      | gotoStmt  // TODO: goto
 //      | fallThroughStmt  // TODO: ?
-//      | block
+      | block
 //      | ifStmt
 //      | switchStmt  // TODO: switch
 //      | selectStmt  // TODO: concurrency
@@ -37,7 +37,7 @@ Semantics
 ## Empty statements
 
 Syntax
-  emptyStmt ::= ()
+  emptyStmt ::= ( )
 
 Rule
   execute[[ ]] = null-value
@@ -45,12 +45,19 @@ Rule
 
 ## Blocks
 
-//Syntax
-//  Block          : block          ::= '{' terminatedStmt* '}'
-//  TerminatedStmt : terminatedStmt ::= statement ';'
-//
-//Rule
-//  execute[['{' TerminatedStmt* '}']] = execute[[TerminatedStmt*]]
+Syntax
+  Block          : block          ::= '{' terminatedStmt* '}'
+  TerminatedStmt : terminatedStmt ::= statement ';'
+
+Rule
+  execute[['{' '}']] = null-value
+
+Rule
+  execute[['{' Statement ';' '}']] = execute[[Statement]]
+
+Rule
+  execute[['{' Statement ';' TerminatedStmt+ '}']]
+    = sequential(execute[[Statement]], execute[['{' TerminatedStmt+ '}']])
 
 
 ## Expression statements

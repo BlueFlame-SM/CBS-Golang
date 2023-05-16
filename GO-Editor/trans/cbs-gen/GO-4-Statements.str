@@ -27,6 +27,16 @@ to-funcons:
 // ## Blocks
                  
 
+to-funcons:
+  |[ execute[: {} :] ]| ->
+  |[ null-value ]|
+to-funcons:
+  |[ execute[: {(:Statement:);} :] ]| ->
+  |[ execute[: (:Statement:) :] ]|
+to-funcons:
+  |[ execute[: {(:Statement:);(:TerminatedStmt+:)} :] ]| ->
+  |[ sequential (execute[: (:Statement:) :], 
+             execute[: {(:TerminatedStmt+:)} :]) ]|
 
 // ## Expression statements
                  

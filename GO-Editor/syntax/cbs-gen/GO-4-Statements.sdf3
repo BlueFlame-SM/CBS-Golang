@@ -121,6 +121,8 @@ context-free syntax // Language
   
   L-statement.L-statement--L-simpleStmt =
     L-simpleStmt
+  L-statement.L-statement--L-block =
+    L-block
   L-statement.L-statement--L-printStmt =
     L-printStmt
   
@@ -137,6 +139,12 @@ context-free syntax // Language
   
   // ## Blocks
                    
+  
+  L-block.L-block--LBRACE-L-terminatedStmt-S-RBRACE =
+    "{" L-terminatedStmt* "}"
+  
+  L-terminatedStmt.L-terminatedStmt--L-statement-SEMI =
+    L-statement ";"
   
   
   // ## Expression statements
@@ -313,6 +321,15 @@ variables // Meta-variables
   // ## Blocks
                    
   
+  L-block = "(:Block" [1-9]? ":)" {prefer}
+  L-block? = "(:Block" [1-9]? "?:)" {prefer}
+  L-block* = "(:Block" [1-9]? "*:)" {prefer}
+  L-block+ = "(:Block" [1-9]? "+:)" {prefer}
+  L-terminatedStmt* = "..." [1-9]? {prefer}
+  L-terminatedStmt = "(:TerminatedStmt" [1-9]? ":)" {prefer}
+  L-terminatedStmt? = "(:TerminatedStmt" [1-9]? "?:)" {prefer}
+  L-terminatedStmt* = "(:TerminatedStmt" [1-9]? "*:)" {prefer}
+  L-terminatedStmt+ = "(:TerminatedStmt" [1-9]? "+:)" {prefer}
   
   // ## Expression statements
                    
