@@ -10,10 +10,14 @@ Lexis
   hex-digit     ::= '0'-'9' | 'A'-'F' | 'a'-'f'
 
 Lexis
-  identifier ::= letter (letter | decimal-digit)*
+  Identifier : identifier ::= letter (letter | decimal-digit)*
+
+Semantics
+  identifier[[Identifier:identifier]] : =>ids
+    = \"Identifier\"
 
 Lexis
-  IL : int-lit ::= decimal-digit+ // decimal-lit | binary-lit | octal-lit | hex-lit  // TODO: advanced integer literals
+  Int-Lit : int-lit ::= decimal-digit+ // decimal-lit | binary-lit | octal-lit | hex-lit  // TODO: advanced integer literals
 //  decimal-lit      ::= '0' | '0'-'9' ('_'? decimal-digits)?
 //  binary-lit       ::= '0' ('b' | 'B') '_'? binary-digits
 //  octal-lit        ::= '0' ('o' | 'O')? '_'? octal-digits
@@ -25,8 +29,8 @@ Lexis
 //  hex-digits     ::= hex-digit ('_'? hex-digit)*
 
 Semantics
-  integer-value[[IL:int-lit]] : =>natural-numbers =
-    decimal-natural \"IL\"
+  integer-value[[Int-Lit:int-lit]] : =>natural-numbers
+    = decimal-natural \"Int-Lit\"
 
 //Lexis
 //  float-lit         ::= decimal-float-lit | hex-float-lit

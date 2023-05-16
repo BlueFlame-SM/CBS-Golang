@@ -1,9 +1,10 @@
 module GO-Start
             
 imports 
+  GO-A-Disambiguation
   GO-1-Lexemes
   GO-3-Expressions
-  GO-A-Disambiguation
+  GO-4-Statements
   Funcons
 
 // Language "Golang"
@@ -13,8 +14,8 @@ lexical syntax // Language
 syntax // Language
   
 context-free syntax // Language
-  L-start.L-start--L-expression =
-    L-expression
+  L-start.L-start--L-statement =
+    L-statement
   
   
 context-free syntax // Semantics

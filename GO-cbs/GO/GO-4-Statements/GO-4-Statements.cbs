@@ -1,0 +1,167 @@
+Language "Golang"
+
+#4 Statements
+
+Syntax
+  Statement : statement
+    ::= simpleStmt
+//      | declaration  // TODO: declarations
+//      | labeledStmt  // TODO: goto
+//      | goStmt  // TODO: concurrency
+//      | returnStmt  // TODO: functions
+//      | breakStmt  // TODO: loops
+//      | continueStmt  // TODO: loops
+//      | gotoStmt  // TODO: goto
+//      | fallThroughStmt  // TODO: ?
+//      | block
+//      | ifStmt
+//      | switchStmt  // TODO: switch
+//      | selectStmt  // TODO: concurrency
+//      | forStmt  // TODO: loops
+//      | deferStmt  // TODO: concurrency
+      | printStmt
+
+Syntax
+  SimpleStmt : simpleStmt
+    ::= emptyStmt
+//      | expressionStmt
+//      | sendStmt  // TODO: concurrency
+//      | incDecStmt  // TODO: incdec
+//      | assignment  // TODO: assignment
+//      | shortVarDecl
+
+Semantics
+  execute[[_:statement]] : =>null-type
+
+
+## Empty statements
+
+Syntax
+  emptyStmt ::= ()
+
+Rule
+  execute[[ ]] = null-value
+
+
+## Blocks
+
+//Syntax
+//  Block          : block          ::= '{' terminatedStmt* '}'
+//  TerminatedStmt : terminatedStmt ::= statement ';'
+//
+//Rule
+//  execute[['{' TerminatedStmt* '}']] = execute[[TerminatedStmt*]]
+
+
+## Expression statements
+
+//Syntax
+//  expressionStmt ::= expression
+//
+//Rule
+//  execute[[Expression]] = evaluate[[Expression]]
+
+
+## Assignment statements
+// Skipped in favour of short variable declarations
+
+//Syntax
+//  assignment ::= identifier '=' expression  // TODO: expression resolution, multiple assignment, augmented assignment
+
+
+## Declarations
+// Skipped in favour of short variable declarations
+
+//Syntax
+//  declaration
+//    ::= varDecl
+////      | constDecl  // TODO: const
+////      | typeDecl  // TODO: types
+//
+//  topLevelDecl
+//    ::= declaration
+////      | functionDecl  // TODO: functions
+////      | methodDecl  // TODO: methods
+
+
+### Constant declarations
+// Skipped in favour of short variable declarations
+
+//Syntax
+//  constDecl ::= 'const' (constSpec | '(' (constSpec ';')* ')')
+//  constSpec ::= identifierList (type? '=' expressionList)?
+//
+//Syntax
+//  identifierList ::= identifier (',' identifier)*
+//  expressionList ::= expression (',' expression)*
+
+
+### Variable declarations
+
+//Syntax  // TODO: multiple assignment, types
+//  varDecl ::= 'var' (varSpec | '(' (varSpec ';')* ')')
+//  varSpec ::= identifier (type ('=' expression)? | '=' expression)
+
+
+### Short variable declarations
+
+//Syntax
+//  ShortVarDecl : shortVarDecl ::= identifier ':=' expression  // TODO: multiple assignment
+
+
+## If statements
+
+// NOTE: spent time reducing the amount of rules required
+
+//Syntax
+//  IfStmt   : ifStmt   ::= 'if' (simpleStmt ';')? expression block elseStmt?
+//  ElseStmt : elseStmt ::= 'else' (ifStmt | block)
+//
+//Rule
+//  [['if' Expression Block ElseStmt?]] : ifStmt
+//    = [['if' ';' Expression Block 'else' ElseStmt?]]
+//
+//Rule
+//  [['if' SimpleStmt ';' Expression Block]] : ifStmt
+//    = [['if' SimpleStmt ';' Expression Block '{' '}']]
+//
+//Rule
+//  execute[['if' SimpleStmt ';' Expression Block ElseStmt]]
+//    = if-else(Expression, Block, ElseStmt)
+//
+//Rule
+//  execute[['else' IfStmt]] = execute[[IfStmt]]
+//
+//Rule
+//  execute[['else' Block]] = execute[[Block]]
+
+
+## For statements
+
+//Syntax
+//  ForStmt : forStmt ::= 'for' (expression | forClause)? block  // TODO: range clause
+
+
+### For statements with for clause
+
+//Syntax
+//  forClause ::= simpleStmt? ';' expression? ';' simpleStmt?  // initStmt? ';' condition? ';' postStmt?
+
+
+## Temporary print statement
+
+Syntax
+  printStmt ::= 'print' '(' expression ')'
+
+Rule
+  execute[['print' '(' Expression ')']]
+    = print(evaluate[[Expression]])
+
+
+
+
+
+
+
+
+

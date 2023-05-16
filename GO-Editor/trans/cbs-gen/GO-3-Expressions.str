@@ -17,38 +17,29 @@ rules
               
 
 
-// ## Operand
+// ## Operands
                  
 
 to-funcons:
-  |[ evaluate[: (:IL:) :] ]| ->
-  |[ integer-value[: (:IL:) :] ]|
+  |[ evaluate[: (:Int-Lit:) :] ]| ->
+  |[ integer-value[: (:Int-Lit:) :] ]|
 to-funcons:
   |[ evaluate[: ((:Expression:)) :] ]| ->
   |[ evaluate[: (:Expression:) :] ]|
 
-// ## Primary
+// ## Primary expressions
                  
 
 
-// ## Unary
-                 
-
-to-funcons:
-  |[ evaluate[: +(:UnaryExpr:) :] ]| ->
-  |[ evaluate[: (:UnaryExpr:) :] ]|
-to-funcons:
-  |[ evaluate[: -(:UnaryExpr:) :] ]| ->
-  |[ integer-negate evaluate[: (:UnaryExpr:) :] ]|
-to-funcons:
-  |[ evaluate[: !(:UnaryExpr:) :] ]| ->
-  |[ not evaluate[: (:UnaryExpr:) :] ]|
-
-// ## Binary
+// ## Operators
                  
 
 
-// ### Boolean
+// ### Binary operators
+                 
+
+
+// #### Boolean expressions
                  
 
 to-funcons:
@@ -62,7 +53,7 @@ to-funcons:
              evaluate[: (:Expression2:) :], 
              false) ]|
 
-// ### Comparison
+// #### Comparison expressions
                  
 
 to-funcons:
@@ -90,7 +81,7 @@ to-funcons:
   |[ is-greater-or-equal l-to-r (evaluate[: (:Expression1:) :], 
                     evaluate[: (:Expression2:) :]) ]|
 
-// ### Additive
+// #### Additive expressions
                  
 
 to-funcons:
@@ -102,7 +93,7 @@ to-funcons:
   |[ int-sub l-to-r (evaluate[: (:Expression1:) :], 
                     evaluate[: (:Expression2:) :]) ]|
 
-// ### Multiplicative
+// #### Multiplicative expressions
                  
 
 to-funcons:
@@ -117,4 +108,17 @@ to-funcons:
   |[ evaluate[: (:Expression1:)%(:Expression2:) :] ]| ->
   |[ checked int-mod l-to-r (evaluate[: (:Expression1:) :], 
                            evaluate[: (:Expression2:) :]) ]|
+
+// ### Unary expressions
+                 
+
+to-funcons:
+  |[ evaluate[: +(:UnaryExpr:) :] ]| ->
+  |[ evaluate[: (:UnaryExpr:) :] ]|
+to-funcons:
+  |[ evaluate[: -(:UnaryExpr:) :] ]| ->
+  |[ integer-negate evaluate[: (:UnaryExpr:) :] ]|
+to-funcons:
+  |[ evaluate[: !(:UnaryExpr:) :] ]| ->
+  |[ not (evaluate[: (:UnaryExpr:) :]) ]|
 

@@ -1,0 +1,73 @@
+module GO-4-Statements
+
+imports
+  libstratego-gpp
+  signatures/-
+  pp/GO-parenthesize
+  pp/GO-pp
+
+imports
+  cbs-gen/GO-3-Expressions
+
+// Language "Golang"
+
+rules
+
+// #4 Statements
+              
+
+
+// ## Empty statements
+                 
+
+to-funcons:
+  |[ execute[:  :] ]| ->
+  |[ null-value ]|
+
+// ## Blocks
+                 
+
+
+// ## Expression statements
+                 
+
+
+// ## Assignment statements
+                 
+
+
+// ## Declarations
+                 
+
+
+// ### Constant declarations
+                 
+
+
+// ### Variable declarations
+                 
+
+
+// ### Short variable declarations
+                 
+
+
+// ## If statements
+                 
+
+
+// ## For statements
+                 
+
+
+// ### For statements with for clause
+                 
+
+
+// ## Temporary print statement
+                 
+
+to-funcons:
+  |[ execute[: print((:Expression:)) :] ]| ->
+  |[ print (evaluate[: (:Expression:) :]) ]|
+

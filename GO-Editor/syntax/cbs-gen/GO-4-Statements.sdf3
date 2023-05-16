@@ -1,0 +1,412 @@
+module GO-4-Statements
+            
+imports 
+  GO-3-Expressions
+  Funcons
+
+// Language "Golang"
+    
+lexical syntax // Language
+  
+  // #4 Statements
+                
+  
+  
+  // ## Empty statements
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## Expression statements
+                   
+  
+  
+  // ## Assignment statements
+                   
+  
+  
+  // ## Declarations
+                   
+  
+  
+  // ### Constant declarations
+                   
+  
+  
+  // ### Variable declarations
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ### For statements with for clause
+                   
+  
+  
+  // ## Temporary print statement
+                   
+  
+  
+syntax // Language
+  
+  // #4 Statements
+                
+  
+  
+  // ## Empty statements
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## Expression statements
+                   
+  
+  
+  // ## Assignment statements
+                   
+  
+  
+  // ## Declarations
+                   
+  
+  
+  // ### Constant declarations
+                   
+  
+  
+  // ### Variable declarations
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ### For statements with for clause
+                   
+  
+  
+  // ## Temporary print statement
+                   
+  
+  
+context-free syntax // Language
+  
+  // #4 Statements
+                
+  
+  L-statement.L-statement--L-simpleStmt =
+    L-simpleStmt
+  L-statement.L-statement--L-printStmt =
+    L-printStmt
+  
+  L-simpleStmt.L-simpleStmt--L-emptyStmt =
+    L-emptyStmt
+  
+  
+  // ## Empty statements
+                   
+  
+  L-emptyStmt.L-emptyStmt--EMPTY =
+    
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## Expression statements
+                   
+  
+  
+  // ## Assignment statements
+                   
+  
+  
+  // ## Declarations
+                   
+  
+  
+  // ### Constant declarations
+                   
+  
+  
+  // ### Variable declarations
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ### For statements with for clause
+                   
+  
+  
+  // ## Temporary print statement
+                   
+  
+  L-printStmt.L-printStmt--R-print-LPAREN-L-expression-RPAREN =
+    "print" "(" L-expression ")"
+  
+  
+context-free syntax // Semantics
+  
+  // #4 Statements
+                
+  
+  FCT.T-execute =
+    "execute" "[:" L-statement ":]"
+  
+  // ## Empty statements
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## Expression statements
+                   
+  
+  
+  // ## Assignment statements
+                   
+  
+  
+  // ## Declarations
+                   
+  
+  
+  // ### Constant declarations
+                   
+  
+  
+  // ### Variable declarations
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ### For statements with for clause
+                   
+  
+  
+  // ## Temporary print statement
+                   
+  
+  
+context-free syntax // Desugaring
+  
+  // #4 Statements
+                
+  
+  
+  // ## Empty statements
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## Expression statements
+                   
+  
+  
+  // ## Assignment statements
+                   
+  
+  
+  // ## Declarations
+                   
+  
+  
+  // ### Constant declarations
+                   
+  
+  
+  // ### Variable declarations
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ### For statements with for clause
+                   
+  
+  
+  // ## Temporary print statement
+                   
+  
+  
+variables // Meta-variables
+  
+  // #4 Statements
+                
+  
+  L-statement = "(:Statement" [1-9]? ":)" {prefer}
+  L-statement? = "(:Statement" [1-9]? "?:)" {prefer}
+  L-statement* = "(:Statement" [1-9]? "*:)" {prefer}
+  L-statement+ = "(:Statement" [1-9]? "+:)" {prefer}
+  L-simpleStmt = "(:SimpleStmt" [1-9]? ":)" {prefer}
+  L-simpleStmt? = "(:SimpleStmt" [1-9]? "?:)" {prefer}
+  L-simpleStmt* = "(:SimpleStmt" [1-9]? "*:)" {prefer}
+  L-simpleStmt+ = "(:SimpleStmt" [1-9]? "+:)" {prefer}
+  
+  // ## Empty statements
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## Expression statements
+                   
+  
+  
+  // ## Assignment statements
+                   
+  
+  
+  // ## Declarations
+                   
+  
+  
+  // ### Constant declarations
+                   
+  
+  
+  // ### Variable declarations
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ### For statements with for clause
+                   
+  
+  
+  // ## Temporary print statement
+                   
+  
+  
+// SDF comments
+  
+  // #4 Statements
+                
+  
+  
+  // ## Empty statements
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## Expression statements
+                   
+  
+  
+  // ## Assignment statements
+                   
+  
+  
+  // ## Declarations
+                   
+  
+  
+  // ### Constant declarations
+                   
+  
+  
+  // ### Variable declarations
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ### For statements with for clause
+                   
+  
+  
+  // ## Temporary print statement
+                   
+  
+  
+sorts // ASTs
+  T-start

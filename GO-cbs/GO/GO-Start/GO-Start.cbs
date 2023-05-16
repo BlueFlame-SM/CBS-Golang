@@ -4,16 +4,16 @@ Language "Golang"
   #1 Lexical
 //  #2 Types
   #3 Expressions
+  #4 Statements
   #A Disambiguation
 ]
 
 Syntax
-  START : start ::= expression
+  START : start ::= statement
 
 Semantics
-  start[[START:start]] : =>values
+  start[[ START:start ]] : =>null-type
 
 Rule
-  start[[Expression]] =
-    finalise-failing
-      evaluate[[Expression]]
+  start[[Statement]]
+    = finalise-failing execute[[Statement]]

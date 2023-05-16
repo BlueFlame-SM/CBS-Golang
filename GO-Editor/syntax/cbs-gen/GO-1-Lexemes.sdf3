@@ -55,7 +55,9 @@ context-free syntax // Semantics
   FCT-Quoted.LEX-binary-digit = LEX-binary-digit
   FCT-Quoted.LEX-octal-digit = LEX-octal-digit
   FCT-Quoted.LEX-hex-digit = LEX-hex-digit
-  FCT-Quoted.LEX-identifier = LEX-identifier
+  FCT-Quoted.L-identifier = L-identifier
+  FCT.T-identifier =
+    "identifier" "[:" L-identifier ":]"
   FCT-Quoted.L-int-lit = L-int-lit
   FCT.T-integer-value =
     "integer-value" "[:" L-int-lit ":]"
@@ -71,10 +73,14 @@ variables // Meta-variables
   // #1 Lexemes
                 
   
-  L-int-lit = "(:IL" [1-9]? ":)" {prefer}
-  L-int-lit? = "(:IL" [1-9]? "?:)" {prefer}
-  L-int-lit* = "(:IL" [1-9]? "*:)" {prefer}
-  L-int-lit+ = "(:IL" [1-9]? "+:)" {prefer}
+  L-identifier = "(:Identifier" [1-9]? ":)" {prefer}
+  L-identifier? = "(:Identifier" [1-9]? "?:)" {prefer}
+  L-identifier* = "(:Identifier" [1-9]? "*:)" {prefer}
+  L-identifier+ = "(:Identifier" [1-9]? "+:)" {prefer}
+  L-int-lit = "(:Int-Lit" [1-9]? ":)" {prefer}
+  L-int-lit? = "(:Int-Lit" [1-9]? "?:)" {prefer}
+  L-int-lit* = "(:Int-Lit" [1-9]? "*:)" {prefer}
+  L-int-lit+ = "(:Int-Lit" [1-9]? "+:)" {prefer}
   
 // SDF comments
   

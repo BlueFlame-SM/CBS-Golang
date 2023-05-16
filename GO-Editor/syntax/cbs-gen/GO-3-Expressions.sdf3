@@ -12,35 +12,39 @@ lexical syntax // Language
                 
   
   
-  // ## Operand
+  // ## Operands
                    
   
   
-  // ## Primary
+  // ## Primary expressions
                    
   
   
-  // ## Unary
+  // ## Operators
                    
   
   
-  // ## Binary
+  // ### Binary operators
                    
   
   
-  // ### Boolean
+  // #### Boolean expressions
                    
   
   
-  // ### Comparison
+  // #### Comparison expressions
                    
   
   
-  // ### Additive
+  // #### Additive expressions
                    
   
   
-  // ### Multiplicative
+  // #### Multiplicative expressions
+                   
+  
+  
+  // ### Unary expressions
                    
   
   
@@ -50,35 +54,39 @@ syntax // Language
                 
   
   
-  // ## Operand
+  // ## Operands
                    
   
   
-  // ## Primary
+  // ## Primary expressions
                    
   
   
-  // ## Unary
+  // ## Operators
                    
   
   
-  // ## Binary
+  // ### Binary operators
                    
   
   
-  // ### Boolean
+  // #### Boolean expressions
                    
   
   
-  // ### Comparison
+  // #### Comparison expressions
                    
   
   
-  // ### Additive
+  // #### Additive expressions
                    
   
   
-  // ### Multiplicative
+  // #### Multiplicative expressions
+                   
+  
+  
+  // ### Unary expressions
                    
   
   
@@ -88,7 +96,7 @@ context-free syntax // Language
                 
   
   
-  // ## Operand
+  // ## Operands
                    
   
   L-operand.L-operand--L-int-lit =
@@ -97,27 +105,18 @@ context-free syntax // Language
     "(" L-expression ")"
   
   
-  // ## Primary
+  // ## Primary expressions
                    
   
   L-primaryExpr.L-primaryExpr--L-operand =
     L-operand
   
   
-  // ## Unary
+  // ## Operators
                    
   
-  L-unaryExpr.L-unaryExpr--L-primaryExpr =
-    L-primaryExpr
-  L-unaryExpr.L-unaryExpr--PLUS-L-unaryExpr =
-    "+" L-unaryExpr
-  L-unaryExpr.L-unaryExpr--DASH-L-unaryExpr =
-    "-" L-unaryExpr
-  L-unaryExpr.L-unaryExpr--BANG-L-unaryExpr =
-    "!" L-unaryExpr
   
-  
-  // ## Binary
+  // ### Binary operators
                    
   
   L-expression.L-expression--L-unaryExpr =
@@ -150,20 +149,33 @@ context-free syntax // Language
     L-expression "%" L-expression
   
   
-  // ### Boolean
+  // #### Boolean expressions
                    
   
   
-  // ### Comparison
+  // #### Comparison expressions
                    
   
   
-  // ### Additive
+  // #### Additive expressions
                    
   
   
-  // ### Multiplicative
+  // #### Multiplicative expressions
                    
+  
+  
+  // ### Unary expressions
+                   
+  
+  L-unaryExpr.L-unaryExpr--L-primaryExpr =
+    L-primaryExpr
+  L-unaryExpr.L-unaryExpr--PLUS-L-unaryExpr =
+    "+" L-unaryExpr
+  L-unaryExpr.L-unaryExpr--DASH-L-unaryExpr =
+    "-" L-unaryExpr
+  L-unaryExpr.L-unaryExpr--BANG-L-unaryExpr =
+    "!" L-unaryExpr
   
   
 context-free syntax // Semantics
@@ -172,37 +184,41 @@ context-free syntax // Semantics
                 
   
   
-  // ## Operand
+  // ## Operands
                    
   
   
-  // ## Primary
+  // ## Primary expressions
                    
   
   
-  // ## Unary
+  // ## Operators
                    
   
   
-  // ## Binary
+  // ### Binary operators
                    
   
   FCT.T-evaluate =
     "evaluate" "[:" L-expression ":]"
   
-  // ### Boolean
+  // #### Boolean expressions
                    
   
   
-  // ### Comparison
+  // #### Comparison expressions
                    
   
   
-  // ### Additive
+  // #### Additive expressions
                    
   
   
-  // ### Multiplicative
+  // #### Multiplicative expressions
+                   
+  
+  
+  // ### Unary expressions
                    
   
   
@@ -212,35 +228,39 @@ context-free syntax // Desugaring
                 
   
   
-  // ## Operand
+  // ## Operands
                    
   
   
-  // ## Primary
+  // ## Primary expressions
                    
   
   
-  // ## Unary
+  // ## Operators
                    
   
   
-  // ## Binary
+  // ### Binary operators
                    
   
   
-  // ### Boolean
+  // #### Boolean expressions
                    
   
   
-  // ### Comparison
+  // #### Comparison expressions
                    
   
   
-  // ### Additive
+  // #### Additive expressions
                    
   
   
-  // ### Multiplicative
+  // #### Multiplicative expressions
+                   
+  
+  
+  // ### Unary expressions
                    
   
   
@@ -250,7 +270,7 @@ variables // Meta-variables
                 
   
   
-  // ## Operand
+  // ## Operands
                    
   
   L-operand = "(:Operand" [1-9]? ":)" {prefer}
@@ -258,7 +278,7 @@ variables // Meta-variables
   L-operand* = "(:Operand" [1-9]? "*:)" {prefer}
   L-operand+ = "(:Operand" [1-9]? "+:)" {prefer}
   
-  // ## Primary
+  // ## Primary expressions
                    
   
   L-primaryExpr = "(:PrimaryExpr" [1-9]? ":)" {prefer}
@@ -266,15 +286,11 @@ variables // Meta-variables
   L-primaryExpr* = "(:PrimaryExpr" [1-9]? "*:)" {prefer}
   L-primaryExpr+ = "(:PrimaryExpr" [1-9]? "+:)" {prefer}
   
-  // ## Unary
+  // ## Operators
                    
   
-  L-unaryExpr = "(:UnaryExpr" [1-9]? ":)" {prefer}
-  L-unaryExpr? = "(:UnaryExpr" [1-9]? "?:)" {prefer}
-  L-unaryExpr* = "(:UnaryExpr" [1-9]? "*:)" {prefer}
-  L-unaryExpr+ = "(:UnaryExpr" [1-9]? "+:)" {prefer}
   
-  // ## Binary
+  // ### Binary operators
                    
   
   L-expression = "(:Expression" [1-9]? ":)" {prefer}
@@ -282,21 +298,29 @@ variables // Meta-variables
   L-expression* = "(:Expression" [1-9]? "*:)" {prefer}
   L-expression+ = "(:Expression" [1-9]? "+:)" {prefer}
   
-  // ### Boolean
+  // #### Boolean expressions
                    
   
   
-  // ### Comparison
+  // #### Comparison expressions
                    
   
   
-  // ### Additive
+  // #### Additive expressions
                    
   
   
-  // ### Multiplicative
+  // #### Multiplicative expressions
                    
   
+  
+  // ### Unary expressions
+                   
+  
+  L-unaryExpr = "(:UnaryExpr" [1-9]? ":)" {prefer}
+  L-unaryExpr? = "(:UnaryExpr" [1-9]? "?:)" {prefer}
+  L-unaryExpr* = "(:UnaryExpr" [1-9]? "*:)" {prefer}
+  L-unaryExpr+ = "(:UnaryExpr" [1-9]? "+:)" {prefer}
   
 // SDF comments
   
@@ -304,35 +328,39 @@ variables // Meta-variables
                 
   
   
-  // ## Operand
+  // ## Operands
                    
   
   
-  // ## Primary
+  // ## Primary expressions
                    
   
   
-  // ## Unary
+  // ## Operators
                    
   
   
-  // ## Binary
+  // ### Binary operators
                    
   
   
-  // ### Boolean
+  // #### Boolean expressions
                    
   
   
-  // ### Comparison
+  // #### Comparison expressions
                    
   
   
-  // ### Additive
+  // #### Additive expressions
                    
   
   
-  // ### Multiplicative
+  // #### Multiplicative expressions
+                   
+  
+  
+  // ### Unary expressions
                    
   
   

@@ -7,14 +7,15 @@ imports
   pp/GO-pp
 
 imports
+  cbs-gen/GO-A-Disambiguation
   cbs-gen/GO-1-Lexemes
   cbs-gen/GO-3-Expressions
-  cbs-gen/GO-A-Disambiguation
+  cbs-gen/GO-4-Statements
 
 // Language "Golang"
 
 rules
 to-funcons:
-  |[ start[: (:Expression:) :] ]| ->
-  |[ finalise-failing evaluate[: (:Expression:) :] ]|
+  |[ start[: (:Statement:) :] ]| ->
+  |[ finalise-failing execute[: (:Statement:) :] ]|
 
