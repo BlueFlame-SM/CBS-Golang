@@ -7,6 +7,7 @@ imports
   pp/GO-pp
 
 imports
+  cbs-gen/GO-1-Lexemes
   cbs-gen/GO-3-Expressions
 
 // Language "Golang"
@@ -28,15 +29,18 @@ to-funcons:
                  
 
 to-funcons:
-  |[ execute[: {} :] ]| ->
+  |[ execute[: {(:TerminatedStmt*:)} :] ]| ->
+  |[ execute-block[: (:TerminatedStmt*:) :] ]|
+to-funcons:
+  |[ execute-block[:  :] ]| ->
   |[ null-value ]|
 to-funcons:
-  |[ execute[: {(:Statement:);} :] ]| ->
+  |[ execute-block[: (:Statement:); :] ]| ->
   |[ execute[: (:Statement:) :] ]|
 to-funcons:
-  |[ execute[: {(:Statement:);(:TerminatedStmt+:)} :] ]| ->
+  |[ execute-block[: (:Statement:);(:TerminatedStmt+:) :] ]| ->
   |[ sequential (execute[: (:Statement:) :], 
-             execute[: {(:TerminatedStmt+:)} :]) ]|
+             execute-block[: (:TerminatedStmt+:) :]) ]|
 
 // ## Expression statements
                  
@@ -57,6 +61,11 @@ to-funcons:
 // ### Variable declarations
                  
 
+to-funcons:
+  |[ declare-vars[: var(:Identifier:)=(:Expression:) :] ]| ->
+  |[ bind (identifier[: (:Identifier:) :], 
+             alloc-init (values, 
+                     evaluate[: (:Expression:) :])) ]|
 
 // ### Short variable declarations
                  

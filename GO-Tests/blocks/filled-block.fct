@@ -1,4 +1,4 @@
-finalise-failing sequential
+initialise-binding initialise-storing finalise-failing sequential
   (print
      (decimal-natural "1"),
    print

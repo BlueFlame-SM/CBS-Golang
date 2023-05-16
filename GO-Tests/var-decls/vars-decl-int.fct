@@ -1,2 +1,2 @@
 initialise-binding initialise-storing finalise-failing
-  null-value
+  execute [: var i = 1 :]

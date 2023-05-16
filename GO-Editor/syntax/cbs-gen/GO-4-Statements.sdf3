@@ -1,6 +1,7 @@
 module GO-4-Statements
             
 imports 
+  GO-1-Lexemes
   GO-3-Expressions
   Funcons
 
@@ -121,6 +122,8 @@ context-free syntax // Language
   
   L-statement.L-statement--L-simpleStmt =
     L-simpleStmt
+  L-statement.L-statement--L-declaration =
+    L-declaration
   L-statement.L-statement--L-block =
     L-block
   L-statement.L-statement--L-printStmt =
@@ -158,6 +161,12 @@ context-free syntax // Language
   // ## Declarations
                    
   
+  L-declaration.L-declaration--L-varDecl =
+    L-varDecl
+  
+  L-topLevelDecl.L-topLevelDecl--L-declaration =
+    L-declaration
+  
   
   // ### Constant declarations
                    
@@ -165,6 +174,12 @@ context-free syntax // Language
   
   // ### Variable declarations
                    
+  
+  L-varDecl.L-varDecl--R-var-L-varSpec =
+    "var" L-varSpec
+  
+  L-varSpec.L-varSpec--L-identifier-EQUALS-L-expression =
+    L-identifier "=" L-expression
   
   
   // ### Short variable declarations
@@ -205,6 +220,8 @@ context-free syntax // Semantics
   // ## Blocks
                    
   
+  FCT.T-execute-block =
+    "execute-block" "[:" L-terminatedStmt* ":]"
   
   // ## Expression statements
                    
@@ -225,6 +242,8 @@ context-free syntax // Semantics
   // ### Variable declarations
                    
   
+  FCT.T-declare-vars =
+    "declare-vars" "[:" L-varDecl ":]"
   
   // ### Short variable declarations
                    
@@ -350,6 +369,10 @@ variables // Meta-variables
   // ### Variable declarations
                    
   
+  L-varDecl = "(:VarDecl" [1-9]? ":)" {prefer}
+  L-varDecl? = "(:VarDecl" [1-9]? "?:)" {prefer}
+  L-varDecl* = "(:VarDecl" [1-9]? "*:)" {prefer}
+  L-varDecl+ = "(:VarDecl" [1-9]? "+:)" {prefer}
   
   // ### Short variable declarations
                    

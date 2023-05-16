@@ -5,7 +5,7 @@ Language "Golang"
 Syntax
   Statement : statement
     ::= simpleStmt
-//      | declaration  // TODO: declarations
+      | declaration
 //      | labeledStmt  // TODO: goto
 //      | goStmt  // TODO: concurrency
 //      | returnStmt  // TODO: functions
@@ -50,14 +50,21 @@ Syntax
   TerminatedStmt : terminatedStmt ::= statement ';'
 
 Rule
-  execute[['{' '}']] = null-value
+  execute[['{' TerminatedStmt* '}']]
+    = execute-block[[TerminatedStmt*]]
+
+Semantics
+  execute-block[[_:terminatedStmt*]] : =>null-type
 
 Rule
-  execute[['{' Statement ';' '}']] = execute[[Statement]]
+  execute-block[[ ]] = null-value
 
 Rule
-  execute[['{' Statement ';' TerminatedStmt+ '}']]
-    = sequential(execute[[Statement]], execute[['{' TerminatedStmt+ '}']])
+  execute-block[[Statement ';']] = execute[[Statement]]
+
+Rule
+  execute-block[[Statement ';' TerminatedStmt+]]
+    = sequential(execute[[Statement]], execute-block[[TerminatedStmt+]])
 
 
 ## Expression statements
@@ -77,18 +84,17 @@ Rule
 
 
 ## Declarations
-// Skipped in favour of short variable declarations
 
-//Syntax
-//  declaration
-//    ::= varDecl
-////      | constDecl  // TODO: const
-////      | typeDecl  // TODO: types
-//
-//  topLevelDecl
-//    ::= declaration
-////      | functionDecl  // TODO: functions
-////      | methodDecl  // TODO: methods
+Syntax
+  declaration
+    ::= varDecl
+//      | constDecl  // TODO: const
+//      | typeDecl  // TODO: types
+
+  topLevelDecl
+    ::= declaration
+//      | functionDecl  // TODO: functions
+//      | methodDecl  // TODO: methods
 
 
 ### Constant declarations
@@ -105,9 +111,16 @@ Rule
 
 ### Variable declarations
 
-//Syntax  // TODO: multiple assignment, types
-//  varDecl ::= 'var' (varSpec | '(' (varSpec ';')* ')')
-//  varSpec ::= identifier (type ('=' expression)? | '=' expression)
+Syntax  // TODO: multiple assignment, multiple declares, types
+  VarDecl : varDecl ::= 'var' varSpec
+            varSpec ::= identifier '=' expression
+
+Semantics
+  declare-vars[[_:varDecl]] : =>environments
+
+Rule
+  declare-vars[['var' Identifier '=' Expression]]
+    = bind(identifier[[Identifier]], alloc-init(values, evaluate[[Expression]]))
 
 
 ### Short variable declarations

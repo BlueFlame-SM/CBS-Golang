@@ -17,5 +17,5 @@ imports
 rules
 to-funcons:
   |[ start[: (:Statement:) :] ]| ->
-  |[ finalise-failing execute[: (:Statement:) :] ]|
+  |[ initialise-binding initialise-storing finalise-failing execute[: (:Statement:) :] ]|
 

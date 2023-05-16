@@ -16,4 +16,7 @@ Semantics
 
 Rule
   start[[Statement]]
-    = finalise-failing execute[[Statement]]
+    = initialise-binding
+      initialise-storing
+      finalise-failing
+        execute[[Statement]]
