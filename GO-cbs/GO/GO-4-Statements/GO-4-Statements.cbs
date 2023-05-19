@@ -14,7 +14,7 @@ Syntax
 //      | gotoStmt  // TODO: goto
 //      | fallThroughStmt  // TODO: ?
       | block
-//      | ifStmt
+      | ifStmt
 //      | switchStmt  // TODO: switch
 //      | selectStmt  // TODO: concurrency
 //      | forStmt  // TODO: loops
@@ -24,7 +24,7 @@ Syntax
 Syntax
   SimpleStmt : simpleStmt
     ::= emptyStmt
-//      | expressionStmt
+      | expressionStmt
 //      | sendStmt  // TODO: concurrency
 //      | incDecStmt  // TODO: incdec
 //      | assignment  // TODO: assignment
@@ -87,11 +87,11 @@ Otherwise
 
 ## Expression statements
 
-//Syntax
-//  expressionStmt ::= expression
-//
-//Rule
-//  execute[[Expression]] = evaluate[[Expression]]
+Syntax
+  expressionStmt ::= expression
+
+Rule
+  execute[[Expression]] = evaluate[[Expression]]
 
 
 ## Assignment statements
@@ -156,27 +156,23 @@ Rule
 
 ## If statements
 
-//Syntax
-//  IfStmt   : ifStmt   ::= 'if' (simpleStmt ';')? expression block elseStmt?
-//  ElseStmt : elseStmt ::= 'else' (ifStmt | block)
-//
-//Rule
-//  [['if' Expression Block ElseStmt?]] : ifStmt
-//    = [['if' ';' Expression Block 'else' ElseStmt?]]
-//
-//Rule
-//  [['if' SimpleStmt ';' Expression Block]] : ifStmt
-//    = [['if' SimpleStmt ';' Expression Block '{' '}']]
-//
-//Rule
-//  execute[['if' SimpleStmt ';' Expression Block ElseStmt]]
-//    = if-else(Expression, Block, ElseStmt)
-//
-//Rule
-//  execute[['else' IfStmt]] = execute[[IfStmt]]
-//
-//Rule
-//  execute[['else' Block]] = execute[[Block]]
+Syntax
+  IfStmt : ifStmt  // TODO: Initializer
+    ::= 'if' expression block
+      | 'if' expression block 'else' block
+      | 'if' expression block 'else' ifStmt
+
+Rule
+  [['if' Expression Block]] : ifStmt
+    = [['if' Expression Block 'else' '{' '}']]
+
+Rule
+  execute[['if' Expression Block1 'else' Block2]]
+    = if-else(evaluate[[Expression]], execute[[Block1]], execute[[Block2]])
+
+Rule
+  execute[['if' Expression Block 'else' IfStmt]]
+    = if-else(evaluate[[Expression]], execute[[Block]], execute[[IfStmt]])
 
 
 ## For statements

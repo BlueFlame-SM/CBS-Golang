@@ -1,0 +1,26 @@
+initialise-binding initialise-storing finalise-failing if-else
+  (is-eq l-to-r
+     (decimal-natural "3",
+      decimal-natural "1"),
+   scope
+     (map
+        ( ),
+      sequential
+        (print
+           (decimal-natural "1"),
+         null-value)),
+   if-else
+     (is-eq l-to-r
+        (decimal-natural "3",
+         decimal-natural "2"),
+      scope
+        (map
+           ( ),
+         sequential
+           (print
+              (decimal-natural "2"),
+            null-value)),
+      scope
+        (map
+           ( ),
+         null-value)))
