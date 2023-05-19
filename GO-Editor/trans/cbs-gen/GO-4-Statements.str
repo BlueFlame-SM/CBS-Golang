@@ -7,8 +7,8 @@ imports
   pp/GO-pp
 
 imports
-  cbs-gen/GO-1-Lexemes
   cbs-gen/GO-3-Expressions
+  cbs-gen/GO-1-Lexemes
 
 // Language "Golang"
 
@@ -61,9 +61,38 @@ to-funcons:
   |[ execute[: (:Expression:) :] ]| ->
   |[ evaluate[: (:Expression:) :] ]|
 
+// ## IncDec statements
+                 
+
+to-desugared:
+  [: (:Identifier:)++ :] : statement ->
+  [: (:Identifier:)+=1 :] : statement
+to-desugared:
+  [: (:Identifier:)-- :] : statement ->
+  [: (:Identifier:)-=1 :] : statement
+
 // ## Assignment statements
                  
 
+to-funcons:
+  |[ execute[: (:Identifier:)=(:Expression:) :] ]| ->
+  |[ assign (bound (identifier[: (:Identifier:) :]), 
+             evaluate[: (:Expression:) :]) ]|
+to-desugared:
+  [: (:Identifier:)+=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)+((:Expression:)) :] : assignment
+to-desugared:
+  [: (:Identifier:)-=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)-((:Expression:)) :] : assignment
+to-desugared:
+  [: (:Identifier:)*=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)*((:Expression:)) :] : assignment
+to-desugared:
+  [: (:Identifier:)/=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)/((:Expression:)) :] : assignment
+to-desugared:
+  [: (:Identifier:)%=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)%((:Expression:)) :] : assignment
 
 // ## Declarations
                  
@@ -88,6 +117,9 @@ to-funcons:
 // ### Short variable declarations
                  
 
+to-desugared:
+  [: (:Identifier:):=(:Expression:) :] : statement ->
+  [: var(:Identifier:)=(:Expression:) :] : statement
 
 // ## If statements
                  
@@ -109,10 +141,20 @@ to-funcons:
 // ## For statements
                  
 
-
-// ### For statements with for clause
-                 
-
+to-funcons:
+  |[ execute[: for(:Block:) :] ]| ->
+  |[ while (true, 
+             execute[: (:Block:) :]) ]|
+to-funcons:
+  |[ execute[: for(:Expression:)(:Block:) :] ]| ->
+  |[ while (evaluate[: (:Expression:) :], 
+             execute[: (:Block:) :]) ]|
+to-desugared:
+  [: for(:SimpleStmt1:);(:Expression:);(:SimpleStmt2:){(:StatementSC*:)} :] : statement ->
+  [: {(:SimpleStmt1:);for(:Expression:){(:StatementSC*:)(:SimpleStmt2:);};} :] : statement
+to-desugared:
+  [: for(:SimpleStmt1:);;(:SimpleStmt2:){(:StatementSC*:)} :] : statement ->
+  [: {(:SimpleStmt1:);for{(:StatementSC*:)(:SimpleStmt2:);};} :] : statement
 
 // ## Temporary print statement
                  

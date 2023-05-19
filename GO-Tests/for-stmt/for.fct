@@ -1,0 +1,9 @@
+initialise-binding initialise-storing finalise-failing while
+  (true,
+   scope
+     (map
+        ( ),
+      sequential
+        (print
+           (decimal-natural "1"),
+         null-value)))

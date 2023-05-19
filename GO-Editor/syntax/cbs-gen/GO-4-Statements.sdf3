@@ -1,8 +1,8 @@
 module GO-4-Statements
             
 imports 
-  GO-1-Lexemes
   GO-3-Expressions
+  GO-1-Lexemes
   Funcons
 
 // Language "Golang"
@@ -22,6 +22,10 @@ lexical syntax // Language
   
   
   // ## Expression statements
+                   
+  
+  
+  // ## IncDec statements
                    
   
   
@@ -50,10 +54,6 @@ lexical syntax // Language
   
   
   // ## For statements
-                   
-  
-  
-  // ### For statements with for clause
                    
   
   
@@ -79,6 +79,10 @@ syntax // Language
                    
   
   
+  // ## IncDec statements
+                   
+  
+  
   // ## Assignment statements
                    
   
@@ -107,10 +111,6 @@ syntax // Language
                    
   
   
-  // ### For statements with for clause
-                   
-  
-  
   // ## Temporary print statement
                    
   
@@ -128,6 +128,8 @@ context-free syntax // Language
     L-block
   L-statement.L-statement--L-ifStmt =
     L-ifStmt
+  L-statement.L-statement--L-forStmt =
+    L-forStmt
   L-statement.L-statement--L-printStmt =
     L-printStmt
   
@@ -135,6 +137,12 @@ context-free syntax // Language
     L-emptyStmt
   L-simpleStmt.L-simpleStmt--L-expressionStmt =
     L-expressionStmt
+  L-simpleStmt.L-simpleStmt--L-incDecStmt =
+    L-incDecStmt
+  L-simpleStmt.L-simpleStmt--L-assignment =
+    L-assignment
+  L-simpleStmt.L-simpleStmt--L-shortVarDecl =
+    L-shortVarDecl
   
   L-statementSC.L-statementSC--L-statement-SEMI =
     L-statement ";"
@@ -164,8 +172,30 @@ context-free syntax // Language
     L-expression
   
   
+  // ## IncDec statements
+                   
+  
+  L-incDecStmt.L-incDecStmt--L-identifier-PLUS-PLUS =
+    L-identifier "++"
+  L-incDecStmt.L-incDecStmt--L-identifier-DASH-DASH =
+    L-identifier "--"
+  
+  
   // ## Assignment statements
                    
+  
+  L-assignment.L-assignment--L-identifier-EQUALS-L-expression =
+    L-identifier "=" L-expression
+  L-assignment.L-assignment--L-identifier-PLUS-EQUALS-L-expression =
+    L-identifier "+=" L-expression
+  L-assignment.L-assignment--L-identifier-DASH-EQUALS-L-expression =
+    L-identifier "-=" L-expression
+  L-assignment.L-assignment--L-identifier-STAR-EQUALS-L-expression =
+    L-identifier "*=" L-expression
+  L-assignment.L-assignment--L-identifier-SLASH-EQUALS-L-expression =
+    L-identifier "/=" L-expression
+  L-assignment.L-assignment--L-identifier-PERCENT-EQUALS-L-expression =
+    L-identifier "%=" L-expression
   
   
   // ## Declarations
@@ -195,6 +225,9 @@ context-free syntax // Language
   // ### Short variable declarations
                    
   
+  L-shortVarDecl.L-shortVarDecl--L-identifier-COLON-EQUALS-L-expression =
+    L-identifier ":=" L-expression
+  
   
   // ## If statements
                    
@@ -210,9 +243,12 @@ context-free syntax // Language
   // ## For statements
                    
   
-  
-  // ### For statements with for clause
-                   
+  L-forStmt.L-forStmt--R-for-L-block =
+    "for" L-block
+  L-forStmt.L-forStmt--R-for-L-expression-L-block =
+    "for" L-expression L-block
+  L-forStmt.L-forStmt--R-for-L-simpleStmt-Q-SEMI-L-expression-Q-SEMI-L-simpleStmt-Q-L-block =
+    "for" L-simpleStmt? ";" L-expression? ";" L-simpleStmt? L-block
   
   
   // ## Temporary print statement
@@ -243,6 +279,10 @@ context-free syntax // Semantics
     "execute-stmts" "[:" L-statementSC* ":]"
   
   // ## Expression statements
+                   
+  
+  
+  // ## IncDec statements
                    
   
   
@@ -278,10 +318,6 @@ context-free syntax // Semantics
                    
   
   
-  // ### For statements with for clause
-                   
-  
-  
   // ## Temporary print statement
                    
   
@@ -304,9 +340,20 @@ context-free syntax // Desugaring
                    
   
   
+  // ## IncDec statements
+                   
+  
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  
   // ## Assignment statements
                    
   
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
   
   // ## Declarations
                    
@@ -323,6 +370,7 @@ context-free syntax // Desugaring
   // ### Short variable declarations
                    
   
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
   
   // ## If statements
                    
@@ -332,10 +380,8 @@ context-free syntax // Desugaring
   // ## For statements
                    
   
-  
-  // ### For statements with for clause
-                   
-  
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
   
   // ## Temporary print statement
                    
@@ -380,6 +426,10 @@ variables // Meta-variables
                    
   
   
+  // ## IncDec statements
+                   
+  
+  
   // ## Assignment statements
                    
   
@@ -415,10 +465,10 @@ variables // Meta-variables
   // ## For statements
                    
   
-  
-  // ### For statements with for clause
-                   
-  
+  L-forStmt = "(:ForStmt" [1-9]? ":)" {prefer}
+  L-forStmt? = "(:ForStmt" [1-9]? "?:)" {prefer}
+  L-forStmt* = "(:ForStmt" [1-9]? "*:)" {prefer}
+  L-forStmt+ = "(:ForStmt" [1-9]? "+:)" {prefer}
   
   // ## Temporary print statement
                    
@@ -439,6 +489,10 @@ variables // Meta-variables
   
   
   // ## Expression statements
+                   
+  
+  
+  // ## IncDec statements
                    
   
   
@@ -467,10 +521,6 @@ variables // Meta-variables
   
   
   // ## For statements
-                   
-  
-  
-  // ### For statements with for clause
                    
   
   

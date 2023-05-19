@@ -17,7 +17,7 @@ Syntax
       | ifStmt
 //      | switchStmt  // TODO: switch
 //      | selectStmt  // TODO: concurrency
-//      | forStmt  // TODO: loops
+      | forStmt
 //      | deferStmt  // TODO: concurrency
       | printStmt
 
@@ -26,9 +26,9 @@ Syntax
     ::= emptyStmt
       | expressionStmt
 //      | sendStmt  // TODO: concurrency
-//      | incDecStmt  // TODO: incdec
-//      | assignment  // TODO: assignment
-//      | shortVarDecl
+      | incDecStmt
+      | assignment
+      | shortVarDecl
 
 Syntax
   StatementSC  : statementSC  ::= statement ';'
@@ -94,11 +94,56 @@ Rule
   execute[[Expression]] = evaluate[[Expression]]
 
 
-## Assignment statements
-// Skipped in favour of short variable declarations
+## IncDec statements
 
-//Syntax
-//  assignment ::= identifier '=' expression  // TODO: expression resolution, multiple assignment, augmented assignment
+Syntax
+  incDecStmt
+    ::= identifier '++'
+      | identifier '--'
+
+Rule
+  [[Identifier '++']] : statement
+    = [[Identifier '+=' '1']]
+
+Rule
+  [[Identifier '--']] : statement
+    = [[Identifier '-=' '1']]
+
+
+## Assignment statements
+
+Syntax
+  assignment  // TODO: expression resolution, multiple assignment
+    ::= identifier '=' expression
+      | identifier '+=' expression
+      | identifier '-=' expression
+      | identifier '*=' expression
+      | identifier '/=' expression
+      | identifier '%=' expression
+
+Rule
+  execute[[Identifier '=' Expression]]
+    = assign(bound(identifier[[Identifier]]), evaluate[[Expression]])
+
+Rule
+  [[Identifier '+=' Expression]] : assignment
+    = [[Identifier '=' Identifier '+' '(' Expression ')']]
+
+Rule
+  [[Identifier '-=' Expression]] : assignment
+    = [[Identifier '=' Identifier '-' '(' Expression ')']]
+
+Rule
+  [[Identifier '*=' Expression]] : assignment
+    = [[Identifier '=' Identifier '*' '(' Expression ')']]
+
+Rule
+  [[Identifier '/=' Expression]] : assignment
+    = [[Identifier '=' Identifier '/' '(' Expression ')']]
+
+Rule
+  [[Identifier '%=' Expression]] : assignment
+    = [[Identifier '=' Identifier '%' '(' Expression ')']]
 
 
 ## Declarations
@@ -150,8 +195,12 @@ Rule
 
 ### Short variable declarations
 
-//Syntax
-//  ShortVarDecl : shortVarDecl ::= identifier ':=' expression  // TODO: multiple assignment
+Syntax
+  shortVarDecl ::= identifier ':=' expression  // TODO: multiple assignment
+
+Rule
+  [[Identifier ':=' Expression]] : statement
+    = [['var' Identifier '=' Expression]]
 
 
 ## If statements
@@ -177,14 +226,25 @@ Rule
 
 ## For statements
 
-//Syntax
-//  ForStmt : forStmt ::= 'for' (expression | forClause)? block  // TODO: range clause
+Syntax  // TODO: range clause
+  ForStmt : forStmt
+    ::= 'for' block
+      | 'for' expression block
+      | 'for' simpleStmt? ';' expression? ';' simpleStmt? block
 
+Rule
+  execute[['for' Block]] = while(true, execute[[Block]])
 
-### For statements with for clause
+Rule
+  execute[['for' Expression Block]] = while(evaluate[[Expression]], execute[[Block]])
 
-//Syntax
-//  forClause ::= simpleStmt? ';' expression? ';' simpleStmt?  // initStmt? ';' condition? ';' postStmt?
+Rule
+  [['for' SimpleStmt1 ';' Expression ';' SimpleStmt2 '{' StatementSC* '}']] : statement
+    = [['{' SimpleStmt1 ';' 'for' Expression '{' StatementSC* SimpleStmt2 ';' '}' ';' '}']]
+
+Rule
+  [['for' SimpleStmt1 ';' ';' SimpleStmt2 '{' StatementSC* '}']] : statement
+    = [['{' SimpleStmt1 ';' 'for' '{' StatementSC* SimpleStmt2 ';' '}' ';' '}']]
 
 
 ## Temporary print statement
