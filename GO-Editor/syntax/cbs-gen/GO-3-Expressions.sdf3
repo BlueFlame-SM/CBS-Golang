@@ -101,6 +101,8 @@ context-free syntax // Language
   
   L-operand.L-operand--L-int-lit =
     L-int-lit
+  L-operand.L-operand--L-identifier =
+    L-identifier
   L-operand.L-operand--LPAREN-L-expression-RPAREN =
     "(" L-expression ")"
   

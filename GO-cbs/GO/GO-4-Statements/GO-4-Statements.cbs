@@ -30,6 +30,10 @@ Syntax
 //      | assignment  // TODO: assignment
 //      | shortVarDecl
 
+Syntax
+  StatementSC  : statementSC  ::= statement ';'
+  SimpleStmtSC : simpleStmtSC ::= simpleStmt ';'
+
 Semantics
   execute[[_:statement]] : =>null-type
 
@@ -46,25 +50,39 @@ Rule
 ## Blocks
 
 Syntax
-  Block          : block          ::= '{' terminatedStmt* '}'
-  TerminatedStmt : terminatedStmt ::= statement ';'
+  Block : block ::= '{' statementSC* '}'
 
 Rule
-  execute[['{' TerminatedStmt* '}']]
-    = execute-block[[TerminatedStmt*]]
+  execute[['{' StatementSC* '}']]
+    = scope(allocate-stmts[[StatementSC*]], execute-stmts[[StatementSC*]])
 
 Semantics
-  execute-block[[_:terminatedStmt*]] : =>null-type
+  allocate-stmts[[_:statementSC*]] : =>envs
 
 Rule
-  execute-block[[ ]] = null-value
+  allocate-stmts[[ ]] = map( )
 
 Rule
-  execute-block[[Statement ';']] = execute[[Statement]]
+  allocate-stmts[[VarDecl ';' StatementSC*]]
+    = collateral(allocate-vars[[VarDecl]], allocate-stmts[[StatementSC*]])
+
+Otherwise
+  allocate-stmts[[Statement ';' StatementSC*]]
+    = allocate-stmts[[StatementSC*]]
+
+Semantics
+  execute-stmts[[_:statementSC*]] : =>null-type
 
 Rule
-  execute-block[[Statement ';' TerminatedStmt+]]
-    = sequential(execute[[Statement]], execute-block[[TerminatedStmt+]])
+  execute-stmts[[ ]] = null-value
+
+Rule
+  execute-stmts[[VarDecl ';' StatementSC*]]
+    = sequential(initialise-vars[[VarDecl]], execute-stmts[[StatementSC*]])
+
+Otherwise
+  execute-stmts[[Statement ';' StatementSC*]]
+    = sequential(execute[[Statement]], execute-stmts[[StatementSC*]])
 
 
 ## Expression statements
@@ -116,11 +134,18 @@ Syntax  // TODO: multiple assignment, multiple declares, types
             varSpec ::= identifier '=' expression
 
 Semantics
-  declare-vars[[_:varDecl]] : =>environments
+  allocate-vars[[_:varDecl]] : =>envs
 
 Rule
-  declare-vars[['var' Identifier '=' Expression]]
-    = bind(identifier[[Identifier]], alloc-init(values, evaluate[[Expression]]))
+  allocate-vars[['var' Identifier '=' Expression]]
+    = bind(identifier[[Identifier]], alloc(values))
+
+Semantics
+  initialise-vars[[_:varDecl]] : =>envs
+
+Rule
+  initialise-vars[['var' Identifier '=' Expression]]
+    = assign(bound(identifier[[Identifier]]), evaluate[[Expression]])
 
 
 ### Short variable declarations
@@ -130,8 +155,6 @@ Rule
 
 
 ## If statements
-
-// NOTE: spent time reducing the amount of rules required
 
 //Syntax
 //  IfStmt   : ifStmt   ::= 'if' (simpleStmt ';')? expression block elseStmt?

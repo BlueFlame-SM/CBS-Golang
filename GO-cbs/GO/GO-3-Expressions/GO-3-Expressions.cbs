@@ -12,7 +12,7 @@ Syntax
 //      | imaginary-lit  // TODO: imaginary
 //      | rune-lit  // TODO: runes
 //      | string-lit  // TODO: strings
-//      | identifier // typeArgs?  // TODO: types
+      | identifier // typeArgs?  // TODO: types
 //      | qualifiedIdent typeArgs?  // TODO: packages
       | '(' expression ')'
 
@@ -24,6 +24,10 @@ Rule
 Rule
   evaluate[['(' Expression ')']]
     = evaluate[[Expression]]
+
+Rule
+  evaluate[[Identifier]]
+    = assigned(bound(identifier[[Identifier]]))
 
 
 ## Primary expressions

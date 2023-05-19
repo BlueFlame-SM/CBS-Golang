@@ -10,4 +10,5 @@ initialise-binding initialise-storing finalise-failing sequential
    print
      (decimal-natural "16"),
    print
-     (decimal-natural "32"))
+     (decimal-natural "32"),
+   null-value)

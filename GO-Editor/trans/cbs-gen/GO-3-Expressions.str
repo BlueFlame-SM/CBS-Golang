@@ -26,6 +26,9 @@ to-funcons:
 to-funcons:
   |[ evaluate[: ((:Expression:)) :] ]| ->
   |[ evaluate[: (:Expression:) :] ]|
+to-funcons:
+  |[ evaluate[: (:Identifier:) :] ]| ->
+  |[ assigned (bound (identifier[: (:Identifier:) :])) ]|
 
 // ## Primary expressions
                  

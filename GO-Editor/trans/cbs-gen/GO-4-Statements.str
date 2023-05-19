@@ -7,8 +7,8 @@ imports
   pp/GO-pp
 
 imports
-  cbs-gen/GO-1-Lexemes
   cbs-gen/GO-3-Expressions
+  cbs-gen/GO-1-Lexemes
 
 // Language "Golang"
 
@@ -29,18 +29,30 @@ to-funcons:
                  
 
 to-funcons:
-  |[ execute[: {(:TerminatedStmt*:)} :] ]| ->
-  |[ execute-block[: (:TerminatedStmt*:) :] ]|
+  |[ execute[: {(:StatementSC*:)} :] ]| ->
+  |[ scope (allocate-stmts[: (:StatementSC*:) :], 
+             execute-stmts[: (:StatementSC*:) :]) ]|
 to-funcons:
-  |[ execute-block[:  :] ]| ->
+  |[ allocate-stmts[:  :] ]| ->
+  |[ map () ]|
+to-funcons:
+  |[ allocate-stmts[: (:VarDecl:);(:StatementSC*:) :] ]| ->
+  |[ collateral (allocate-vars[: (:VarDecl:) :], 
+             allocate-stmts[: (:StatementSC*:) :]) ]|
+to-funcons-default:
+  |[ allocate-stmts[: (:Statement:);(:StatementSC*:) :] ]| ->
+  |[ allocate-stmts[: (:StatementSC*:) :] ]|
+to-funcons:
+  |[ execute-stmts[:  :] ]| ->
   |[ null-value ]|
 to-funcons:
-  |[ execute-block[: (:Statement:); :] ]| ->
-  |[ execute[: (:Statement:) :] ]|
-to-funcons:
-  |[ execute-block[: (:Statement:);(:TerminatedStmt+:) :] ]| ->
+  |[ execute-stmts[: (:VarDecl:);(:StatementSC*:) :] ]| ->
+  |[ sequential (initialise-vars[: (:VarDecl:) :], 
+             execute-stmts[: (:StatementSC*:) :]) ]|
+to-funcons-default:
+  |[ execute-stmts[: (:Statement:);(:StatementSC*:) :] ]| ->
   |[ sequential (execute[: (:Statement:) :], 
-             execute-block[: (:TerminatedStmt+:) :]) ]|
+             execute-stmts[: (:StatementSC*:) :]) ]|
 
 // ## Expression statements
                  
@@ -62,10 +74,13 @@ to-funcons:
                  
 
 to-funcons:
-  |[ declare-vars[: var(:Identifier:)=(:Expression:) :] ]| ->
+  |[ allocate-vars[: var(:Identifier:)=(:Expression:) :] ]| ->
   |[ bind (identifier[: (:Identifier:) :], 
-             alloc-init (values, 
-                     evaluate[: (:Expression:) :])) ]|
+             alloc (values)) ]|
+to-funcons:
+  |[ initialise-vars[: var(:Identifier:)=(:Expression:) :] ]| ->
+  |[ assign (bound (identifier[: (:Identifier:) :]), 
+             evaluate[: (:Expression:) :]) ]|
 
 // ### Short variable declarations
                  

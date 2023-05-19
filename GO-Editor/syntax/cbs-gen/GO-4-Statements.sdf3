@@ -1,8 +1,8 @@
 module GO-4-Statements
             
 imports 
-  GO-1-Lexemes
   GO-3-Expressions
+  GO-1-Lexemes
   Funcons
 
 // Language "Golang"
@@ -132,6 +132,12 @@ context-free syntax // Language
   L-simpleStmt.L-simpleStmt--L-emptyStmt =
     L-emptyStmt
   
+  L-statementSC.L-statementSC--L-statement-SEMI =
+    L-statement ";"
+  
+  L-simpleStmtSC.L-simpleStmtSC--L-simpleStmt-SEMI =
+    L-simpleStmt ";"
+  
   
   // ## Empty statements
                    
@@ -143,11 +149,8 @@ context-free syntax // Language
   // ## Blocks
                    
   
-  L-block.L-block--LBRACE-L-terminatedStmt-S-RBRACE =
-    "{" L-terminatedStmt* "}"
-  
-  L-terminatedStmt.L-terminatedStmt--L-statement-SEMI =
-    L-statement ";"
+  L-block.L-block--LBRACE-L-statementSC-S-RBRACE =
+    "{" L-statementSC* "}"
   
   
   // ## Expression statements
@@ -220,8 +223,10 @@ context-free syntax // Semantics
   // ## Blocks
                    
   
-  FCT.T-execute-block =
-    "execute-block" "[:" L-terminatedStmt* ":]"
+  FCT.T-allocate-stmts =
+    "allocate-stmts" "[:" L-statementSC* ":]"
+  FCT.T-execute-stmts =
+    "execute-stmts" "[:" L-statementSC* ":]"
   
   // ## Expression statements
                    
@@ -242,8 +247,10 @@ context-free syntax // Semantics
   // ### Variable declarations
                    
   
-  FCT.T-declare-vars =
-    "declare-vars" "[:" L-varDecl ":]"
+  FCT.T-allocate-vars =
+    "allocate-vars" "[:" L-varDecl ":]"
+  FCT.T-initialise-vars =
+    "initialise-vars" "[:" L-varDecl ":]"
   
   // ### Short variable declarations
                    
@@ -332,6 +339,14 @@ variables // Meta-variables
   L-simpleStmt? = "(:SimpleStmt" [1-9]? "?:)" {prefer}
   L-simpleStmt* = "(:SimpleStmt" [1-9]? "*:)" {prefer}
   L-simpleStmt+ = "(:SimpleStmt" [1-9]? "+:)" {prefer}
+  L-statementSC = "(:StatementSC" [1-9]? ":)" {prefer}
+  L-statementSC? = "(:StatementSC" [1-9]? "?:)" {prefer}
+  L-statementSC* = "(:StatementSC" [1-9]? "*:)" {prefer}
+  L-statementSC+ = "(:StatementSC" [1-9]? "+:)" {prefer}
+  L-simpleStmtSC = "(:SimpleStmtSC" [1-9]? ":)" {prefer}
+  L-simpleStmtSC? = "(:SimpleStmtSC" [1-9]? "?:)" {prefer}
+  L-simpleStmtSC* = "(:SimpleStmtSC" [1-9]? "*:)" {prefer}
+  L-simpleStmtSC+ = "(:SimpleStmtSC" [1-9]? "+:)" {prefer}
   
   // ## Empty statements
                    
@@ -344,11 +359,7 @@ variables // Meta-variables
   L-block? = "(:Block" [1-9]? "?:)" {prefer}
   L-block* = "(:Block" [1-9]? "*:)" {prefer}
   L-block+ = "(:Block" [1-9]? "+:)" {prefer}
-  L-terminatedStmt* = "..." [1-9]? {prefer}
-  L-terminatedStmt = "(:TerminatedStmt" [1-9]? ":)" {prefer}
-  L-terminatedStmt? = "(:TerminatedStmt" [1-9]? "?:)" {prefer}
-  L-terminatedStmt* = "(:TerminatedStmt" [1-9]? "*:)" {prefer}
-  L-terminatedStmt+ = "(:TerminatedStmt" [1-9]? "+:)" {prefer}
+  L-statementSC* = "..." [1-9]? {prefer}
   
   // ## Expression statements
                    
