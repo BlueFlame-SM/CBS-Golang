@@ -146,54 +146,7 @@ Rule
     = [[Identifier '=' Identifier '%' '(' Expression ')']]
 
 
-## Declarations
-
-Syntax
-  declaration
-    ::= varDecl
-//      | constDecl  // TODO: const
-//      | typeDecl  // TODO: types
-
-  topLevelDecl
-    ::= declaration
-//      | functionDecl  // TODO: functions
-//      | methodDecl  // TODO: methods
-
-
-### Constant declarations
-// Skipped in favour of short variable declarations
-
-//Syntax
-//  constDecl ::= 'const' (constSpec | '(' (constSpec ';')* ')')
-//  constSpec ::= identifierList (type? '=' expressionList)?
-//
-//Syntax
-//  identifierList ::= identifier (',' identifier)*
-//  expressionList ::= expression (',' expression)*
-
-
-### Variable declarations
-
-Syntax  // TODO: multiple assignment, multiple declares, types
-  VarDecl : varDecl ::= 'var' varSpec
-            varSpec ::= identifier '=' expression
-
-Semantics
-  allocate-vars[[_:varDecl]] : =>envs
-
-Rule
-  allocate-vars[['var' Identifier '=' Expression]]
-    = bind(identifier[[Identifier]], alloc(values))
-
-Semantics
-  initialise-vars[[_:varDecl]] : =>envs
-
-Rule
-  initialise-vars[['var' Identifier '=' Expression]]
-    = assign(bound(identifier[[Identifier]]), evaluate[[Expression]])
-
-
-### Short variable declarations
+## Short variable declarations
 
 Syntax
   shortVarDecl ::= identifier ':=' expression  // TODO: multiple assignment
@@ -206,10 +159,13 @@ Rule
 ## If statements
 
 Syntax
-  IfStmt : ifStmt  // TODO: Initializer
+  IfStmt : ifStmt
     ::= 'if' expression block
       | 'if' expression block 'else' block
       | 'if' expression block 'else' ifStmt
+      | 'if' simpleStmt ';' expression block
+      | 'if' simpleStmt ';' expression block 'else' block
+      | 'if' simpleStmt ';' expression block 'else' ifStmt
 
 Rule
   [['if' Expression Block]] : ifStmt
@@ -222,6 +178,18 @@ Rule
 Rule
   execute[['if' Expression Block 'else' IfStmt]]
     = if-else(evaluate[[Expression]], execute[[Block]], execute[[IfStmt]])
+
+Rule
+  [['if' SimpleStmt ';' Expression Block]] : statement
+    = [['{' SimpleStmt ';' 'if' Expression Block ';' '}']]
+
+Rule
+  [['if' SimpleStmt ';' Expression Block1 'else' Block2]] : statement
+    = [['{' SimpleStmt ';' 'if' Expression Block1 'else' Block2 ';' '}']]
+
+Rule
+  [['if' SimpleStmt ';' Expression Block 'else' IfStmt]] : statement
+    = [['{' SimpleStmt ';' 'if' Expression Block 'else' IfStmt ';' '}']]
 
 
 ## For statements

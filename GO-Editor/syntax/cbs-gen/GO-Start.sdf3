@@ -4,6 +4,7 @@ imports
   GO-A-Disambiguation
   GO-1-Lexemes
   GO-3-Expressions
+  GO-5-Declarations
   GO-4-Statements
   Funcons
 

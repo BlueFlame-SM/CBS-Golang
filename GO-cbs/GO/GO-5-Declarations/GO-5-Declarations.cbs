@@ -1,0 +1,58 @@
+Language "Golang"
+
+#5 Declarations
+
+Syntax
+  declaration
+    ::= varDecl
+//      | constDecl  // TODO: const
+//      | typeDecl  // TODO: types
+
+  topLevelDecl
+    ::= declaration
+//      | functionDecl
+//      | methodDecl  // TODO: methods
+
+
+## Constant declarations
+
+//Syntax
+//  constDecl ::= 'const' (constSpec | '(' (constSpec ';')* ')')
+//  constSpec ::= identifierList (type? '=' expressionList)?
+//
+//Syntax
+//  identifierList ::= identifier (',' identifier)*
+//  expressionList ::= expression (',' expression)*
+
+
+## Variable declarations
+
+Syntax  // TODO: multiple assignment, multiple declares, types
+  VarDecl : varDecl ::= 'var' varSpec
+            varSpec ::= identifier '=' expression
+
+Semantics
+  allocate-vars[[_:varDecl]] : =>envs
+
+Rule
+  allocate-vars[['var' Identifier '=' Expression]]
+    = bind(identifier[[Identifier]], alloc(values))
+
+Semantics
+  initialise-vars[[_:varDecl]] : =>envs
+
+Rule
+  initialise-vars[['var' Identifier '=' Expression]]
+    = assign(bound(identifier[[Identifier]]), evaluate[[Expression]])
+
+
+## Function declarations
+
+//Syntax
+//  FunctionDecl : functionDecl
+//    ::= 'func' identifier signature block
+
+
+
+
+

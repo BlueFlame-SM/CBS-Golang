@@ -1,6 +1,7 @@
 module GO-4-Statements
             
 imports 
+  GO-5-Declarations
   GO-3-Expressions
   GO-1-Lexemes
   Funcons
@@ -33,19 +34,7 @@ lexical syntax // Language
                    
   
   
-  // ## Declarations
-                   
-  
-  
-  // ### Constant declarations
-                   
-  
-  
-  // ### Variable declarations
-                   
-  
-  
-  // ### Short variable declarations
+  // ## Short variable declarations
                    
   
   
@@ -87,19 +76,7 @@ syntax // Language
                    
   
   
-  // ## Declarations
-                   
-  
-  
-  // ### Constant declarations
-                   
-  
-  
-  // ### Variable declarations
-                   
-  
-  
-  // ### Short variable declarations
+  // ## Short variable declarations
                    
   
   
@@ -198,31 +175,7 @@ context-free syntax // Language
     L-identifier "%=" L-expression
   
   
-  // ## Declarations
-                   
-  
-  L-declaration.L-declaration--L-varDecl =
-    L-varDecl
-  
-  L-topLevelDecl.L-topLevelDecl--L-declaration =
-    L-declaration
-  
-  
-  // ### Constant declarations
-                   
-  
-  
-  // ### Variable declarations
-                   
-  
-  L-varDecl.L-varDecl--R-var-L-varSpec =
-    "var" L-varSpec
-  
-  L-varSpec.L-varSpec--L-identifier-EQUALS-L-expression =
-    L-identifier "=" L-expression
-  
-  
-  // ### Short variable declarations
+  // ## Short variable declarations
                    
   
   L-shortVarDecl.L-shortVarDecl--L-identifier-COLON-EQUALS-L-expression =
@@ -231,13 +184,6 @@ context-free syntax // Language
   
   // ## If statements
                    
-  
-  L-ifStmt.L-ifStmt--R-if-L-expression-L-block =
-    "if" L-expression L-block
-  L-ifStmt.L-ifStmt--R-if-L-expression-L-block-R-else-L-block =
-    "if" L-expression L-block "else" L-block
-  L-ifStmt.L-ifStmt--R-if-L-expression-L-block-R-else-L-ifStmt =
-    "if" L-expression L-block "else" L-ifStmt
   
   
   // ## For statements
@@ -290,23 +236,7 @@ context-free syntax // Semantics
                    
   
   
-  // ## Declarations
-                   
-  
-  
-  // ### Constant declarations
-                   
-  
-  
-  // ### Variable declarations
-                   
-  
-  FCT.T-allocate-vars =
-    "allocate-vars" "[:" L-varDecl ":]"
-  FCT.T-initialise-vars =
-    "initialise-vars" "[:" L-varDecl ":]"
-  
-  // ### Short variable declarations
+  // ## Short variable declarations
                    
   
   
@@ -355,19 +285,7 @@ context-free syntax // Desugaring
   Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
   Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
   
-  // ## Declarations
-                   
-  
-  
-  // ### Constant declarations
-                   
-  
-  
-  // ### Variable declarations
-                   
-  
-  
-  // ### Short variable declarations
+  // ## Short variable declarations
                    
   
   Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
@@ -376,6 +294,9 @@ context-free syntax // Desugaring
                    
   
   Term.ToTerm = "[:" L-ifStmt  ":]" ":" "ifStmt"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
   
   // ## For statements
                    
@@ -434,23 +355,7 @@ variables // Meta-variables
                    
   
   
-  // ## Declarations
-                   
-  
-  
-  // ### Constant declarations
-                   
-  
-  
-  // ### Variable declarations
-                   
-  
-  L-varDecl = "(:VarDecl" [1-9]? ":)" {prefer}
-  L-varDecl? = "(:VarDecl" [1-9]? "?:)" {prefer}
-  L-varDecl* = "(:VarDecl" [1-9]? "*:)" {prefer}
-  L-varDecl+ = "(:VarDecl" [1-9]? "+:)" {prefer}
-  
-  // ### Short variable declarations
+  // ## Short variable declarations
                    
   
   
@@ -500,19 +405,7 @@ variables // Meta-variables
                    
   
   
-  // ## Declarations
-                   
-  
-  
-  // ### Constant declarations
-                   
-  
-  
-  // ### Variable declarations
-                   
-  
-  
-  // ### Short variable declarations
+  // ## Short variable declarations
                    
   
   

@@ -10,6 +10,7 @@ imports
   cbs-gen/GO-A-Disambiguation
   cbs-gen/GO-1-Lexemes
   cbs-gen/GO-3-Expressions
+  cbs-gen/GO-5-Declarations
   cbs-gen/GO-4-Statements
 
 // Language "Golang"

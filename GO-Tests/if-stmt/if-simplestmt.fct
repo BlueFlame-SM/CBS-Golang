@@ -1,0 +1,31 @@
+initialise-binding initialise-storing finalise-failing scope
+  (collateral
+     (bind
+        ("i",
+         alloc
+           (values)),
+      map
+        ( )),
+   sequential
+     (assign
+        (bound
+           ("i"),
+         decimal-natural "1"),
+      if-else
+        (is-eq l-to-r
+           (decimal-natural "1",
+            decimal-natural "1"),
+         scope
+           (map
+              ( ),
+            sequential
+              (print
+                 (assigned
+                    (bound
+                       ("i"))),
+               null-value)),
+         scope
+           (map
+              ( ),
+            null-value)),
+      null-value))

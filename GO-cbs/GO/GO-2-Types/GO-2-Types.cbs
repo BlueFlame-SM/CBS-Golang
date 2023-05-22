@@ -2,21 +2,31 @@ Language "Golang"
 
 #2 Types
 
-Syntax
-  T : type
-    ::= '(' type ')'
-//      | arrayType  // TODO: arrays
-//      | structType  // TODO: structs
-//      | pointerType  // TODO: pointers
-//      | functionType  // TODO: functions
-//      | interfaceType  // TODO: interfaces
-//      | sliceType  // TODO: slices
-//      | mapType  // TODO: maps
-//      | channelType // TODO: channels
-//      | identifier typeArgs?  // TODO: full typing
-//      | qualifiedIdent typeArgs?  // TODO: full typing
-      | 'int'  // TODO: full types (replace in favour of environment)
+//Syntax
+//  T : type
+//    ::= '(' type ')'
+////      | arrayType  // TODO: arrays
+////      | structType  // TODO: structs
+////      | pointerType  // TODO: pointers
+////      | functionType  // TODO: functions
+////      | interfaceType  // TODO: interfaces
+////      | sliceType  // TODO: slices
+////      | mapType  // TODO: maps
+////      | channelType // TODO: channels
+////      | identifier typeArgs?  // TODO: full typing
+////      | qualifiedIdent typeArgs?  // TODO: full typing
+//
+//Syntax
+//  typeArgs ::= '[' typeList ','? ']'
+//  typeList ::= type (',' type)*
 
-Syntax
-  typeArgs ::= '[' typeList ','? ']'
-  typeList ::= type (',' type)*
+
+//## Function Types
+//
+//Syntax
+//  functionType  ::= 'func' signature
+//  signature     ::= parameters result?
+//  result        ::= parameters | result
+//  parameters    ::= '(' (parametersList ','?)? ')'
+//  parameterList ::= parameterDecl (',' parameterDecl)*
+//  parameterDecl ::=

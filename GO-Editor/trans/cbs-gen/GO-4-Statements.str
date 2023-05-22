@@ -7,6 +7,7 @@ imports
   pp/GO-pp
 
 imports
+  cbs-gen/GO-5-Declarations
   cbs-gen/GO-3-Expressions
   cbs-gen/GO-1-Lexemes
 
@@ -94,27 +95,7 @@ to-desugared:
   [: (:Identifier:)%=(:Expression:) :] : assignment ->
   [: (:Identifier:)=(:Identifier:)%((:Expression:)) :] : assignment
 
-// ## Declarations
-                 
-
-
-// ### Constant declarations
-                 
-
-
-// ### Variable declarations
-                 
-
-to-funcons:
-  |[ allocate-vars[: var(:Identifier:)=(:Expression:) :] ]| ->
-  |[ bind (identifier[: (:Identifier:) :], 
-             alloc (values)) ]|
-to-funcons:
-  |[ initialise-vars[: var(:Identifier:)=(:Expression:) :] ]| ->
-  |[ assign (bound (identifier[: (:Identifier:) :]), 
-             evaluate[: (:Expression:) :]) ]|
-
-// ### Short variable declarations
+// ## Short variable declarations
                  
 
 to-desugared:
@@ -137,6 +118,15 @@ to-funcons:
   |[ if-else (evaluate[: (:Expression:) :], 
              execute[: (:Block:) :], 
              execute[: (:IfStmt:) :]) ]|
+to-desugared:
+  [: if(:SimpleStmt:);(:Expression:)(:Block:) :] : statement ->
+  [: {(:SimpleStmt:);if(:Expression:)(:Block:);} :] : statement
+to-desugared:
+  [: if(:SimpleStmt:);(:Expression:)(:Block1:)else(:Block2:) :] : statement ->
+  [: {(:SimpleStmt:);if(:Expression:)(:Block1:)else(:Block2:);} :] : statement
+to-desugared:
+  [: if(:SimpleStmt:);(:Expression:)(:Block:)else(:IfStmt:) :] : statement ->
+  [: {(:SimpleStmt:);if(:Expression:)(:Block:)else(:IfStmt:);} :] : statement
 
 // ## For statements
                  

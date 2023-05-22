@@ -1,0 +1,157 @@
+module GO-5-Declarations
+            
+imports 
+  GO-3-Expressions
+  GO-1-Lexemes
+  Funcons
+
+// Language "Golang"
+    
+lexical syntax // Language
+  
+  // #5 Declarations
+                
+  
+  
+  // ## Constant declarations
+                   
+  
+  
+  // ## Variable declarations
+                   
+  
+  
+  // ## Function declarations
+                   
+  
+  
+syntax // Language
+  
+  // #5 Declarations
+                
+  
+  
+  // ## Constant declarations
+                   
+  
+  
+  // ## Variable declarations
+                   
+  
+  
+  // ## Function declarations
+                   
+  
+  
+context-free syntax // Language
+  
+  // #5 Declarations
+                
+  
+  L-declaration.L-declaration--L-varDecl =
+    L-varDecl
+  
+  L-topLevelDecl.L-topLevelDecl--L-declaration =
+    L-declaration
+  
+  
+  // ## Constant declarations
+                   
+  
+  
+  // ## Variable declarations
+                   
+  
+  L-varDecl.L-varDecl--R-var-L-varSpec =
+    "var" L-varSpec
+  
+  L-varSpec.L-varSpec--L-identifier-EQUALS-L-expression =
+    L-identifier "=" L-expression
+  
+  
+  // ## Function declarations
+                   
+  
+  
+context-free syntax // Semantics
+  
+  // #5 Declarations
+                
+  
+  
+  // ## Constant declarations
+                   
+  
+  
+  // ## Variable declarations
+                   
+  
+  FCT.T-allocate-vars =
+    "allocate-vars" "[:" L-varDecl ":]"
+  FCT.T-initialise-vars =
+    "initialise-vars" "[:" L-varDecl ":]"
+  
+  // ## Function declarations
+                   
+  
+  
+context-free syntax // Desugaring
+  
+  // #5 Declarations
+                
+  
+  
+  // ## Constant declarations
+                   
+  
+  
+  // ## Variable declarations
+                   
+  
+  
+  // ## Function declarations
+                   
+  
+  
+variables // Meta-variables
+  
+  // #5 Declarations
+                
+  
+  
+  // ## Constant declarations
+                   
+  
+  
+  // ## Variable declarations
+                   
+  
+  L-varDecl = "(:VarDecl" [1-9]? ":)" {prefer}
+  L-varDecl? = "(:VarDecl" [1-9]? "?:)" {prefer}
+  L-varDecl* = "(:VarDecl" [1-9]? "*:)" {prefer}
+  L-varDecl+ = "(:VarDecl" [1-9]? "+:)" {prefer}
+  
+  // ## Function declarations
+                   
+  
+  
+// SDF comments
+  
+  // #5 Declarations
+                
+  
+  
+  // ## Constant declarations
+                   
+  
+  
+  // ## Variable declarations
+                   
+  
+  
+  // ## Function declarations
+                   
+  
+  
+sorts // ASTs
+  T-start
