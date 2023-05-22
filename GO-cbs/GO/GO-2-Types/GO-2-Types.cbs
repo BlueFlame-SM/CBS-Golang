@@ -2,6 +2,18 @@ Language "Golang"
 
 #2 Types
 
+Type int ~> int32
+Type int8 ~> bounded-ints(-2^7, int-sub(2^7,1))
+Type int16 ~> bounded-ints(-2^15, int-sub(2^15,1))
+Type int32 ~> bounded-ints(-2^31, int-sub(2^31,1))
+//Type int64 ~> bounded-ints(-2^63, int-sub(2^63,1))
+
+Type uint ~> uint32
+Type uint8 ~> bounded-ints(0, int-sub(2^8,1))
+Type uint16 ~> bounded-ints(0, int-sub(2^16,1))
+Type uint32 ~> bounded-ints(0, int-sub(2^32,1))
+//Type uint64 ~> bounded-ints(0, int-sub(2^64,1))
+
 //Syntax
 //  T : type
 //    ::= '(' type ')'

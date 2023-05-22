@@ -11,7 +11,6 @@ lexical syntax // Language
   // #2 Types
                 
   
-  LEX-COMMA = ","
   
 syntax // Language
   
@@ -23,21 +22,6 @@ context-free syntax // Language
   
   // #2 Types
                 
-  
-  L-type.L-type--LPAREN-L-type-RPAREN =
-    "(" L-type ")"
-  L-type.L-type--R-int =
-    "int"
-  
-  L-typeArgs.L-typeArgs--LBRACK-L-typeList-COMMA-Q-RBRACK =
-    "[" L-typeList LEX-COMMA? "]"
-  
-  L-typeList.L-typeList--L-type-C-COMMA-L-type-D-S =
-    L-type L-COMMA-L-type*
-  
-  L-COMMA-L-type.L-COMMA-L-type--COMMA-L-type =
-    "," L-type
-  
   
   
 context-free syntax // Semantics
@@ -57,10 +41,6 @@ variables // Meta-variables
   // #2 Types
                 
   
-  L-type = "(:T" [1-9]? ":)" {prefer}
-  L-type? = "(:T" [1-9]? "?:)" {prefer}
-  L-type* = "(:T" [1-9]? "*:)" {prefer}
-  L-type+ = "(:T" [1-9]? "+:)" {prefer}
   
 // SDF comments
   

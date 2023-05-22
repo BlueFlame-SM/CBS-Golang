@@ -185,6 +185,19 @@ context-free syntax // Language
   // ## If statements
                    
   
+  L-ifStmt.L-ifStmt--R-if-L-expression-L-block =
+    "if" L-expression L-block
+  L-ifStmt.L-ifStmt--R-if-L-expression-L-block-R-else-L-block =
+    "if" L-expression L-block "else" L-block
+  L-ifStmt.L-ifStmt--R-if-L-expression-L-block-R-else-L-ifStmt =
+    "if" L-expression L-block "else" L-ifStmt
+  L-ifStmt.L-ifStmt--R-if-L-simpleStmt-SEMI-L-expression-L-block =
+    "if" L-simpleStmt ";" L-expression L-block
+  L-ifStmt.L-ifStmt--R-if-L-simpleStmt-SEMI-L-expression-L-block-R-else-L-block =
+    "if" L-simpleStmt ";" L-expression L-block "else" L-block
+  L-ifStmt.L-ifStmt--R-if-L-simpleStmt-SEMI-L-expression-L-block-R-else-L-ifStmt =
+    "if" L-simpleStmt ";" L-expression L-block "else" L-ifStmt
+  
   
   // ## For statements
                    
