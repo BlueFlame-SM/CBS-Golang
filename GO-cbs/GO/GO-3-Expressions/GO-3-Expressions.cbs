@@ -2,7 +2,6 @@ Language "Golang"
 
 #3 Expressions
 
-
 ## Operands
 
 Syntax
@@ -130,7 +129,7 @@ Rule
 
 Rule
   evaluate[[Expression1 '-' Expression2]]
-    = int-sub l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+    = integer-subtract l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
 
 
 #### Multiplicative expressions

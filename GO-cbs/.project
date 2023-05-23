@@ -6,24 +6,7 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>org.eclipse.m2e.core.maven2Builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.metaborg.spoofax.eclipse.meta.builder.generatesources</name>
-			<triggers>clean,full,</triggers>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
 			<name>org.metaborg.spoofax.eclipse.builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.metaborg.spoofax.eclipse.meta.builder.prejava</name>
-			<triggers>clean,full,</triggers>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -32,17 +15,9 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>org.metaborg.spoofax.eclipse.meta.builder.postjava</name>
-			<triggers>clean,full,</triggers>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.metaborg.spoofax.eclipse.nature</nature>
-		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.metaborg.spoofax.eclipse.meta.nature</nature>
+		<nature>org.metaborg.spoofax.eclipse.nature</nature>
 	</natures>
 </projectDescription>

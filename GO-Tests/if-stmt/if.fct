@@ -1,15 +1,92 @@
-initialise-binding initialise-storing finalise-failing if-else
-  (is-eq l-to-r
-     (decimal-natural "1",
-      decimal-natural "1"),
-   scope
-     (map
-        ( ),
-      sequential
-        (print
-           (decimal-natural "1"),
-         null-value)),
-   scope
-     (map
-        ( ),
-      null-value))
+initialise-binding initialise-storing finalise-failing scope
+  (accumulate
+     (bind
+        ("any",
+         alloc-init
+           (types,
+            values)),
+      bind
+        ("bool",
+         alloc-init
+           (types,
+            bools)),
+      bind
+        ("int",
+         alloc-init
+           (types,
+            int)),
+      bind
+        ("int8",
+         alloc-init
+           (types,
+            int8)),
+      bind
+        ("int16",
+         alloc-init
+           (types,
+            int16)),
+      bind
+        ("int32",
+         alloc-init
+           (types,
+            int32)),
+      bind
+        ("int64",
+         alloc-init
+           (types,
+            int64)),
+      bind
+        ("uint",
+         alloc-init
+           (types,
+            uint)),
+      bind
+        ("uint8",
+         alloc-init
+           (types,
+            uint8)),
+      bind
+        ("uint16",
+         alloc-init
+           (types,
+            uint16)),
+      bind
+        ("uint32",
+         alloc-init
+           (types,
+            uint32)),
+      bind
+        ("uint64",
+         alloc-init
+           (types,
+            uint64)),
+      bind
+        ("true",
+         alloc-init
+           (bools,
+            true)),
+      bind
+        ("false",
+         alloc-init
+           (bools,
+            false)),
+      bind
+        ("nil",
+         alloc-init
+           (null-type,
+            null))),
+   if-else
+     (is-eq l-to-r
+        (decimal-natural "1",
+         decimal-natural "1"),
+      scope
+        (map
+           ( ),
+         sequential
+           (print
+              (decimal-natural "1"),
+            null-value)),
+      scope
+        (map
+           ( ),
+         null-value)))

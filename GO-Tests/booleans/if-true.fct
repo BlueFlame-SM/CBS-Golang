@@ -1,49 +1,30 @@
 initialise-binding initialise-storing finalise-failing scope
-  ({"any" |-> alloc-init
-                (types,
-                 values),
-    "bool" |-> alloc-init
-                 (types,
-                  bools),
-    "int" |-> alloc-init
-                (types,
-                 int),
-    "int8" |-> alloc-init
-                 (types,
-                  int8),
-    "int16" |-> alloc-init
-                  (types,
-                   int16),
-    "int32" |-> alloc-init
-                  (types,
-                   int32),
-    "int64" |-> alloc-init
-                  (types,
-                   int64),
-    "uint" |-> alloc-init
-                 (types,
-                  uint),
-    "uint8" |-> alloc-init
-                  (types,
-                   uint8),
-    "uint16" |-> alloc-init
-                   (types,
-                    uint16),
-    "uint32" |-> alloc-init
-                   (types,
-                    uint32),
-    "uint64" |-> alloc-init
-                   (types,
-                    uint64),
-    "true" |-> alloc-init
-                 (bools,
-                  true),
-    "false" |-> alloc-init
-                  (bools,
-                   false),
-    "nil" |-> alloc-init
-                (null-type,
-                 null)},
+  (accumulate
+     (bind
+        ("any",
+         alloc-init
+           (types,
+            values)),
+      bind
+        ("bool",
+         alloc-init
+           (types,
+            bools)),
+      bind
+        ("int",
+         alloc-init
+           (types,
+            int)),
+      bind
+        ("true",
+         alloc-init
+           (bools,
+            true)),
+      bind
+        ("false",
+         alloc-init
+           (bools,
+            false))),
    if-else
      (assigned
         (bound

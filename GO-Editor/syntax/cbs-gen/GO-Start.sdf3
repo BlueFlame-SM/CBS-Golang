@@ -2,11 +2,11 @@ module GO-Start
             
 imports 
   GO-1-Lexemes
+  GO-2-Types
   GO-A-Disambiguation
   GO-3-Expressions
-  GO-4-Statements
   GO-5-Declarations
-  GO-2-Types
+  GO-4-Statements
   Funcons
 
 // Language "Golang"

@@ -13,7 +13,7 @@ Syntax
   START : start ::= statement
 
 Semantics
-  start[[ START:start ]] : =>null-type
+  start[[START:start]] : =>null-type
 
 Rule
   start[[Statement]]
@@ -21,24 +21,24 @@ Rule
       initialise-storing
       finalise-failing
       scope(
-        {
+        accumulate(
           // Types:
-          "any" |-> alloc-init(types, values),
-          "bool" |-> alloc-init(types, bools),
-          "int" |-> alloc-init(types, int),
-          "int8" |-> alloc-init(types, int8),
-          "int16" |-> alloc-init(types, int16),
-          "int32" |-> alloc-init(types, int32),
-          "int64" |-> alloc-init(types, int64),
-          "uint" |-> alloc-init(types, uint),
-          "uint8" |-> alloc-init(types, uint8),
-          "uint16" |-> alloc-init(types, uint16),
-          "uint32" |-> alloc-init(types, uint32),
-          "uint64" |-> alloc-init(types, uint64),
+          bind("any", alloc-init(types, values)),
+          bind("bool", alloc-init(types, bools)),
+          bind("int", alloc-init(types, int)),
+          bind("int8", alloc-init(types, int8)),
+          bind("int16", alloc-init(types, int16)),
+          bind("int32", alloc-init(types, int32)),
+          bind("int64", alloc-init(types, int64)),
+          bind("uint", alloc-init(types, uint)),
+          bind("uint8", alloc-init(types, uint8)),
+          bind("uint16", alloc-init(types, uint16)),
+          bind("uint32", alloc-init(types, uint32)),
+          bind("uint64", alloc-init(types, uint64)),
           // Constants:
-          "true" |-> alloc-init(bools, true),
-          "false" |-> alloc-init(bools, false),
+          bind("true", alloc-init(bools, true)),
+          bind("false", alloc-init(bools, false))
           // Zero value:
-          "nil" |-> alloc-init(null-type, null)
-        },
+//          bind("nil", alloc-init(null-type, null))
+        ),
         execute[[Statement]])
