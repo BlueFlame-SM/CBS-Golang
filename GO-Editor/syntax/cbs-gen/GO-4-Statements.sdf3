@@ -1,0 +1,467 @@
+module GO-4-Statements
+            
+imports 
+  GO-5-Declarations
+  GO-1-Lexemes
+  GO-3-Expressions
+  Funcons
+
+// Language "Golang"
+    
+lexical syntax // Language
+  
+  // #4 Statements
+                
+  
+  
+  // ## Return statement
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ## Simple Statements
+                   
+  
+  
+  // ### Empty statements
+                   
+  
+  
+  // ### Expression statements
+                   
+  
+  
+  // ### IncDec statements
+                   
+  
+  
+  // ### Assignment statements
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+syntax // Language
+  
+  // #4 Statements
+                
+  
+  
+  // ## Return statement
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ## Simple Statements
+                   
+  
+  
+  // ### Empty statements
+                   
+  
+  
+  // ### Expression statements
+                   
+  
+  
+  // ### IncDec statements
+                   
+  
+  
+  // ### Assignment statements
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+context-free syntax // Language
+  
+  // #4 Statements
+                
+  
+  L-statement.L-statement--L-simpleStmt =
+    L-simpleStmt
+  L-statement.L-statement--L-declaration =
+    L-declaration
+  L-statement.L-statement--L-returnStmt =
+    L-returnStmt
+  L-statement.L-statement--L-block =
+    L-block
+  L-statement.L-statement--L-ifStmt =
+    L-ifStmt
+  L-statement.L-statement--L-forStmt =
+    L-forStmt
+  
+  
+  // ## Return statement
+                   
+  
+  L-returnStmt.L-returnStmt--R-return-L-expression-Q =
+    "return" L-expression?
+  
+  
+  // ## Blocks
+                   
+  
+  L-block.L-block--LBRACE-L-statementSemic-S-RBRACE =
+    "{" L-statementSemic* "}"
+  
+  L-statementSemic.L-statementSemic--L-statement-SEMI =
+    L-statement ";"
+  
+  
+  // ## If statements
+                   
+  
+  L-ifStmt.L-ifStmt--R-if-L-expression-L-block =
+    "if" L-expression L-block
+  L-ifStmt.L-ifStmt--R-if-L-expression-L-block-R-else-L-block =
+    "if" L-expression L-block "else" L-block
+  L-ifStmt.L-ifStmt--R-if-L-expression-L-block-R-else-L-ifStmt =
+    "if" L-expression L-block "else" L-ifStmt
+  L-ifStmt.L-ifStmt--R-if-L-simpleStmt-SEMI-L-expression-L-block =
+    "if" L-simpleStmt ";" L-expression L-block
+  L-ifStmt.L-ifStmt--R-if-L-simpleStmt-SEMI-L-expression-L-block-R-else-L-block =
+    "if" L-simpleStmt ";" L-expression L-block "else" L-block
+  L-ifStmt.L-ifStmt--R-if-L-simpleStmt-SEMI-L-expression-L-block-R-else-L-ifStmt =
+    "if" L-simpleStmt ";" L-expression L-block "else" L-ifStmt
+  
+  
+  // ## For statements
+                   
+  
+  L-forStmt.L-forStmt--R-for-L-block =
+    "for" L-block
+  L-forStmt.L-forStmt--R-for-L-expression-L-block =
+    "for" L-expression L-block
+  L-forStmt.L-forStmt--R-for-L-simpleStmt-Q-SEMI-L-expression-Q-SEMI-L-simpleStmt-Q-L-block =
+    "for" L-simpleStmt? ";" L-expression? ";" L-simpleStmt? L-block
+  
+  
+  // ## Simple Statements
+                   
+  
+  L-simpleStmt.L-simpleStmt--L-emptyStmt =
+    L-emptyStmt
+  L-simpleStmt.L-simpleStmt--L-expressionStmt =
+    L-expressionStmt
+  L-simpleStmt.L-simpleStmt--L-incDecStmt =
+    L-incDecStmt
+  L-simpleStmt.L-simpleStmt--L-assignment =
+    L-assignment
+  L-simpleStmt.L-simpleStmt--L-shortVarDecl =
+    L-shortVarDecl
+  
+  
+  // ### Empty statements
+                   
+  
+  L-emptyStmt.L-emptyStmt--EMPTY =
+    
+  
+  
+  // ### Expression statements
+                   
+  
+  L-expressionStmt.L-expressionStmt--L-expression =
+    L-expression
+  
+  
+  // ### IncDec statements
+                   
+  
+  L-incDecStmt.L-incDecStmt--L-identifier-PLUS-PLUS =
+    L-identifier "++"
+  L-incDecStmt.L-incDecStmt--L-identifier-DASH-DASH =
+    L-identifier "--"
+  
+  
+  // ### Assignment statements
+                   
+  
+  L-assignment.L-assignment--L-identifier-EQUALS-L-expression =
+    L-identifier "=" L-expression
+  L-assignment.L-assignment--L-identifier-PLUS-EQUALS-L-expression =
+    L-identifier "+=" L-expression
+  L-assignment.L-assignment--L-identifier-DASH-EQUALS-L-expression =
+    L-identifier "-=" L-expression
+  L-assignment.L-assignment--L-identifier-STAR-EQUALS-L-expression =
+    L-identifier "*=" L-expression
+  L-assignment.L-assignment--L-identifier-SLASH-EQUALS-L-expression =
+    L-identifier "/=" L-expression
+  L-assignment.L-assignment--L-identifier-PERCENT-EQUALS-L-expression =
+    L-identifier "%=" L-expression
+  
+  
+  // ### Short variable declarations
+                   
+  
+  L-shortVarDecl.L-shortVarDecl--L-identifier-COLON-EQUALS-L-expression =
+    L-identifier ":=" L-expression
+  
+  
+context-free syntax // Semantics
+  
+  // #4 Statements
+                
+  
+  FCT.T-execute-statement =
+    "execute-statement" "[:" L-statement ":]"
+  
+  // ## Return statement
+                   
+  
+  FCT.T-execute-returnstmt =
+    "execute-returnstmt" "[:" L-returnStmt ":]"
+  
+  // ## Blocks
+                   
+  
+  FCT.T-execute-statementsemic =
+    "execute-statementsemic" "[:" L-statementSemic* ":]"
+  FCT.T-allocate-statementsemic =
+    "allocate-statementsemic" "[:" L-statementSemic* ":]"
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ## Simple Statements
+                   
+  
+  FCT.T-execute-simplestmt =
+    "execute-simplestmt" "[:" L-simpleStmt ":]"
+  
+  // ### Empty statements
+                   
+  
+  
+  // ### Expression statements
+                   
+  
+  
+  // ### IncDec statements
+                   
+  
+  
+  // ### Assignment statements
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+context-free syntax // Desugaring
+  
+  // #4 Statements
+                
+  
+  
+  // ## Return statement
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## If statements
+                   
+  
+  Term.ToTerm = "[:" L-ifStmt  ":]" ":" "ifStmt"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  
+  // ## For statements
+                   
+  
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  
+  // ## Simple Statements
+                   
+  
+  
+  // ### Empty statements
+                   
+  
+  
+  // ### Expression statements
+                   
+  
+  
+  // ### IncDec statements
+                   
+  
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  
+  // ### Assignment statements
+                   
+  
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
+  Term.ToTerm = "[:" L-assignment  ":]" ":" "assignment"
+  
+  // ### Short variable declarations
+                   
+  
+  Term.ToTerm = "[:" L-statement  ":]" ":" "statement"
+  
+variables // Meta-variables
+  
+  // #4 Statements
+                
+  
+  L-statement = "(:Statement" [1-9]? ":)" {prefer}
+  L-statement? = "(:Statement" [1-9]? "?:)" {prefer}
+  L-statement* = "(:Statement" [1-9]? "*:)" {prefer}
+  L-statement+ = "(:Statement" [1-9]? "+:)" {prefer}
+  
+  // ## Return statement
+                   
+  
+  L-returnStmt = "(:ReturnStmt" [1-9]? ":)" {prefer}
+  L-returnStmt? = "(:ReturnStmt" [1-9]? "?:)" {prefer}
+  L-returnStmt* = "(:ReturnStmt" [1-9]? "*:)" {prefer}
+  L-returnStmt+ = "(:ReturnStmt" [1-9]? "+:)" {prefer}
+  
+  // ## Blocks
+                   
+  
+  L-block = "(:Block" [1-9]? ":)" {prefer}
+  L-block? = "(:Block" [1-9]? "?:)" {prefer}
+  L-block* = "(:Block" [1-9]? "*:)" {prefer}
+  L-block+ = "(:Block" [1-9]? "+:)" {prefer}
+  L-statementSemic* = "..." [1-9]? {prefer}
+  L-statementSemic = "(:StatementSemic" [1-9]? ":)" {prefer}
+  L-statementSemic? = "(:StatementSemic" [1-9]? "?:)" {prefer}
+  L-statementSemic* = "(:StatementSemic" [1-9]? "*:)" {prefer}
+  L-statementSemic+ = "(:StatementSemic" [1-9]? "+:)" {prefer}
+  
+  // ## If statements
+                   
+  
+  L-ifStmt = "(:IfStmt" [1-9]? ":)" {prefer}
+  L-ifStmt? = "(:IfStmt" [1-9]? "?:)" {prefer}
+  L-ifStmt* = "(:IfStmt" [1-9]? "*:)" {prefer}
+  L-ifStmt+ = "(:IfStmt" [1-9]? "+:)" {prefer}
+  
+  // ## For statements
+                   
+  
+  L-forStmt = "(:ForStmt" [1-9]? ":)" {prefer}
+  L-forStmt? = "(:ForStmt" [1-9]? "?:)" {prefer}
+  L-forStmt* = "(:ForStmt" [1-9]? "*:)" {prefer}
+  L-forStmt+ = "(:ForStmt" [1-9]? "+:)" {prefer}
+  
+  // ## Simple Statements
+                   
+  
+  L-simpleStmt = "(:SimpleStmt" [1-9]? ":)" {prefer}
+  L-simpleStmt? = "(:SimpleStmt" [1-9]? "?:)" {prefer}
+  L-simpleStmt* = "(:SimpleStmt" [1-9]? "*:)" {prefer}
+  L-simpleStmt+ = "(:SimpleStmt" [1-9]? "+:)" {prefer}
+  
+  // ### Empty statements
+                   
+  
+  
+  // ### Expression statements
+                   
+  
+  
+  // ### IncDec statements
+                   
+  
+  
+  // ### Assignment statements
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+// SDF comments
+  
+  // #4 Statements
+                
+  
+  
+  // ## Return statement
+                   
+  
+  
+  // ## Blocks
+                   
+  
+  
+  // ## If statements
+                   
+  
+  
+  // ## For statements
+                   
+  
+  
+  // ## Simple Statements
+                   
+  
+  
+  // ### Empty statements
+                   
+  
+  
+  // ### Expression statements
+                   
+  
+  
+  // ### IncDec statements
+                   
+  
+  
+  // ### Assignment statements
+                   
+  
+  
+  // ### Short variable declarations
+                   
+  
+  
+sorts // ASTs
+  T-start

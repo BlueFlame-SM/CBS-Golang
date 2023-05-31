@@ -1,0 +1,241 @@
+Language "Golang"
+
+#4 Statements
+
+Syntax
+  Statement : statement
+    ::= simpleStmt
+      | declaration
+//      | labeledStmt  // TODO: goto
+//      | goStmt  // TODO: concurrency
+      | returnStmt
+//      | breakStmt  // TODO: loops
+//      | continueStmt  // TODO: loops
+//      | gotoStmt  // TODO: goto
+//      | fallThroughStmt  // TODO: ?
+      | block
+      | ifStmt
+//      | switchStmt  // TODO: switch
+//      | selectStmt  // TODO: concurrency
+      | forStmt
+//      | deferStmt  // TODO: concurrency
+
+Semantics
+  execute-statement[[_:statement]] : =>null-type
+
+Rule
+  execute-statement[[SimpleStmt]] = execute-simplestmt[[SimpleStmt]]
+
+
+## Return statement
+
+Syntax
+  ReturnStmt : returnStmt ::= 'return' expression?
+
+Rule
+  execute-statement[[ReturnStmt]] = execute-returnstmt[[ReturnStmt]]
+
+Semantics
+  execute-returnstmt[[_:returnStmt]] : =>null-type
+
+Rule
+  execute-returnstmt[['return']] = return null
+
+Rule
+  execute-returnstmt[['return' Expression]] = return evaluate-expression[[Expression]]
+
+## Blocks
+
+Syntax
+  Block          : block          ::= '{' statementSemic* '}'
+  StatementSemic : statementSemic ::= statement ';'
+
+Rule
+  execute-statement[['{' StatementSemic* '}']]
+    = scope(allocate-statementsemic[[StatementSemic*]], execute-statementsemic[[StatementSemic*]])
+
+Semantics
+  execute-statementsemic[[_:statementSemic*]] : =>null-value
+
+Rule
+  execute-statementsemic[[ ]] = null-value
+
+Rule
+  execute-statementsemic[[Statement ';' StatementSemic*]]
+    = sequential(execute-statement[[Statement]], execute-statementsemic[[StatementSemic*]])
+
+Semantics
+  allocate-statementsemic[[_:statementSemic*]] : =>envs
+
+Rule
+  allocate-statementsemic[[ ]] = map( )
+
+Rule
+  allocate-statementsemic[[VarDecl ';']] = allocate-vardecl[[VarDecl]]
+
+Otherwise
+  allocate-statementsemic[[Statement ';']] = map( )
+
+Rule
+  allocate-statementsemic[[VarDecl ';' StatementSemic*]]
+    = collateral(allocate-vardecl[[VarDecl]], allocate-statementsemic[[StatementSemic*]])
+
+Otherwise
+  allocate-statementsemic[[Statement ';' StatementSemic*]]
+    = allocate-statementsemic[[StatementSemic*]]
+
+
+## If statements
+
+Syntax
+  IfStmt : ifStmt
+    ::= 'if' expression block
+      | 'if' expression block 'else' block
+      | 'if' expression block 'else' ifStmt
+      | 'if' simpleStmt ';' expression block
+      | 'if' simpleStmt ';' expression block 'else' block
+      | 'if' simpleStmt ';' expression block 'else' ifStmt
+
+Rule
+  [['if' Expression Block]] : ifStmt
+    = [['if' Expression Block 'else' '{' '}']]
+
+Rule
+  execute-statement[['if' Expression Block1 'else' Block2]]
+    = if-else(evaluate-expression[[Expression]], execute-statement[[Block1]], execute-statement[[Block2]])
+
+Rule
+  execute-statement[['if' Expression Block 'else' IfStmt]]
+    = if-else(evaluate-expression[[Expression]], execute-statement[[Block]], execute-statement[[IfStmt]])
+
+Rule
+  [['if' SimpleStmt ';' Expression Block]] : statement
+    = [['{' SimpleStmt ';' 'if' Expression Block ';' '}']]
+
+Rule
+  [['if' SimpleStmt ';' Expression Block1 'else' Block2]] : statement
+    = [['{' SimpleStmt ';' 'if' Expression Block1 'else' Block2 ';' '}']]
+
+Rule
+  [['if' SimpleStmt ';' Expression Block 'else' IfStmt]] : statement
+    = [['{' SimpleStmt ';' 'if' Expression Block 'else' IfStmt ';' '}']]
+
+
+## For statements
+
+Syntax  // TODO: range clause
+  ForStmt : forStmt
+    ::= 'for' block
+      | 'for' expression block
+      | 'for' simpleStmt? ';' expression? ';' simpleStmt? block
+
+Rule
+  execute-statement[['for' Block]] = while(true, execute-statement[[Block]])
+
+Rule
+  execute-statement[['for' Expression Block]] = while(evaluate-expression[[Expression]], execute-statement[[Block]])
+
+Rule
+  [['for' SimpleStmt1 ';' Expression ';' SimpleStmt2 '{' StatementSemic* '}']] : statement
+    = [['{' SimpleStmt1 ';' 'for' Expression '{' StatementSemic* SimpleStmt2 ';' '}' ';' '}']]
+
+Rule
+  [['for' SimpleStmt1 ';' ';' SimpleStmt2 '{' StatementSemic* '}']] : statement
+    = [['{' SimpleStmt1 ';' 'for' '{' StatementSemic* SimpleStmt2 ';' '}' ';' '}']]
+
+
+## Simple Statements
+
+Syntax
+  SimpleStmt : simpleStmt
+    ::= emptyStmt
+      | expressionStmt
+//      | sendStmt  // TODO: concurrency
+      | incDecStmt
+      | assignment
+      | shortVarDecl
+
+Semantics
+  execute-simplestmt[[_:simpleStmt]] : =>null-type
+
+
+### Empty statements
+
+Syntax
+  emptyStmt ::= ( )
+
+Rule
+  execute-simplestmt[[ ]] = null-value
+
+
+### Expression statements
+
+Syntax
+  expressionStmt ::= expression
+
+Rule
+  execute-simplestmt[[Expression]] = evaluate-expression[[Expression]]
+
+
+### IncDec statements
+
+Syntax
+  incDecStmt
+    ::= identifier '++'
+      | identifier '--'
+
+Rule
+  [[Identifier '++']] : statement
+    = [[Identifier '+=' '1']]
+
+Rule
+  [[Identifier '--']] : statement
+    = [[Identifier '-=' '1']]
+
+
+### Assignment statements
+
+Syntax
+  assignment  // TODO: expression resolution, multiple assignment
+    ::= identifier '=' expression
+      | identifier '+=' expression
+      | identifier '-=' expression
+      | identifier '*=' expression
+      | identifier '/=' expression
+      | identifier '%=' expression
+
+Rule
+  execute-simplestmt[[Identifier '=' Expression]]
+    = sequential(
+        check-true is-in-type(bound identifier[[Identifier]], variables),
+        assign(bound identifier[[Identifier]], evaluate-expression[[Expression]]))
+
+Rule
+  [[Identifier '+=' Expression]] : assignment
+    = [[Identifier '=' Identifier '+' '(' Expression ')']]
+
+Rule
+  [[Identifier '-=' Expression]] : assignment
+    = [[Identifier '=' Identifier '-' '(' Expression ')']]
+
+Rule
+  [[Identifier '*=' Expression]] : assignment
+    = [[Identifier '=' Identifier '*' '(' Expression ')']]
+
+Rule
+  [[Identifier '/=' Expression]] : assignment
+    = [[Identifier '=' Identifier '/' '(' Expression ')']]
+
+Rule
+  [[Identifier '%=' Expression]] : assignment
+    = [[Identifier '=' Identifier '%' '(' Expression ')']]
+
+
+### Short variable declarations
+
+Syntax
+  shortVarDecl ::= identifier ':=' expression  // TODO: multiple assignment
+
+Rule
+  [[Identifier ':=' Expression]] : statement
+    = [['var' Identifier '=' Expression]]

@@ -1,0 +1,4 @@
+finalise-failing print
+  (is-eq l-to-r
+     (decimal-natural "1",
+      decimal-natural "1"))

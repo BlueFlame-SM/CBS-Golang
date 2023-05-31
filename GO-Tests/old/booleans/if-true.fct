@@ -1,0 +1,44 @@
+initialise-binding initialise-storing finalise-failing scope
+  (accumulate
+     (bind
+        ("any",
+         alloc-init
+           (types,
+            values)),
+      bind
+        ("bool",
+         alloc-init
+           (types,
+            bools)),
+      bind
+        ("int",
+         alloc-init
+           (types,
+            int)),
+      bind
+        ("true",
+         alloc-init
+           (bools,
+            true)),
+      bind
+        ("false",
+         alloc-init
+           (bools,
+            false))),
+   if-else
+     (assigned
+        (bound
+           ("true")),
+      scope
+        (map
+           ( ),
+         sequential
+           (print
+              (assigned
+                 (bound
+                    ("true"))),
+            null-value)),
+      scope
+        (map
+           ( ),
+         null-value)))

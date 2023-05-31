@@ -1,6 +1,7 @@
 module GO-A-Disambiguation
             
 imports 
+  GO-1-Lexemes
   GO-3-Expressions
   Funcons
 
@@ -47,6 +48,9 @@ variables // Meta-variables
   // #A Disambiguation
                 
   
+  
+  lexical syntax
+    LEX-identifier = LEX-keyword {reject}
   
   context-free syntax
   

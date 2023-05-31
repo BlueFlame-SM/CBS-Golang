@@ -1,0 +1,14 @@
+initialise-binding initialise-storing finalise-failing sequential
+  (print
+     (decimal-natural "1"),
+   print
+     (decimal-natural "2"),
+   print
+     (decimal-natural "4"),
+   print
+     (decimal-natural "8"),
+   print
+     (decimal-natural "16"),
+   print
+     (decimal-natural "32"),
+   null-value)

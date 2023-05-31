@@ -2,8 +2,7 @@ Language "Golang"
 
 #3 Expressions
 
-
-## Operand
+## Operands
 
 Syntax
   Operand : operand
@@ -12,21 +11,29 @@ Syntax
 //      | imaginary-lit  // TODO: imaginary
 //      | rune-lit  // TODO: runes
 //      | string-lit  // TODO: strings
-//      | identifier // typeArgs?  // TODO: types
+      | identifier // typeArgs?  // TODO: types
 //      | qualifiedIdent typeArgs?  // TODO: packages
       | '(' expression ')'
 
-Rule
-  evaluate[[IL]] =
-    integer-value[[IL]]
-
+Semantics
+  evaluate-operand[[_:operand]] : =>values
 
 Rule
-  evaluate[['(' Expression ')']] =
-    evaluate[[Expression]]
+  evaluate-operand[[Int-Lit]]
+    = integer-value[[Int-Lit]]
+
+Rule
+  evaluate-operand[[Identifier]]
+    = sequential(
+        check-true not is-in-type(bound identifier[[Identifier]], types),
+        current-value bound identifier[[Identifier]])
+
+Rule
+  evaluate-operand[['(' Expression ')']]
+    = evaluate-expression[[Expression]]
 
 
-## Primary
+## Primary expressions
 
 Syntax
   PrimaryExpr : primaryExpr
@@ -43,36 +50,62 @@ Syntax
       // TypeAssertion
 //      | primaryExpr '.' '(' type ')'  // TODO: types
       // Arguments
-//      | primaryExpr '(' ((expressionList | type (',' expressionList)?) '...'? ','?)? ')'  // TODO: functions
+      | primaryExpr arguments
+
+Semantics
+  evaluate-primaryexpr[[_:primaryExpr]] : =>values
+
+Rule
+  evaluate-primaryexpr[[Operand]] = evaluate-operand[[Operand]]
+
+Rule
+  evaluate-primaryexpr[[PrimaryExpr Arguments]]
+    = apply(
+        evaluate-primaryexpr[[PrimaryExpr]],
+        evaluate-arguments[[Arguments]])
 
 
-## Unary
+### Arguments
 
 Syntax
-  UnaryExpr : unaryExpr
-    ::= primaryExpr
-      | '+' unaryExpr
-      | '-' unaryExpr
-      | '!' unaryExpr
-//      | '^' unaryExpr  // TODO: bitwise
-//      | '*' unaryExpr  // TODO: pointers
-//      | '&' unaryExpr  // TODO: pointers
-//      | '<-' unaryExpr  // TODO: concurrency
+  Arguments : arguments  // TODO: Variadic
+    ::= '(' ')'
+      | '(' expressionList ')'
+      | '(' expressionList ',' ')'
+
+Semantics
+  evaluate-arguments[[_:arguments]] : =>tuple(values)
 
 Rule
-  evaluate[['+' UnaryExpr]] =
-    evaluate[[UnaryExpr]]
+  evaluate-arguments[['(' ')']] = tuple( )
 
 Rule
-  evaluate[['-' UnaryExpr]] =
-    integer-negate evaluate[[UnaryExpr]]
+  evaluate-arguments[['(' ExpressionList ')']]
+    = tuple(evaluate-expressionlist[[ExpressionList]])
 
 Rule
-  evaluate[['!' UnaryExpr]] =
-    not evaluate[[UnaryExpr]]
+  evaluate-arguments[['(' ExpressionList ',' ')']]
+    = tuple(evaluate-expressionlist[[ExpressionList]])
+
+Syntax
+  ExpressionList : expressionList
+    ::= expression
+      | expression ',' expressionList
+
+Semantics
+  evaluate-expressionlist[[_:expressionList]] : =>values*
+
+Rule
+  evaluate-expressionlist[[Expression]] = evaluate-expression[[Expression]]
+
+Rule
+  evaluate-expressionlist[[Expression ',' ExpressionList]]
+    = evaluate-expression[[Expression]], evaluate-expressionlist[[ExpressionList]]
 
 
-## Binary
+## Operators
+
+### Binary operators
 
 Syntax
   Expression : expression
@@ -101,68 +134,100 @@ Syntax
 //      | expression '&^' expression  //TODO: bitwise
 
 Semantics
-  evaluate[[Expression:expression]] : =>values
-
-
-### Boolean
+  evaluate-expression[[_:expression]] : =>values
 
 Rule
-  evaluate[[Expression1 '||' Expression2]] =
-    if-else(evaluate[[Expression1]], true, evaluate[[Expression2]])
+  evaluate-expression[[UnaryExpr]] = evaluate-unaryexpr[[UnaryExpr]]
+
+
+#### Boolean expressions
 
 Rule
-  evaluate[[Expression1 '&&' Expression2]] =
-    if-else(evaluate[[Expression1]], evaluate[[Expression2]], false)
-
-
-### Comparison
+  evaluate-expression[[Expression1 '||' Expression2]]
+    = if-else(evaluate-expression[[Expression1]], true, evaluate-expression[[Expression2]])
 
 Rule
-  evaluate[[Expression1 '==' Expression2]] =
-    is-eq l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+  evaluate-expression[[Expression1 '&&' Expression2]] =
+    if-else(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]], false)
+
+
+#### Comparison expressions
 
 Rule
-  evaluate[[Expression1 '!=' Expression2]] =
-    not is-eq l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+  evaluate-expression[[Expression1 '==' Expression2]]
+    = is-eq l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
 
 Rule
-  evaluate[[Expression1 '<' Expression2]] =
-    is-less l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+  evaluate-expression[[Expression1 '!=' Expression2]]
+    = not is-eq l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
 
 Rule
-  evaluate[[Expression1 '<=' Expression2]] =
-    is-less-or-equal l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+  evaluate-expression[[Expression1 '<' Expression2]]
+    = is-less l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
 
 Rule
-  evaluate[[Expression1 '>' Expression2]] =
-    is-greater l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+  evaluate-expression[[Expression1 '<=' Expression2]]
+    = is-less-or-equal l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
 
 Rule
-  evaluate[[Expression1 '>=' Expression2]] =
-    is-greater-or-equal l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
-
-
-### Additive
+  evaluate-expression[[Expression1 '>' Expression2]]
+    = is-greater l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
 
 Rule
-  evaluate[[Expression1 '+' Expression2]] =
-    int-add l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+  evaluate-expression[[Expression1 '>=' Expression2]]
+    = is-greater-or-equal l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
+
+
+#### Additive expressions
 
 Rule
-  evaluate[[Expression1 '-' Expression2]] =
-    int-sub l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
-
-
-### Multiplicative
+  evaluate-expression[[Expression1 '+' Expression2]]
+    = int-add l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
 
 Rule
-  evaluate[[Expression1 '*' Expression2]] =
-    int-mul l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+  evaluate-expression[[Expression1 '-' Expression2]]
+    = integer-subtract l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
+
+
+#### Multiplicative expressions
 
 Rule
-  evaluate[[Expression1 '/' Expression2]] =
-    checked int-div l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+  evaluate-expression[[Expression1 '*' Expression2]]
+    = int-mul l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
 
 Rule
-  evaluate[[Expression1 '%' Expression2]] =
-    checked int-mod l-to-r(evaluate[[Expression1]], evaluate[[Expression2]])
+  evaluate-expression[[Expression1 '/' Expression2]]
+    = checked int-div l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
+
+Rule
+  evaluate-expression[[Expression1 '%' Expression2]]
+    = checked int-mod l-to-r(evaluate-expression[[Expression1]], evaluate-expression[[Expression2]])
+
+
+### Unary expressions
+
+Syntax
+  UnaryExpr : unaryExpr
+    ::= primaryExpr
+      | '+' unaryExpr
+      | '-' unaryExpr
+      | '!' unaryExpr
+//      | '^' unaryExpr  // TODO: bitwise
+//      | '*' unaryExpr  // TODO: pointers
+//      | '&' unaryExpr  // TODO: pointers
+//      | '<-' unaryExpr  // TODO: concurrency
+
+Semantics
+  evaluate-unaryexpr[[_:unaryExpr]] : =>values
+
+Rule
+  evaluate-unaryexpr[[PrimaryExpr]] = evaluate-primaryexpr[[PrimaryExpr]]
+
+Rule
+  evaluate-unaryexpr[['+' UnaryExpr]] = evaluate-unaryexpr[[UnaryExpr]]
+
+Rule
+  evaluate-unaryexpr[['-' UnaryExpr]] = integer-negate evaluate-unaryexpr[[UnaryExpr]]
+
+Rule
+  evaluate-unaryexpr[['!' UnaryExpr]] = not(evaluate-unaryexpr[[UnaryExpr]])

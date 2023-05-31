@@ -17,9 +17,15 @@ rules
               
 
 to-funcons-lex: 
+  FCTDoubleQuoted(L-identifier(LEX-identifier(str))) -> 
+  FCTString(<double-quote> str)
+to-funcons:
+  |[ identifier[: (:Identifier:) :] ]| ->
+  |[ \"(:Identifier:)\" ]|
+to-funcons-lex: 
   FCTDoubleQuoted(L-int-lit(LEX-int-lit(str))) -> 
   FCTString(<double-quote> str)
 to-funcons:
-  |[ integer-value[: (:IL:) :] ]| ->
-  |[ decimal-natural \"(:IL:)\" ]|
+  |[ integer-value[: (:Int-Lit:) :] ]| ->
+  |[ decimal-natural \"(:Int-Lit:)\" ]|
 

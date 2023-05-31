@@ -2,20 +2,105 @@ Language "Golang"
 
 #2 Types
 
-//Syntax
-//  T : type
-//    ::= '(' type ')'
-////      | arrayType  // TODO: arrays
-////      | structType  // TODO: structs
-////      | pointerType  // TODO: pointers
-////      | functionType  // TODO: functions
-////      | interfaceType  // TODO: interfaces
-////      | sliceType  // TODO: slices
-////      | mapType  // TODO: maps
-////      | channelType // TODO: channels
-//      | identifier typeArgs?
-////      | qualifiedIdent typeArgs?
-//
+Type int8 ~> bounded-ints(int-neg(int-pow(2, 7)), int-add(int-pow(2, 7), -1))
+Type int16 ~> bounded-ints(int-neg(int-pow(2, 15)), int-add(int-pow(2, 15), -1))
+Type int32 ~> bounded-ints(int-neg(int-pow(2, 31)), int-add(int-pow(2, 31), -1))
+Type int64 ~> bounded-ints(int-neg(int-pow(2, 63)), int-add(int-pow(2, 63), -1))
+Alias int = int32
+
+Type uint8 ~> bounded-ints(0, int-add(int-pow(2, 8), -1))
+Type uint16 ~> bounded-ints(0, int-add(int-pow(2, 16), -1))
+Type uint32 ~> bounded-ints(0, int-add(int-pow(2, 32), -1))
+Type uint64 ~> bounded-ints(0, int-add(int-pow(2, 64), -1))
+Alias uint = uint32
+
+Funcon
+  variable-type(_:variables) : =>types
+
+Rule
+  variable-type(variable(_:locations, T:types)) ~> T
+
+
+Syntax
+  GoType : goType
+    ::= '(' goType ')'
+//      | arrayType  // TODO: arrays
+//      | structType  // TODO: structs
+//      | pointerType  // TODO: pointers
+//      | functionType  // TODO: functions
+//      | interfaceType  // TODO: interfaces
+//      | sliceType  // TODO: slices
+//      | mapType  // TODO: maps
+//      | channelType // TODO: channels
+      | identifier  // TODO: typeargs
+//      | qualifiedIdent  // TODO: typeargs
+
 //Syntax
 //  typeArgs ::= '[' typeList ','? ']'
 //  typeList ::= type (',' type)*
+
+Semantics
+  typeof-gotype[[_:goType]] : =>types
+
+Rule
+  typeof-gotype[['(' GoType ')']] = typeof-gotype[[GoType]]
+
+Rule
+  typeof-gotype[[Identifier]]
+    = sequential(
+        check-true is-in-type(bound identifier[[Identifier]], types),
+        bound identifier[[Identifier]])
+
+
+## Function Types
+
+Syntax
+  FunctionType  : functionType  ::= 'func' signature
+  Signature     : signature     ::= parameters result?
+  Result        : result        ::= goType  // TODO: add parameters (requires multiple assignment / tuples)
+  Parameters    : parameters
+    ::= '(' ')'
+      | '(' parameterList ')'
+      | '(' parameterList ',' ')'
+  ParameterList : parameterList
+    ::= parameterDecl
+      | parameterDecl ',' parameterList
+  ParameterDecl : parameterDecl ::= identifier goType  // TODO: identifierList
+
+Semantics
+  parameters-patterns[[_:parameters]] : =>patterns*
+
+Rule
+  parameters-patterns[['(' ')']] = ( )
+
+Rule
+  parameters-patterns[['(' ParameterList ')']] = parameterlist-patterns[[ParameterList]]
+
+Rule
+  parameters-patterns[['(' ParameterList ',' ')']] = parameterlist-patterns[[ParameterList]]
+
+Semantics
+  parameterlist-patterns[[_:parameterList]] : =>patterns*
+
+Rule
+  parameterlist-patterns[[ParameterDecl]]
+    = parameterdecl-patterns[[ParameterDecl]]
+
+Rule
+  parameterlist-patterns[[ParameterDecl ',' ParameterList]]
+    = parameterlist-patterns[[ParameterDecl]], parameterlist-patterns[[ParameterList]]
+
+Semantics
+  parameterdecl-patterns[[_:parameterDecl]] : =>patterns*
+
+Rule
+  parameterdecl-patterns[[Identifier GoType]]
+    = pattern closure bind(
+        identifier[[Identifier]],
+        alloc-init(values, given))
+
+
+
+
+
+

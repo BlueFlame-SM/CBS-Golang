@@ -1,0 +1,87 @@
+module GO-5-Declarations
+
+imports
+  libstratego-gpp
+  signatures/-
+  pp/GO-parenthesize
+  pp/GO-pp
+
+imports
+  cbs-gen/GO-2-Types
+  cbs-gen/GO-4-Statements
+  cbs-gen/GO-3-Expressions
+  cbs-gen/GO-1-Lexemes
+
+// Language "Golang"
+
+rules
+
+// #5 Declarations
+              
+
+to-funcons:
+  |[ allocate-topleveldecl[: (:Declaration:) :] ]| ->
+  |[ allocate-declaration[: (:Declaration:) :] ]|
+to-funcons:
+  |[ initialise-topleveldecl[: (:Declaration:) :] ]| ->
+  |[ initialise-declaration[: (:Declaration:) :] ]|
+
+// ## Constant declarations
+                 
+
+
+// ## Variable declarations
+                 
+
+to-funcons:
+  |[ execute-statement[: (:VarDecl:) :] ]| ->
+  |[ initialise-vardecl[: (:VarDecl:) :] ]|
+to-funcons:
+  |[ allocate-declaration[: (:VarDecl:) :] ]| ->
+  |[ allocate-vardecl[: (:VarDecl:) :] ]|
+to-funcons:
+  |[ initialise-declaration[: (:VarDecl:) :] ]| ->
+  |[ allocate-vardecl[: (:VarDecl:) :] ]|
+to-funcons:
+  |[ allocate-vardecl[: var(:Identifier:)=(:Expression:) :] ]| ->
+  |[ bind (identifier[: (:Identifier:) :], 
+             alloc values) ]|
+to-funcons:
+  |[ initialise-vardecl[: var(:Identifier:)=(:Expression:) :] ]| ->
+  |[ assign (bound identifier[: (:Identifier:) :], 
+             evaluate-expression[: (:Expression:) :]) ]|
+
+// ## Function declarations
+                 
+
+to-funcons:
+  |[ allocate-topleveldecl[: (:FunctionDecl:) :] ]| ->
+  |[ allocate-functiondecl[: (:FunctionDecl:) :] ]|
+to-funcons:
+  |[ initialise-topleveldecl[: (:FunctionDecl:) :] ]| ->
+  |[ initialise-functiondecl[: (:FunctionDecl:) :] ]|
+to-funcons:
+  |[ allocate-functiondecl[: func(:Identifier:)(:Parameters:)(:Block:) :] ]| ->
+  |[ bind (identifier[: (:Identifier:) :], 
+             alloc functions (tuples ((values)*), 
+                            null-type)) ]|
+to-funcons:
+  |[ allocate-functiondecl[: func(:Identifier:)(:Parameters:)(:GoType:)(:Block:) :] ]| ->
+  |[ bind (identifier[: (:Identifier:) :], 
+             alloc functions (tuples ((values)*), 
+                            typeof-gotype[: (:GoType:) :])) ]|
+to-funcons:
+  |[ initialise-functiondecl[: func(:Identifier:)(:Parameters:){(:StatementSemic*:)} :] ]| ->
+  |[ assign (bound identifier[: (:Identifier:) :], 
+             function closure scope (collateral (match (given, 
+                                                   tuple (parameters-patterns[: (:Parameters:) :])), 
+                                           allocate-statementsemic[: (:StatementSemic*:) :]), 
+                                   handle-return execute-statementsemic[: (:StatementSemic*:) :])) ]|
+to-funcons:
+  |[ initialise-functiondecl[: func(:Identifier:)(:Parameters:)(:GoType:){(:StatementSemic*:)} :] ]| ->
+  |[ assign (bound identifier[: (:Identifier:) :], 
+             function closure scope (collateral (match (given, 
+                                                   tuple (parameters-patterns[: (:Parameters:) :])), 
+                                           allocate-statementsemic[: (:StatementSemic*:) :]), 
+                                   handle-return execute-statementsemic[: (:StatementSemic*:) :])) ]|
+

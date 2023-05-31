@@ -1,0 +1,172 @@
+module GO-4-Statements
+
+imports
+  libstratego-gpp
+  signatures/-
+  pp/GO-parenthesize
+  pp/GO-pp
+
+imports
+  cbs-gen/GO-5-Declarations
+  cbs-gen/GO-1-Lexemes
+  cbs-gen/GO-3-Expressions
+
+// Language "Golang"
+
+rules
+
+// #4 Statements
+              
+
+to-funcons:
+  |[ execute-statement[: (:SimpleStmt:) :] ]| ->
+  |[ execute-simplestmt[: (:SimpleStmt:) :] ]|
+
+// ## Return statement
+                 
+
+to-funcons:
+  |[ execute-statement[: (:ReturnStmt:) :] ]| ->
+  |[ execute-returnstmt[: (:ReturnStmt:) :] ]|
+to-funcons:
+  |[ execute-returnstmt[: return :] ]| ->
+  |[ return null ]|
+to-funcons:
+  |[ execute-returnstmt[: return(:Expression:) :] ]| ->
+  |[ return evaluate-expression[: (:Expression:) :] ]|
+
+// ## Blocks
+                 
+
+to-funcons:
+  |[ execute-statement[: {(:StatementSemic*:)} :] ]| ->
+  |[ scope (allocate-statementsemic[: (:StatementSemic*:) :], 
+             execute-statementsemic[: (:StatementSemic*:) :]) ]|
+to-funcons:
+  |[ execute-statementsemic[:  :] ]| ->
+  |[ null-value ]|
+to-funcons:
+  |[ execute-statementsemic[: (:Statement:);(:StatementSemic*:) :] ]| ->
+  |[ sequential (execute-statement[: (:Statement:) :], 
+             execute-statementsemic[: (:StatementSemic*:) :]) ]|
+to-funcons:
+  |[ allocate-statementsemic[:  :] ]| ->
+  |[ map () ]|
+to-funcons:
+  |[ allocate-statementsemic[: (:VarDecl:); :] ]| ->
+  |[ allocate-vardecl[: (:VarDecl:) :] ]|
+to-funcons-default:
+  |[ allocate-statementsemic[: (:Statement:); :] ]| ->
+  |[ map () ]|
+to-funcons:
+  |[ allocate-statementsemic[: (:VarDecl:);(:StatementSemic*:) :] ]| ->
+  |[ collateral (allocate-vardecl[: (:VarDecl:) :], 
+             allocate-statementsemic[: (:StatementSemic*:) :]) ]|
+to-funcons-default:
+  |[ allocate-statementsemic[: (:Statement:);(:StatementSemic*:) :] ]| ->
+  |[ allocate-statementsemic[: (:StatementSemic*:) :] ]|
+
+// ## If statements
+                 
+
+to-desugared:
+  [: if(:Expression:)(:Block:) :] : ifStmt ->
+  [: if(:Expression:)(:Block:)else{} :] : ifStmt
+to-funcons:
+  |[ execute-statement[: if(:Expression:)(:Block1:)else(:Block2:) :] ]| ->
+  |[ if-else (evaluate-expression[: (:Expression:) :], 
+             execute-statement[: (:Block1:) :], 
+             execute-statement[: (:Block2:) :]) ]|
+to-funcons:
+  |[ execute-statement[: if(:Expression:)(:Block:)else(:IfStmt:) :] ]| ->
+  |[ if-else (evaluate-expression[: (:Expression:) :], 
+             execute-statement[: (:Block:) :], 
+             execute-statement[: (:IfStmt:) :]) ]|
+to-desugared:
+  [: if(:SimpleStmt:);(:Expression:)(:Block:) :] : statement ->
+  [: {(:SimpleStmt:);if(:Expression:)(:Block:);} :] : statement
+to-desugared:
+  [: if(:SimpleStmt:);(:Expression:)(:Block1:)else(:Block2:) :] : statement ->
+  [: {(:SimpleStmt:);if(:Expression:)(:Block1:)else(:Block2:);} :] : statement
+to-desugared:
+  [: if(:SimpleStmt:);(:Expression:)(:Block:)else(:IfStmt:) :] : statement ->
+  [: {(:SimpleStmt:);if(:Expression:)(:Block:)else(:IfStmt:);} :] : statement
+
+// ## For statements
+                 
+
+to-funcons:
+  |[ execute-statement[: for(:Block:) :] ]| ->
+  |[ while (true, 
+             execute-statement[: (:Block:) :]) ]|
+to-funcons:
+  |[ execute-statement[: for(:Expression:)(:Block:) :] ]| ->
+  |[ while (evaluate-expression[: (:Expression:) :], 
+             execute-statement[: (:Block:) :]) ]|
+to-desugared:
+  [: for(:SimpleStmt1:);(:Expression:);(:SimpleStmt2:){(:StatementSemic*:)} :] : statement ->
+  [: {(:SimpleStmt1:);for(:Expression:){(:StatementSemic*:)(:SimpleStmt2:);};} :] : statement
+to-desugared:
+  [: for(:SimpleStmt1:);;(:SimpleStmt2:){(:StatementSemic*:)} :] : statement ->
+  [: {(:SimpleStmt1:);for{(:StatementSemic*:)(:SimpleStmt2:);};} :] : statement
+
+// ## Simple Statements
+                 
+
+
+// ### Empty statements
+                 
+
+to-funcons:
+  |[ execute-simplestmt[:  :] ]| ->
+  |[ null-value ]|
+
+// ### Expression statements
+                 
+
+to-funcons:
+  |[ execute-simplestmt[: (:Expression:) :] ]| ->
+  |[ evaluate-expression[: (:Expression:) :] ]|
+
+// ### IncDec statements
+                 
+
+to-desugared:
+  [: (:Identifier:)++ :] : statement ->
+  [: (:Identifier:)+=1 :] : statement
+to-desugared:
+  [: (:Identifier:)-- :] : statement ->
+  [: (:Identifier:)-=1 :] : statement
+
+// ### Assignment statements
+                 
+
+to-funcons:
+  |[ execute-simplestmt[: (:Identifier:)=(:Expression:) :] ]| ->
+  |[ sequential (check-true is-in-type (bound identifier[: (:Identifier:) :], 
+                            variables), 
+             assign (bound identifier[: (:Identifier:) :], 
+                     evaluate-expression[: (:Expression:) :])) ]|
+to-desugared:
+  [: (:Identifier:)+=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)+((:Expression:)) :] : assignment
+to-desugared:
+  [: (:Identifier:)-=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)-((:Expression:)) :] : assignment
+to-desugared:
+  [: (:Identifier:)*=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)*((:Expression:)) :] : assignment
+to-desugared:
+  [: (:Identifier:)/=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)/((:Expression:)) :] : assignment
+to-desugared:
+  [: (:Identifier:)%=(:Expression:) :] : assignment ->
+  [: (:Identifier:)=(:Identifier:)%((:Expression:)) :] : assignment
+
+// ### Short variable declarations
+                 
+
+to-desugared:
+  [: (:Identifier:):=(:Expression:) :] : statement ->
+  [: var(:Identifier:)=(:Expression:) :] : statement
+

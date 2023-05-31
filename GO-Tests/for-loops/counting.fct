@@ -1,0 +1,106 @@
+initialise-giving initialise-binding initialise-storing scope
+  ({"any" |-> values,
+    "bool" |-> bools,
+    "int" |-> int,
+    "int8" |-> int8,
+    "int16" |-> int16,
+    "int32" |-> int32,
+    "int64" |-> int64,
+    "uint" |-> uint,
+    "uint8" |-> uint8,
+    "uint16" |-> uint16,
+    "uint32" |-> uint32,
+    "uint64" |-> uint64,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print
+                  (tuple-elements given)},
+   handle-abrupt
+     (sequential
+        (scope
+           (collateral
+              (bind
+                 ("main",
+                  alloc functions
+                    (tuples
+                       ((values)*),
+                     null-type)),
+               map
+                 ( )),
+            sequential
+              (sequential
+                 (assign
+                    (bound "main",
+                     function closure scope
+                       (collateral
+                          (match
+                             (given,
+                              tuple
+                                ( )),
+                           map
+                             ( )),
+                        handle-return sequential
+                          (scope
+                             (collateral
+                                (bind
+                                   ("i",
+                                    alloc values),
+                                 map
+                                   ( )),
+                              sequential
+                                (assign
+                                   (bound "i",
+                                    decimal-natural "0"),
+                                 while
+                                   (is-less l-to-r
+                                      (sequential
+                                         (check-true not is-in-type
+                                            (bound "i",
+                                             types),
+                                          current-value bound
+                                            "i"),
+                                       decimal-natural "10"),
+                                    scope
+                                      (map
+                                         ( ),
+                                       sequential
+                                         (apply
+                                            (sequential
+                                               (check-true not is-in-type
+                                                  (bound "print",
+                                                   types),
+                                                current-value bound
+                                                  "print"),
+                                             tuple
+                                               (sequential
+                                                  (check-true not is-in-type
+                                                     (bound "i",
+                                                      types),
+                                                   current-value bound
+                                                     "i"))),
+                                          sequential
+                                            (check-true is-in-type
+                                               (bound "i",
+                                                variables),
+                                             assign
+                                               (bound "i",
+                                                int-add l-to-r
+                                                  (sequential
+                                                     (check-true not is-in-type
+                                                        (bound "i",
+                                                         types),
+                                                      current-value bound
+                                                        "i"),
+                                                   decimal-natural "1"))),
+                                          null-value))),
+                                 null-value)),
+                           null-value))),
+                  null-value),
+               apply
+                 (assigned bound
+                    "main",
+                  tuple
+                    ( )))),
+         0),
+      1))

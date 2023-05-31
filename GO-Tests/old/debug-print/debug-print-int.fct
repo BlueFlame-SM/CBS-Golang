@@ -1,0 +1,4 @@
+finalise-failing print
+  (int-add l-to-r
+     (decimal-natural "1",
+      decimal-natural "1"))

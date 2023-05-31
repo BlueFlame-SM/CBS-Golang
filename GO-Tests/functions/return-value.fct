@@ -1,0 +1,94 @@
+initialise-giving initialise-binding initialise-storing finalise-failing finalise-returning scope
+  ({"any" |-> values,
+    "bool" |-> bools,
+    "int" |-> int,
+    "int8" |-> int8,
+    "int16" |-> int16,
+    "int32" |-> int32,
+    "int64" |-> int64,
+    "uint" |-> uint,
+    "uint8" |-> uint8,
+    "uint16" |-> uint16,
+    "uint32" |-> uint32,
+    "uint64" |-> uint64,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print
+                  (tuple-elements given)},
+   scope
+     (collateral
+        (bind
+           ("main",
+            alloc functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         collateral
+           (bind
+              ("my_func",
+               alloc functions
+                 (tuples
+                    ((values)*),
+                  checked when-true
+                    (is-in-type
+                       (bound "int",
+                        types),
+                     bound "int"))),
+            map
+              ( ))),
+      sequential
+        (sequential
+           (assign
+              (bound "main",
+               function closure scope
+                 (collateral
+                    (match
+                       (given,
+                        tuple
+                          ( )),
+                     map
+                       ( )),
+                  handle-return sequential
+                    (apply
+                       (checked when-true
+                          (not is-in-type
+                             (bound "print",
+                              types),
+                           current-value bound
+                             "print"),
+                        tuple
+                          (apply
+                             (checked when-true
+                                (not is-in-type
+                                   (bound "my_func",
+                                    types),
+                                 current-value bound
+                                   "my_func"),
+                              tuple
+                                ( )))),
+                     null-value))),
+            assign
+              (bound "my_func",
+               function closure scope
+                 (collateral
+                    (match
+                       (given,
+                        tuple
+                          ( )),
+                     map
+                       ( )),
+                  handle-return sequential
+                    (return checked when-true
+                       (not is-in-type
+                          (bound "true",
+                           types),
+                        current-value bound
+                          "true"),
+                     null-value))),
+            null-value),
+         apply
+           (assigned bound
+              "main",
+            tuple
+              ( )))))

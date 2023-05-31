@@ -2,6 +2,13 @@ Language "Golang"
 
 #A Disambiguation
 
+Lexis SDF
+/*
+lexical syntax
+  ``identifier`` = ``keyword`` {reject}
+*/
+
+
 Syntax SDF
 /*
 context-free syntax

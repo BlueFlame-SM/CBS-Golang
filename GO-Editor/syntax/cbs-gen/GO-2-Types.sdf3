@@ -1,7 +1,7 @@
 module GO-2-Types
             
 imports 
-  
+  GO-1-Lexemes
   Funcons
 
 // Language "Golang"
@@ -12,10 +12,18 @@ lexical syntax // Language
                 
   
   
+  // ## Function Types
+                   
+  
+  
 syntax // Language
   
   // #2 Types
                 
+  
+  
+  // ## Function Types
+                   
   
   
 context-free syntax // Language
@@ -23,12 +31,57 @@ context-free syntax // Language
   // #2 Types
                 
   
+  L-goType.L-goType--LPAREN-L-goType-RPAREN =
+    "(" L-goType ")"
+  L-goType.L-goType--L-identifier =
+    L-identifier
+  
+  
+  // ## Function Types
+                   
+  
+  L-functionType.L-functionType--R-func-L-signature =
+    "func" L-signature
+  
+  L-signature.L-signature--L-parameters-L-result-Q =
+    L-parameters L-result?
+  
+  L-result.L-result--L-goType =
+    L-goType
+  
+  L-parameters.L-parameters--LPAREN-RPAREN =
+    "(" ")"
+  L-parameters.L-parameters--LPAREN-L-parameterList-RPAREN =
+    "(" L-parameterList ")"
+  L-parameters.L-parameters--LPAREN-L-parameterList-COMMA-RPAREN =
+    "(" L-parameterList "," ")"
+  
+  L-parameterList.L-parameterList--L-parameterDecl =
+    L-parameterDecl
+  L-parameterList.L-parameterList--L-parameterDecl-COMMA-L-parameterList =
+    L-parameterDecl "," L-parameterList
+  
+  L-parameterDecl.L-parameterDecl--L-identifier-L-goType =
+    L-identifier L-goType
+  
   
 context-free syntax // Semantics
   
   // #2 Types
                 
   
+  FCT.T-typeof-gotype =
+    "typeof-gotype" "[:" L-goType ":]"
+  
+  // ## Function Types
+                   
+  
+  FCT.T-parameters-patterns =
+    "parameters-patterns" "[:" L-parameters ":]"
+  FCT.T-parameterlist-patterns =
+    "parameterlist-patterns" "[:" L-parameterList ":]"
+  FCT.T-parameterdecl-patterns =
+    "parameterdecl-patterns" "[:" L-parameterDecl ":]"
   
 context-free syntax // Desugaring
   
@@ -36,16 +89,56 @@ context-free syntax // Desugaring
                 
   
   
+  // ## Function Types
+                   
+  
+  
 variables // Meta-variables
   
   // #2 Types
                 
   
+  L-goType = "(:GoType" [1-9]? ":)" {prefer}
+  L-goType? = "(:GoType" [1-9]? "?:)" {prefer}
+  L-goType* = "(:GoType" [1-9]? "*:)" {prefer}
+  L-goType+ = "(:GoType" [1-9]? "+:)" {prefer}
+  
+  // ## Function Types
+                   
+  
+  L-functionType = "(:FunctionType" [1-9]? ":)" {prefer}
+  L-functionType? = "(:FunctionType" [1-9]? "?:)" {prefer}
+  L-functionType* = "(:FunctionType" [1-9]? "*:)" {prefer}
+  L-functionType+ = "(:FunctionType" [1-9]? "+:)" {prefer}
+  L-signature = "(:Signature" [1-9]? ":)" {prefer}
+  L-signature? = "(:Signature" [1-9]? "?:)" {prefer}
+  L-signature* = "(:Signature" [1-9]? "*:)" {prefer}
+  L-signature+ = "(:Signature" [1-9]? "+:)" {prefer}
+  L-result = "(:Result" [1-9]? ":)" {prefer}
+  L-result? = "(:Result" [1-9]? "?:)" {prefer}
+  L-result* = "(:Result" [1-9]? "*:)" {prefer}
+  L-result+ = "(:Result" [1-9]? "+:)" {prefer}
+  L-parameters = "(:Parameters" [1-9]? ":)" {prefer}
+  L-parameters? = "(:Parameters" [1-9]? "?:)" {prefer}
+  L-parameters* = "(:Parameters" [1-9]? "*:)" {prefer}
+  L-parameters+ = "(:Parameters" [1-9]? "+:)" {prefer}
+  L-parameterList = "(:ParameterList" [1-9]? ":)" {prefer}
+  L-parameterList? = "(:ParameterList" [1-9]? "?:)" {prefer}
+  L-parameterList* = "(:ParameterList" [1-9]? "*:)" {prefer}
+  L-parameterList+ = "(:ParameterList" [1-9]? "+:)" {prefer}
+  L-parameterDecl = "(:ParameterDecl" [1-9]? ":)" {prefer}
+  L-parameterDecl? = "(:ParameterDecl" [1-9]? "?:)" {prefer}
+  L-parameterDecl* = "(:ParameterDecl" [1-9]? "*:)" {prefer}
+  L-parameterDecl+ = "(:ParameterDecl" [1-9]? "+:)" {prefer}
   
 // SDF comments
   
   // #2 Types
                 
+  
+  
+  // ## Function Types
+                   
   
   
 sorts // ASTs
