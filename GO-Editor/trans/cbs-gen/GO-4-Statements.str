@@ -22,6 +22,17 @@ to-funcons:
   |[ execute-statement[: (:SimpleStmt:) :] ]| ->
   |[ execute-simplestmt[: (:SimpleStmt:) :] ]|
 
+// ## GO statement
+                 
+
+to-funcons:
+  |[ execute-statement[: (:GoStmt:) :] ]| ->
+  |[ execute-gostmt[: (:GoStmt:) :] ]|
+to-funcons:
+  |[ execute-gostmt[: go(:PrimaryExpr:)(:Arguments:) :] ]| ->
+  |[ thread-detach thread-activate thread-joinable supply (evaluate-primaryexpr[: (:PrimaryExpr:) :], 
+                                  evaluate-arguments[: (:Arguments:) :]) ]|
+
 // ## Return statement
                  
 

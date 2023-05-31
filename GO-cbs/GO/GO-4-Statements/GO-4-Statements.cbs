@@ -7,7 +7,7 @@ Syntax
     ::= simpleStmt
       | declaration
 //      | labeledStmt  // TODO: goto
-//      | goStmt  // TODO: concurrency
+      | goStmt  // TODO: concurrency
       | returnStmt
 //      | breakStmt  // TODO: loops
 //      | continueStmt  // TODO: loops
@@ -25,6 +25,24 @@ Semantics
 
 Rule
   execute-statement[[SimpleStmt]] = execute-simplestmt[[SimpleStmt]]
+
+
+## GO statement
+
+Syntax
+  GoStmt : goStmt ::= 'go' primaryExpr arguments
+
+Rule
+  execute-statement[[GoStmt]] = execute-gostmt[[GoStmt]]
+
+Semantics
+  execute-gostmt[[_:goStmt]] : =>null-type
+
+Rule
+  execute-gostmt[['go' PrimaryExpr Arguments]]
+    = thread-detach thread-activate thread-joinable supply(
+        evaluate-primaryexpr[[PrimaryExpr]],
+        evaluate-arguments[[Arguments]])
 
 
 ## Return statement

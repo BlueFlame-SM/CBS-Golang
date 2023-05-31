@@ -8,8 +8,8 @@ imports
 
 imports
   cbs-gen/GO-A-Disambiguation
-  cbs-gen/GO-1-Lexemes
   cbs-gen/GO-3-Expressions
+  cbs-gen/GO-1-Lexemes
   cbs-gen/GO-4-Statements
   cbs-gen/GO-5-Declarations
   cbs-gen/GO-2-Types
@@ -35,9 +35,9 @@ to-funcons:
                                    "false" |-> false, 
                                    "nil" |-> null, 
                                    "print" |-> function closure print (tuple-elements given)}, 
-                                  handle-abrupt (sequential (execute-sourcefile[: (:SourceFile:) :], 
-                                                  0), 
-                                          1)) ]|
+                                  handle-abrupt (sequential (multithread execute-sourcefile[: (:SourceFile:) :], 
+                                                  "succes"), 
+                                          "failure")) ]|
 to-funcons:
   |[ execute-sourcefile[: package main;(:TopLevelDeclSemic*:) :] ]| ->
   |[ scope (allocate-topleveldeclsemic[: (:TopLevelDeclSemic*:) :], 

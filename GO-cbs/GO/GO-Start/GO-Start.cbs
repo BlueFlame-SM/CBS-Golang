@@ -42,7 +42,7 @@ Rule
           "nil"    |-> null,
           "print"  |-> function closure print(tuple-elements given)
         },
-        handle-abrupt(sequential(execute-sourcefile[[SourceFile]], "succes"), "failure"))
+        handle-abrupt(sequential(multithread execute-sourcefile[[SourceFile]], "succes"), "failure"))
 
 Syntax
   SourceFile        : sourceFile        ::= 'package' identifier ';' topLevelDeclSemic*
