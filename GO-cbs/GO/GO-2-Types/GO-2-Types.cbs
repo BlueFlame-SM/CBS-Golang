@@ -21,31 +21,86 @@ Rule
   variable-type(variable(_:locations, T:types)) ~> T
 
 
-//Syntax
-//  Type : type
-//    ::= '(' type ')'
-////      | arrayType  // TODO: arrays
-////      | structType  // TODO: structs
-////      | pointerType  // TODO: pointers
-////      | functionType  // TODO: functions
-////      | interfaceType  // TODO: interfaces
-////      | sliceType  // TODO: slices
-////      | mapType  // TODO: maps
-////      | channelType // TODO: channels
-////      | identifier typeArgs?  // TODO: full typing
-////      | qualifiedIdent typeArgs?  // TODO: full typing
-//
+Syntax
+  GoType : goType
+    ::= '(' goType ')'
+//      | arrayType  // TODO: arrays
+//      | structType  // TODO: structs
+//      | pointerType  // TODO: pointers
+//      | functionType  // TODO: functions
+//      | interfaceType  // TODO: interfaces
+//      | sliceType  // TODO: slices
+//      | mapType  // TODO: maps
+//      | channelType // TODO: channels
+      | identifier  // TODO: typeargs
+//      | qualifiedIdent  // TODO: typeargs
+
 //Syntax
 //  typeArgs ::= '[' typeList ','? ']'
 //  typeList ::= type (',' type)*
 
+Semantics
+  typeof-gotype[[_:goType]] : =>types
 
-//## Function Types
-//
-//Syntax
-//  functionType  ::= 'func' signature
-//  signature     ::= parameters result?
-//  result        ::= parameters | result
-//  parameters    ::= '(' (parametersList ','?)? ')'
-//  parameterList ::= parameterDecl (',' parameterDecl)*
-//  parameterDecl ::=
+Rule
+  typeof-gotype[['(' GoType ')']] = typeof-gotype[[GoType]]
+
+Rule
+  typeof-gotype[[Identifier]]
+    = sequential(
+        check-true is-in-type(bound identifier[[Identifier]], types),
+        bound identifier[[Identifier]])
+
+
+## Function Types
+
+Syntax
+  FunctionType  : functionType  ::= 'func' signature
+  Signature     : signature     ::= parameters result?
+  Result        : result        ::= goType  // TODO: add parameters (requires multiple assignment / tuples)
+  Parameters    : parameters
+    ::= '(' ')'
+      | '(' parameterList ')'
+      | '(' parameterList ',' ')'
+  ParameterList : parameterList
+    ::= parameterDecl
+      | parameterDecl ',' parameterList
+  ParameterDecl : parameterDecl ::= identifier goType  // TODO: identifierList
+
+Semantics
+  parameters-patterns[[_:parameters]] : =>patterns*
+
+Rule
+  parameters-patterns[['(' ')']] = ( )
+
+Rule
+  parameters-patterns[['(' ParameterList ')']] = parameterlist-patterns[[ParameterList]]
+
+Rule
+  parameters-patterns[['(' ParameterList ',' ')']] = parameterlist-patterns[[ParameterList]]
+
+Semantics
+  parameterlist-patterns[[_:parameterList]] : =>patterns*
+
+Rule
+  parameterlist-patterns[[ParameterDecl]]
+    = parameterdecl-patterns[[ParameterDecl]]
+
+Rule
+  parameterlist-patterns[[ParameterDecl ',' ParameterList]]
+    = parameterlist-patterns[[ParameterDecl]], parameterlist-patterns[[ParameterList]]
+
+Semantics
+  parameterdecl-patterns[[_:parameterDecl]] : =>patterns*
+
+Rule
+  parameterdecl-patterns[[Identifier GoType]]
+    = pattern closure bind(
+        identifier[[Identifier]],
+        alloc-init(values, given))
+
+
+
+
+
+

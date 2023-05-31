@@ -20,6 +20,10 @@ lexical syntax // Language
                    
   
   
+  // ### Arguments
+                   
+  
+  
   // ## Operators
                    
   
@@ -59,6 +63,10 @@ syntax // Language
   
   
   // ## Primary expressions
+                   
+  
+  
+  // ### Arguments
                    
   
   
@@ -112,6 +120,24 @@ context-free syntax // Language
   
   L-primaryExpr.L-primaryExpr--L-operand =
     L-operand
+  L-primaryExpr.L-primaryExpr--L-primaryExpr-L-arguments =
+    L-primaryExpr L-arguments
+  
+  
+  // ### Arguments
+                   
+  
+  L-arguments.L-arguments--LPAREN-RPAREN =
+    "(" ")"
+  L-arguments.L-arguments--LPAREN-L-expressionList-RPAREN =
+    "(" L-expressionList ")"
+  L-arguments.L-arguments--LPAREN-L-expressionList-COMMA-RPAREN =
+    "(" L-expressionList "," ")"
+  
+  L-expressionList.L-expressionList--L-expression =
+    L-expression
+  L-expressionList.L-expressionList--L-expression-COMMA-L-expressionList =
+    L-expression "," L-expressionList
   
   
   // ## Operators
@@ -189,10 +215,22 @@ context-free syntax // Semantics
   // ## Operands
                    
   
+  FCT.T-evaluate-operand =
+    "evaluate-operand" "[:" L-operand ":]"
   
   // ## Primary expressions
                    
   
+  FCT.T-evaluate-primaryexpr =
+    "evaluate-primaryexpr" "[:" L-primaryExpr ":]"
+  
+  // ### Arguments
+                   
+  
+  FCT.T-evaluate-arguments =
+    "evaluate-arguments" "[:" L-arguments ":]"
+  FCT.T-evaluate-expressionlist =
+    "evaluate-expressionlist" "[:" L-expressionList ":]"
   
   // ## Operators
                    
@@ -201,8 +239,8 @@ context-free syntax // Semantics
   // ### Binary operators
                    
   
-  FCT.T-evaluate =
-    "evaluate" "[:" L-expression ":]"
+  FCT.T-evaluate-expression =
+    "evaluate-expression" "[:" L-expression ":]"
   
   // #### Boolean expressions
                    
@@ -223,6 +261,8 @@ context-free syntax // Semantics
   // ### Unary expressions
                    
   
+  FCT.T-evaluate-unaryexpr =
+    "evaluate-unaryexpr" "[:" L-unaryExpr ":]"
   
 context-free syntax // Desugaring
   
@@ -235,6 +275,10 @@ context-free syntax // Desugaring
   
   
   // ## Primary expressions
+                   
+  
+  
+  // ### Arguments
                    
   
   
@@ -288,6 +332,18 @@ variables // Meta-variables
   L-primaryExpr* = "(:PrimaryExpr" [1-9]? "*:)" {prefer}
   L-primaryExpr+ = "(:PrimaryExpr" [1-9]? "+:)" {prefer}
   
+  // ### Arguments
+                   
+  
+  L-arguments = "(:Arguments" [1-9]? ":)" {prefer}
+  L-arguments? = "(:Arguments" [1-9]? "?:)" {prefer}
+  L-arguments* = "(:Arguments" [1-9]? "*:)" {prefer}
+  L-arguments+ = "(:Arguments" [1-9]? "+:)" {prefer}
+  L-expressionList = "(:ExpressionList" [1-9]? ":)" {prefer}
+  L-expressionList? = "(:ExpressionList" [1-9]? "?:)" {prefer}
+  L-expressionList* = "(:ExpressionList" [1-9]? "*:)" {prefer}
+  L-expressionList+ = "(:ExpressionList" [1-9]? "+:)" {prefer}
+  
   // ## Operators
                    
   
@@ -335,6 +391,10 @@ variables // Meta-variables
   
   
   // ## Primary expressions
+                   
+  
+  
+  // ### Arguments
                    
   
   

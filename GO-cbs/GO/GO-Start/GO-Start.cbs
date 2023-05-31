@@ -10,35 +10,86 @@ Language "Golang"
 ]
 
 Syntax
-  START : start ::= statement
+  START : start ::= sourceFile
 
 Semantics
-  start[[START:start]] : =>null-type
+  start[[START:start]] : =>integers
 
 Rule
-  start[[Statement]]
-    = initialise-binding
+  start[[SourceFile]]
+    = initialise-giving
+      initialise-binding
       initialise-storing
-      finalise-failing
       scope(
-        accumulate(
+        {
           // Types:
-          bind("any", alloc-init(types, values)),
-          bind("bool", alloc-init(types, bools)),
-          bind("int", alloc-init(types, int)),
-          bind("int8", alloc-init(types, int8)),
-          bind("int16", alloc-init(types, int16)),
-          bind("int32", alloc-init(types, int32)),
-          bind("int64", alloc-init(types, int64)),
-          bind("uint", alloc-init(types, uint)),
-          bind("uint8", alloc-init(types, uint8)),
-          bind("uint16", alloc-init(types, uint16)),
-          bind("uint32", alloc-init(types, uint32)),
-          bind("uint64", alloc-init(types, uint64)),
+          "any"    |-> values,
+          "bool"   |-> bools,
+          "int"    |-> int,
+          "int8"   |-> int8,
+          "int16"  |-> int16,
+          "int32"  |-> int32,
+          "int64"  |-> int64,
+          "uint"   |-> uint,
+          "uint8"  |-> uint8,
+          "uint16" |-> uint16,
+          "uint32" |-> uint32,
+          "uint64" |-> uint64,
           // Constants:
-          bind("true", alloc-init(bools, true)),
-          bind("false", alloc-init(bools, false))
+          "true"   |-> true,
+          "false"  |-> false,
           // Zero value:
-//          bind("nil", alloc-init(null-type, null))
-        ),
-        execute[[Statement]])
+          "nil"    |-> null,
+          "print"  |-> function closure print(tuple-elements given)
+        },
+        handle-abrupt(sequential(execute-sourcefile[[SourceFile]], "succes"), "failure"))
+
+Syntax
+  SourceFile        : sourceFile        ::= 'package' identifier ';' topLevelDeclSemic*
+  TopLevelDeclSemic : topLevelDeclSemic ::= topLevelDecl ';'
+
+Semantics
+  execute-sourcefile[[_:sourceFile]] : =>null-value
+
+Rule
+  execute-sourcefile[['package' 'main' ';' TopLevelDeclSemic*]]
+    = scope(
+        allocate-topleveldeclsemic[[TopLevelDeclSemic*]],
+        sequential(
+          initialise-topleveldeclsemic[[TopLevelDeclSemic*]],
+          apply(assigned bound "main", tuple())))
+
+Otherwise
+  execute-sourcefile[['package' Identifier ';' TopLevelDeclSemic*]]
+    = scope(
+        allocate-topleveldeclsemic[[TopLevelDeclSemic*]],
+        initialise-topleveldeclsemic[[TopLevelDeclSemic*]])
+
+Semantics
+  allocate-topleveldeclsemic[[_:topLevelDeclSemic*]] : =>envs
+
+Rule
+  allocate-topleveldeclsemic[[ ]] = map( )
+
+Rule
+  allocate-topleveldeclsemic[[TopLevelDecl ';' TopLevelDeclSemic*]]
+    = collateral(
+        allocate-topleveldecl[[TopLevelDecl]],
+        allocate-topleveldeclsemic[[TopLevelDeclSemic*]])
+
+Semantics
+  initialise-topleveldeclsemic[[_:topLevelDeclSemic*]] : =>null-value
+
+Rule
+  initialise-topleveldeclsemic[[ ]] = null-value
+
+Rule
+  initialise-topleveldeclsemic[[TopLevelDecl ';' TopLevelDeclSemic*]]
+    = sequential(
+        initialise-topleveldecl[[TopLevelDecl]],
+        initialise-topleveldeclsemic[[TopLevelDeclSemic*]])
+
+
+
+
+

@@ -7,32 +7,59 @@ imports
   pp/GO-pp
 
 imports
-  cbs-gen/GO-1-Lexemes
-  cbs-gen/GO-2-Types
   cbs-gen/GO-A-Disambiguation
+  cbs-gen/GO-1-Lexemes
   cbs-gen/GO-3-Expressions
-  cbs-gen/GO-5-Declarations
   cbs-gen/GO-4-Statements
+  cbs-gen/GO-5-Declarations
+  cbs-gen/GO-2-Types
 
 // Language "Golang"
 
 rules
 to-funcons:
-  |[ start[: (:Statement:) :] ]| ->
-  |[ initialise-binding initialise-storing finalise-failing scope (accumulate (bind ("any", 
-                                                  alloc-init (types, 
-                                                          values)), 
-                                          bind ("bool", 
-                                                  alloc-init (types, 
-                                                          bools)), 
-                                          bind ("int", 
-                                                  alloc-init (types, 
-                                                          int)), 
-                                          bind ("true", 
-                                                  alloc-init (bools, 
-                                                          true)), 
-                                          bind ("false", 
-                                                  alloc-init (bools, 
-                                                          false))), 
-                                  execute[: (:Statement:) :]) ]|
+  |[ start[: (:SourceFile:) :] ]| ->
+  |[ initialise-giving initialise-binding initialise-storing scope ({"any" |-> values, 
+                                   "bool" |-> bools, 
+                                   "int" |-> int, 
+                                   "int8" |-> int8, 
+                                   "int16" |-> int16, 
+                                   "int32" |-> int32, 
+                                   "int64" |-> int64, 
+                                   "uint" |-> uint, 
+                                   "uint8" |-> uint8, 
+                                   "uint16" |-> uint16, 
+                                   "uint32" |-> uint32, 
+                                   "uint64" |-> uint64, 
+                                   "true" |-> true, 
+                                   "false" |-> false, 
+                                   "nil" |-> null, 
+                                   "print" |-> function closure print (tuple-elements given)}, 
+                                  handle-abrupt (sequential (execute-sourcefile[: (:SourceFile:) :], 
+                                                  0), 
+                                          1)) ]|
+to-funcons:
+  |[ execute-sourcefile[: package main;(:TopLevelDeclSemic*:) :] ]| ->
+  |[ scope (allocate-topleveldeclsemic[: (:TopLevelDeclSemic*:) :], 
+             sequential (initialise-topleveldeclsemic[: (:TopLevelDeclSemic*:) :], 
+                     apply (assigned bound "main", 
+                             tuple ()))) ]|
+to-funcons-default:
+  |[ execute-sourcefile[: package(:Identifier:);(:TopLevelDeclSemic*:) :] ]| ->
+  |[ scope (allocate-topleveldeclsemic[: (:TopLevelDeclSemic*:) :], 
+             initialise-topleveldeclsemic[: (:TopLevelDeclSemic*:) :]) ]|
+to-funcons:
+  |[ allocate-topleveldeclsemic[:  :] ]| ->
+  |[ map () ]|
+to-funcons:
+  |[ allocate-topleveldeclsemic[: (:TopLevelDecl:);(:TopLevelDeclSemic*:) :] ]| ->
+  |[ collateral (allocate-topleveldecl[: (:TopLevelDecl:) :], 
+             allocate-topleveldeclsemic[: (:TopLevelDeclSemic*:) :]) ]|
+to-funcons:
+  |[ initialise-topleveldeclsemic[:  :] ]| ->
+  |[ null-value ]|
+to-funcons:
+  |[ initialise-topleveldeclsemic[: (:TopLevelDecl:);(:TopLevelDeclSemic*:) :] ]| ->
+  |[ sequential (initialise-topleveldecl[: (:TopLevelDecl:) :], 
+             initialise-topleveldeclsemic[: (:TopLevelDeclSemic*:) :]) ]|
 

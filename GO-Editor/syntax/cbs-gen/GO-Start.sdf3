@@ -1,12 +1,12 @@
 module GO-Start
             
 imports 
-  GO-1-Lexemes
-  GO-2-Types
   GO-A-Disambiguation
+  GO-1-Lexemes
   GO-3-Expressions
-  GO-5-Declarations
   GO-4-Statements
+  GO-5-Declarations
+  GO-2-Types
   Funcons
 
 // Language "Golang"
@@ -16,13 +16,25 @@ lexical syntax // Language
 syntax // Language
   
 context-free syntax // Language
-  L-start.L-start--L-statement =
-    L-statement
+  L-start.L-start--L-sourceFile =
+    L-sourceFile
+  
+  L-sourceFile.L-sourceFile--R-package-L-identifier-SEMI-L-topLevelDeclSemic-S =
+    "package" L-identifier ";" L-topLevelDeclSemic*
+  
+  L-topLevelDeclSemic.L-topLevelDeclSemic--L-topLevelDecl-SEMI =
+    L-topLevelDecl ";"
   
   
 context-free syntax // Semantics
   FCT.T-start =
     "start" "[:" L-start ":]"
+  FCT.T-execute-sourcefile =
+    "execute-sourcefile" "[:" L-sourceFile ":]"
+  FCT.T-allocate-topleveldeclsemic =
+    "allocate-topleveldeclsemic" "[:" L-topLevelDeclSemic* ":]"
+  FCT.T-initialise-topleveldeclsemic =
+    "initialise-topleveldeclsemic" "[:" L-topLevelDeclSemic* ":]"
   
 context-free syntax // Desugaring
   
@@ -31,6 +43,15 @@ variables // Meta-variables
   L-start? = "(:START" [1-9]? "?:)" {prefer}
   L-start* = "(:START" [1-9]? "*:)" {prefer}
   L-start+ = "(:START" [1-9]? "+:)" {prefer}
+  L-sourceFile = "(:SourceFile" [1-9]? ":)" {prefer}
+  L-sourceFile? = "(:SourceFile" [1-9]? "?:)" {prefer}
+  L-sourceFile* = "(:SourceFile" [1-9]? "*:)" {prefer}
+  L-sourceFile+ = "(:SourceFile" [1-9]? "+:)" {prefer}
+  L-topLevelDeclSemic* = "..." [1-9]? {prefer}
+  L-topLevelDeclSemic = "(:TopLevelDeclSemic" [1-9]? ":)" {prefer}
+  L-topLevelDeclSemic? = "(:TopLevelDeclSemic" [1-9]? "?:)" {prefer}
+  L-topLevelDeclSemic* = "(:TopLevelDeclSemic" [1-9]? "*:)" {prefer}
+  L-topLevelDeclSemic+ = "(:TopLevelDeclSemic" [1-9]? "+:)" {prefer}
   
 // SDF comments
   

@@ -7,7 +7,7 @@ imports
   pp/GO-pp
 
 imports
-  
+  cbs-gen/GO-1-Lexemes
 
 // Language "Golang"
 
@@ -16,4 +16,37 @@ rules
 // #2 Types
               
 
+to-funcons:
+  |[ typeof-gotype[: ((:GoType:)) :] ]| ->
+  |[ typeof-gotype[: (:GoType:) :] ]|
+to-funcons:
+  |[ typeof-gotype[: (:Identifier:) :] ]| ->
+  |[ sequential (check-true is-in-type (bound identifier[: (:Identifier:) :], 
+                            types), 
+             bound identifier[: (:Identifier:) :]) ]|
+
+// ## Function Types
+                 
+
+to-funcons:
+  |[ parameters-patterns[: () :] ]| ->
+  |[ () ]|
+to-funcons:
+  |[ parameters-patterns[: ((:ParameterList:)) :] ]| ->
+  |[ parameterlist-patterns[: (:ParameterList:) :] ]|
+to-funcons:
+  |[ parameters-patterns[: ((:ParameterList:),) :] ]| ->
+  |[ parameterlist-patterns[: (:ParameterList:) :] ]|
+to-funcons:
+  |[ parameterlist-patterns[: (:ParameterDecl:) :] ]| ->
+  |[ parameterdecl-patterns[: (:ParameterDecl:) :] ]|
+to-funcons:
+  |[ parameterlist-patterns[: (:ParameterDecl:),(:ParameterList:) :] ]| ->
+  |[ parameterlist-patterns[: (:ParameterDecl:) :], 
+     parameterlist-patterns[: (:ParameterList:) :] ]|
+to-funcons:
+  |[ parameterdecl-patterns[: (:Identifier:)(:GoType:) :] ]| ->
+  |[ pattern closure bind (identifier[: (:Identifier:) :], 
+                           alloc-init (values, 
+                                   given)) ]|
 

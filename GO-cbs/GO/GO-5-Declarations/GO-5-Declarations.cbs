@@ -3,15 +3,35 @@ Language "Golang"
 #5 Declarations
 
 Syntax
-  declaration
+  Declaration : declaration
     ::= varDecl
 //      | constDecl  // TODO: const
 //      | typeDecl  // TODO: types
 
-  topLevelDecl
+  TopLevelDecl : topLevelDecl
     ::= declaration
-//      | functionDecl
+      | functionDecl
 //      | methodDecl  // TODO: methods
+
+Semantics
+  allocate-declaration[[_:declaration]] : =>envs
+
+Semantics
+  allocate-topleveldecl[[_:topLevelDecl]] : =>envs
+
+Rule
+  allocate-topleveldecl[[Declaration]]
+    = allocate-declaration[[Declaration]]
+
+Semantics
+  initialise-declaration[[_:declaration]] : =>envs
+
+Semantics
+  initialise-topleveldecl[[_:topLevelDecl]] : =>envs
+
+Rule
+  initialise-topleveldecl[[Declaration]]
+    = initialise-declaration[[Declaration]]
 
 
 ## Constant declarations
@@ -31,26 +51,80 @@ Syntax  // TODO: multiple assignment, multiple declares, types
   VarDecl : varDecl ::= 'var' varSpec
             varSpec ::= identifier '=' expression
 
-Semantics
-  allocate-vars[[_:varDecl]] : =>envs
+Rule
+  execute-statement[[VarDecl]] = initialise-vardecl[[VarDecl]]
 
 Rule
-  allocate-vars[['var' Identifier '=' Expression]]
-    = bind(identifier[[Identifier]], alloc(values))
-
-Semantics
-  initialise-vars[[_:varDecl]] : =>envs
+  allocate-declaration[[VarDecl]] = allocate-vardecl[[VarDecl]]
 
 Rule
-  initialise-vars[['var' Identifier '=' Expression]]
-    = assign(bound(identifier[[Identifier]]), evaluate[[Expression]])
+  initialise-declaration[[VarDecl]] = allocate-vardecl[[VarDecl]]
+
+Semantics
+  allocate-vardecl[[_:varDecl]] : =>envs
+
+Rule
+  allocate-vardecl[['var' Identifier '=' Expression]]
+    = bind(identifier[[Identifier]], alloc values)
+
+Semantics
+  initialise-vardecl[[_:varDecl]] : =>null-value
+
+Rule
+  initialise-vardecl[['var' Identifier '=' Expression]]
+    = assign(
+        bound identifier[[Identifier]],
+        evaluate-expression[[Expression]])
 
 
 ## Function declarations
 
-//Syntax
-//  FunctionDecl : functionDecl
-//    ::= 'func' identifier signature block
+Syntax
+  FunctionDecl : functionDecl
+    ::= 'func' identifier parameters block
+      | 'func' identifier parameters goType block
+
+Rule
+  allocate-topleveldecl[[FunctionDecl]]
+    = allocate-functiondecl[[FunctionDecl]]
+
+Rule
+  initialise-topleveldecl[[FunctionDecl]]
+    = initialise-functiondecl[[FunctionDecl]]
+
+Semantics
+  allocate-functiondecl[[_:functionDecl]] : =>envs
+
+Rule
+  allocate-functiondecl[['func' Identifier Parameters Block]]
+    = bind(identifier[[Identifier]], alloc functions(tuples(values*), null-type))
+
+Rule
+  allocate-functiondecl[['func' Identifier Parameters GoType Block]]
+    = bind(identifier[[Identifier]], alloc functions(tuples(values*), typeof-gotype[[GoType]]))
+
+Semantics
+  initialise-functiondecl[[_:functionDecl]] : =>null-value
+
+Rule
+  initialise-functiondecl[['func' Identifier Parameters '{' StatementSemic* '}']]
+    = assign(
+        bound identifier[[Identifier]],
+        function closure scope(
+          collateral(
+            match(given, tuple(parameters-patterns[[Parameters]])),
+            allocate-statementsemic[[StatementSemic*]]),
+          handle-return execute-statementsemic[[StatementSemic*]]))
+
+Rule
+  initialise-functiondecl[['func' Identifier Parameters GoType '{' StatementSemic* '}']]
+    = assign(
+        bound identifier[[Identifier]],
+        function closure scope(
+          collateral(
+            match(given, tuple(parameters-patterns[[Parameters]])),
+            allocate-statementsemic[[StatementSemic*]]),
+          handle-return execute-statementsemic[[StatementSemic*]]))
 
 
 

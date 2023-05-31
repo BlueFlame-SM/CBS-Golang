@@ -12,7 +12,7 @@ types = typeEnvFromList
     []
 
 funcons = libFromList
-    [("int8",NullaryFuncon stepInt8),("int16",NullaryFuncon stepInt16),("int32",NullaryFuncon stepInt32),("int",NullaryFuncon stepInt32),("int64",NullaryFuncon stepInt64),("uint8",NullaryFuncon stepUint8),("uint16",NullaryFuncon stepUint16),("uint32",NullaryFuncon stepUint32),("uint",NullaryFuncon stepUint32),("uint64",NullaryFuncon stepUint64),("variable-type",StrictFuncon stepVariable_type),("is-subtype",StrictFuncon stepIs_subtype)]
+    [("int8",NullaryFuncon stepInt8),("int16",NullaryFuncon stepInt16),("int32",NullaryFuncon stepInt32),("int",NullaryFuncon stepInt32),("int64",NullaryFuncon stepInt64),("uint8",NullaryFuncon stepUint8),("uint16",NullaryFuncon stepUint16),("uint32",NullaryFuncon stepUint32),("uint",NullaryFuncon stepUint32),("uint64",NullaryFuncon stepUint64),("go-types",NullaryFuncon stepGo_types),("variable-type",StrictFuncon stepVariable_type)]
 
 int8_ = FName "int8"
 stepInt8 = evalRules [rewrite1] []
@@ -64,6 +64,12 @@ stepUint64 = evalRules [rewrite1] []
             let env = emptyEnv
             rewriteTermTo (TApp "bounded-ints" [TFuncon (FValue (Nat 0)),TApp "int-add" [TApp "int-pow" [TFuncon (FValue (Nat 2)),TFuncon (FValue (Nat 64))],TFuncon (FValue (Nat (-1)))]]) env
 
+go_types_ = FName "go-types"
+stepGo_types = evalRules [rewrite1] []
+    where rewrite1 = do
+            let env = emptyEnv
+            rewriteTermTo (TSet [TName "int8",TName "int16",TName "int32",TName "int64",TName "uint8",TName "uint16",TName "uint32",TName "uint64",TName "bools"]) env
+
 variable_type_ fargs = FApp "variable-type" (fargs)
 stepVariable_type fargs =
     evalRules [rewrite1] []
@@ -71,11 +77,3 @@ stepVariable_type fargs =
             let env = emptyEnv
             env <- vsMatch fargs [PADT "variable" [VPAnnotated VPWildCard (TName "locations"),VPAnnotated (VPMetaVar "T") (TName "types")]] env
             rewriteTermTo (TVar "T") env
-
-is_subtype_ fargs = FApp "is-subtype" (fargs)
-stepIs_subtype fargs =
-    evalRules [rewrite1] []
-    where rewrite1 = do
-            let env = emptyEnv
-            env <- vsMatch fargs [VPAnnotated (VPMetaVar "T1") (TName "types"),VPAnnotated (VPMetaVar "T2") (TName "types")] env
-            rewriteTermTo (TName "true") env
