@@ -134,10 +134,12 @@ context-free syntax // Language
   L-arguments.L-arguments--LPAREN-L-expressionList-COMMA-RPAREN =
     "(" L-expressionList "," ")"
   
-  L-expressionList.L-expressionList--L-expression =
-    L-expression
-  L-expressionList.L-expressionList--L-expression-COMMA-L-expressionList =
-    L-expression "," L-expressionList
+  L-expressionList.L-expressionList--L-expression-C-COMMA-L-expressionList-D-Q =
+    L-expression L-COMMA-L-expressionList?
+  
+  L-COMMA-L-expressionList.L-COMMA-L-expressionList--COMMA-L-expressionList =
+    "," L-expressionList
+  
   
   
   // ## Operators
@@ -215,22 +217,18 @@ context-free syntax // Semantics
   // ## Operands
                    
   
-  FCT.T-evaluate-operand =
-    "evaluate-operand" "[:" L-operand ":]"
   
   // ## Primary expressions
                    
   
-  FCT.T-evaluate-primaryexpr =
-    "evaluate-primaryexpr" "[:" L-primaryExpr ":]"
   
   // ### Arguments
                    
   
-  FCT.T-evaluate-arguments =
-    "evaluate-arguments" "[:" L-arguments ":]"
-  FCT.T-evaluate-expressionlist =
-    "evaluate-expressionlist" "[:" L-expressionList ":]"
+  FCT.T-tuple-arguments =
+    "tuple-arguments" "[:" L-arguments ":]"
+  FCT.T-evaluate-expressions =
+    "evaluate-expressions" "[:" L-expressionList ":]"
   
   // ## Operators
                    
@@ -239,8 +237,8 @@ context-free syntax // Semantics
   // ### Binary operators
                    
   
-  FCT.T-evaluate-expression =
-    "evaluate-expression" "[:" L-expression ":]"
+  FCT.T-evaluate =
+    "evaluate" "[:" L-expression ":]"
   
   // #### Boolean expressions
                    
@@ -261,8 +259,6 @@ context-free syntax // Semantics
   // ### Unary expressions
                    
   
-  FCT.T-evaluate-unaryexpr =
-    "evaluate-unaryexpr" "[:" L-unaryExpr ":]"
   
 context-free syntax // Desugaring
   
@@ -281,6 +277,7 @@ context-free syntax // Desugaring
   // ### Arguments
                    
   
+  Term.ToTerm = "[:" L-arguments  ":]" ":" "arguments"
   
   // ## Operators
                    

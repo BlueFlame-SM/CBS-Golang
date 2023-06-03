@@ -14,24 +14,10 @@ Syntax
 //      | methodDecl  // TODO: methods
 
 Semantics
-  allocate-declaration[[_:declaration]] : =>envs
+  allocate[[_:topLevelDecl]] : =>environments
 
 Semantics
-  allocate-topleveldecl[[_:topLevelDecl]] : =>envs
-
-Rule
-  allocate-topleveldecl[[Declaration]]
-    = allocate-declaration[[Declaration]]
-
-Semantics
-  initialise-declaration[[_:declaration]] : =>envs
-
-Semantics
-  initialise-topleveldecl[[_:topLevelDecl]] : =>envs
-
-Rule
-  initialise-topleveldecl[[Declaration]]
-    = initialise-declaration[[Declaration]]
+  initialise[[_:topLevelDecl]] : =>environments
 
 
 ## Constant declarations
@@ -52,29 +38,16 @@ Syntax  // TODO: multiple assignment, multiple declares, types
             varSpec ::= identifier '=' expression
 
 Rule
-  execute-statement[[VarDecl]] = initialise-vardecl[[VarDecl]]
+  execute[['var' Identifier '=' Expression]]
+    = initialise[['var' Identifier '=' Expression]]
 
 Rule
-  allocate-declaration[[VarDecl]] = allocate-vardecl[[VarDecl]]
+  allocate[['var' Identifier '=' Expression]]
+    = bind(id[[Identifier]], allocate-variable values)
 
 Rule
-  initialise-declaration[[VarDecl]] = allocate-vardecl[[VarDecl]]
-
-Semantics
-  allocate-vardecl[[_:varDecl]] : =>envs
-
-Rule
-  allocate-vardecl[['var' Identifier '=' Expression]]
-    = bind(identifier[[Identifier]], alloc values)
-
-Semantics
-  initialise-vardecl[[_:varDecl]] : =>null-value
-
-Rule
-  initialise-vardecl[['var' Identifier '=' Expression]]
-    = assign(
-        bound identifier[[Identifier]],
-        evaluate-expression[[Expression]])
+  initialise[['var' Identifier '=' Expression]]
+    = assign[[Identifier '=' Expression]]
 
 
 ## Function declarations
@@ -82,49 +55,29 @@ Rule
 Syntax
   FunctionDecl : functionDecl
     ::= 'func' identifier parameters block
-      | 'func' identifier parameters goType block
+      | 'func' identifier parameters type block
 
 Rule
-  allocate-topleveldecl[[FunctionDecl]]
-    = allocate-functiondecl[[FunctionDecl]]
+  allocate[['func' Identifier Parameters Block]]
+    = bind(id[[Identifier]], allocate-variable functions(tuples(values*), null-type))
 
 Rule
-  initialise-topleveldecl[[FunctionDecl]]
-    = initialise-functiondecl[[FunctionDecl]]
-
-Semantics
-  allocate-functiondecl[[_:functionDecl]] : =>envs
+  allocate[['func' Identifier Parameters T Block]]
+    = bind(id[[Identifier]], allocate-variable functions(tuples(values*), type[[T]]))
 
 Rule
-  allocate-functiondecl[['func' Identifier Parameters Block]]
-    = bind(identifier[[Identifier]], alloc functions(tuples(values*), null-type))
-
-Rule
-  allocate-functiondecl[['func' Identifier Parameters GoType Block]]
-    = bind(identifier[[Identifier]], alloc functions(tuples(values*), typeof-gotype[[GoType]]))
-
-Semantics
-  initialise-functiondecl[[_:functionDecl]] : =>null-value
-
-Rule
-  initialise-functiondecl[['func' Identifier Parameters '{' StatementSemic* '}']]
+  initialise[['func' Identifier Parameters '{' StatementSemic* '}']]
     = assign(
-        bound identifier[[Identifier]],
+        bound id[[Identifier]],
         function closure scope(
           collateral(
-            match(given, tuple(parameters-patterns[[Parameters]])),
-            allocate-statementsemic[[StatementSemic*]]),
-          handle-return execute-statementsemic[[StatementSemic*]]))
+            match(given, tuple(bind-parameters[[Parameters]])),
+            allocate-statements[[StatementSemic*]]),
+          handle-return sequential(execute-statements[[StatementSemic*]])))
 
 Rule
-  initialise-functiondecl[['func' Identifier Parameters GoType '{' StatementSemic* '}']]
-    = assign(
-        bound identifier[[Identifier]],
-        function closure scope(
-          collateral(
-            match(given, tuple(parameters-patterns[[Parameters]])),
-            allocate-statementsemic[[StatementSemic*]]),
-          handle-return execute-statementsemic[[StatementSemic*]]))
+  initialise[['func' Identifier Parameters T '{' StatementSemic* '}']]
+    = initialise[['func' Identifier Parameters '{' StatementSemic* '}']]
 
 
 

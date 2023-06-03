@@ -19,16 +19,16 @@ Alias uint = uint32
 
 
 Syntax
-  GoType : goType
-    ::= '(' goType ')'
+  T : type
+    ::= '(' type ')'
 //      | arrayType  // TODO: arrays
 //      | structType  // TODO: structs
-//      | pointerType  // TODO: pointers
+//      | pointerTypegoType  // TODO: pointers
 //      | functionType  // TODO: functions
 //      | interfaceType  // TODO: interfaces
 //      | sliceType  // TODO: slices
 //      | mapType  // TODO: maps
-//      | channelType // TODO: channels
+      | channelType // TODO: channels
       | identifier  // TODO: typeargs
 //      | qualifiedIdent  // TODO: typeargs
 
@@ -37,16 +37,25 @@ Syntax
 //  typeList ::= type (',' type)*
 
 Semantics
-  typeof-gotype[[_:goType]] : =>types
+  type[[_:type]] : =>types
 
 Rule
-  typeof-gotype[['(' GoType ')']] = typeof-gotype[[GoType]]
+  type[['(' T ')']] = type[[T]]
 
 Rule
-  typeof-gotype[[Identifier]]
+  type[[Identifier]]
     = sequential(
-        check-true is-in-type(bound identifier[[Identifier]], types),
-        bound identifier[[Identifier]])
+        check-true is-in-type(bound id[[Identifier]], types),
+        bound id[[Identifier]])
+
+
+## Channel Types
+
+Syntax
+  channelType ::= 'chan' type
+
+Rule
+  type[['chan' T]] = channels(type[[T]])
 
 
 ## Function Types
@@ -54,48 +63,42 @@ Rule
 Syntax
   FunctionType  : functionType  ::= 'func' signature
   Signature     : signature     ::= parameters result?
-  Result        : result        ::= goType  // TODO: add parameters (requires multiple assignment / tuples)
-  Parameters    : parameters
-    ::= '(' ')'
-      | '(' parameterList ')'
-      | '(' parameterList ',' ')'
-  ParameterList : parameterList
-    ::= parameterDecl
-      | parameterDecl ',' parameterList
-  ParameterDecl : parameterDecl ::= identifier goType  // TODO: identifierList
+  Result        : result        ::= type  // TODO: add parameters (requires multiple assignment / tuples)
+  Parameters    : parameters    ::= '(' (parameterList ','?)? ')'
+  ParameterList : parameterList ::= parameterDecl (',' parameterList)?
+  ParameterDecl : parameterDecl ::= identifier type  // TODO: identifierList
+
+
+### Binding
 
 Semantics
-  parameters-patterns[[_:parameters]] : =>patterns*
+  bind-parameters[[_:parameters]] : =>patterns*
 
 Rule
-  parameters-patterns[['(' ')']] = ( )
+  bind-parameters[['(' ')']] = ( )
 
 Rule
-  parameters-patterns[['(' ParameterList ')']] = parameterlist-patterns[[ParameterList]]
+  bind-parameters[['(' ParameterList ')']] = bind-parameterlist[[ParameterList]]
 
 Rule
-  parameters-patterns[['(' ParameterList ',' ')']] = parameterlist-patterns[[ParameterList]]
+  [['(' ParameterList ',' ')']] : parameters = [['(' ParameterList ')']]
 
 Semantics
-  parameterlist-patterns[[_:parameterList]] : =>patterns*
+  bind-parameterlist[[_:parameterList]] : =>patterns*
 
 Rule
-  parameterlist-patterns[[ParameterDecl]]
-    = parameterdecl-patterns[[ParameterDecl]]
+  bind-parameterlist[[ParameterDecl]] = bind-parameterdecl[[ParameterDecl]]
 
 Rule
-  parameterlist-patterns[[ParameterDecl ',' ParameterList]]
-    = parameterlist-patterns[[ParameterDecl]], parameterlist-patterns[[ParameterList]]
+  bind-parameterlist[[ParameterDecl ',' ParameterList]]
+    = bind-parameterdecl[[ParameterDecl]], bind-parameterlist[[ParameterList]]
 
 Semantics
-  parameterdecl-patterns[[_:parameterDecl]] : =>patterns*
+  bind-parameterdecl[[_:parameterDecl]] : =>pattern
 
 Rule
-  parameterdecl-patterns[[Identifier GoType]]
-    = pattern closure bind(
-        identifier[[Identifier]],
-        alloc-init(values, given))
-
+  bind-parameterdecl[[Identifier T]]
+    = pattern closure bind(id[[Identifier]], alloc-init(type[[T]], given))
 
 
 

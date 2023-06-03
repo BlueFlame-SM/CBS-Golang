@@ -1,6 +1,7 @@
 module GO-2-Types
             
 imports 
+  GO-B-Funcons
   GO-1-Lexemes
   Funcons
 
@@ -12,7 +13,20 @@ lexical syntax // Language
                 
   
   
+  // ## Integer Types
+                   
+  
+  
+  // ## Channel Types
+                   
+  
+  
   // ## Function Types
+                   
+  
+  LEX-COMMA = ","
+  
+  // ### Binding
                    
   
   
@@ -22,7 +36,19 @@ syntax // Language
                 
   
   
+  // ## Integer Types
+                   
+  
+  
+  // ## Channel Types
+                   
+  
+  
   // ## Function Types
+                   
+  
+  
+  // ### Binding
                    
   
   
@@ -31,10 +57,23 @@ context-free syntax // Language
   // #2 Types
                 
   
-  L-goType.L-goType--LPAREN-L-goType-RPAREN =
-    "(" L-goType ")"
-  L-goType.L-goType--L-identifier =
+  
+  // ## Integer Types
+                   
+  
+  L-type.L-type--LPAREN-L-type-RPAREN =
+    "(" L-type ")"
+  L-type.L-type--L-channelType =
+    L-channelType
+  L-type.L-type--L-identifier =
     L-identifier
+  
+  
+  // ## Channel Types
+                   
+  
+  L-channelType.L-channelType--R-chan-L-type =
+    "chan" L-type
   
   
   // ## Function Types
@@ -46,23 +85,29 @@ context-free syntax // Language
   L-signature.L-signature--L-parameters-L-result-Q =
     L-parameters L-result?
   
-  L-result.L-result--L-goType =
-    L-goType
+  L-result.L-result--L-type =
+    L-type
   
-  L-parameters.L-parameters--LPAREN-RPAREN =
-    "(" ")"
-  L-parameters.L-parameters--LPAREN-L-parameterList-RPAREN =
-    "(" L-parameterList ")"
-  L-parameters.L-parameters--LPAREN-L-parameterList-COMMA-RPAREN =
-    "(" L-parameterList "," ")"
+  L-parameters.L-parameters--LPAREN-C-L-parameterList-COMMA-Q-D-Q-RPAREN =
+    "(" L-L-parameterList-COMMA-Q? ")"
   
-  L-parameterList.L-parameterList--L-parameterDecl =
-    L-parameterDecl
-  L-parameterList.L-parameterList--L-parameterDecl-COMMA-L-parameterList =
-    L-parameterDecl "," L-parameterList
+  L-L-parameterList-COMMA-Q.L-L-parameterList-COMMA-Q--L-parameterList-COMMA-Q =
+    L-parameterList LEX-COMMA?
   
-  L-parameterDecl.L-parameterDecl--L-identifier-L-goType =
-    L-identifier L-goType
+  
+  L-parameterList.L-parameterList--L-parameterDecl-C-COMMA-L-parameterList-D-Q =
+    L-parameterDecl L-COMMA-L-parameterList?
+  
+  L-COMMA-L-parameterList.L-COMMA-L-parameterList--COMMA-L-parameterList =
+    "," L-parameterList
+  
+  
+  L-parameterDecl.L-parameterDecl--L-identifier-L-type =
+    L-identifier L-type
+  
+  
+  // ### Binding
+                   
   
   
 context-free syntax // Semantics
@@ -70,18 +115,30 @@ context-free syntax // Semantics
   // #2 Types
                 
   
-  FCT.T-typeof-gotype =
-    "typeof-gotype" "[:" L-goType ":]"
+  
+  // ## Integer Types
+                   
+  
+  FCT.T-type =
+    "type" "[:" L-type ":]"
+  
+  // ## Channel Types
+                   
+  
   
   // ## Function Types
                    
   
-  FCT.T-parameters-patterns =
-    "parameters-patterns" "[:" L-parameters ":]"
-  FCT.T-parameterlist-patterns =
-    "parameterlist-patterns" "[:" L-parameterList ":]"
-  FCT.T-parameterdecl-patterns =
-    "parameterdecl-patterns" "[:" L-parameterDecl ":]"
+  
+  // ### Binding
+                   
+  
+  FCT.T-bind-parameters =
+    "bind-parameters" "[:" L-parameters ":]"
+  FCT.T-bind-parameterlist =
+    "bind-parameterlist" "[:" L-parameterList ":]"
+  FCT.T-bind-parameterdecl =
+    "bind-parameterdecl" "[:" L-parameterDecl ":]"
   
 context-free syntax // Desugaring
   
@@ -89,19 +146,40 @@ context-free syntax // Desugaring
                 
   
   
+  // ## Integer Types
+                   
+  
+  
+  // ## Channel Types
+                   
+  
+  
   // ## Function Types
                    
   
+  
+  // ### Binding
+                   
+  
+  Term.ToTerm = "[:" L-parameters  ":]" ":" "parameters"
   
 variables // Meta-variables
   
   // #2 Types
                 
   
-  L-goType = "(:GoType" [1-9]? ":)" {prefer}
-  L-goType? = "(:GoType" [1-9]? "?:)" {prefer}
-  L-goType* = "(:GoType" [1-9]? "*:)" {prefer}
-  L-goType+ = "(:GoType" [1-9]? "+:)" {prefer}
+  
+  // ## Integer Types
+                   
+  
+  L-type = "(:T" [1-9]? ":)" {prefer}
+  L-type? = "(:T" [1-9]? "?:)" {prefer}
+  L-type* = "(:T" [1-9]? "*:)" {prefer}
+  L-type+ = "(:T" [1-9]? "+:)" {prefer}
+  
+  // ## Channel Types
+                   
+  
   
   // ## Function Types
                    
@@ -131,13 +209,29 @@ variables // Meta-variables
   L-parameterDecl* = "(:ParameterDecl" [1-9]? "*:)" {prefer}
   L-parameterDecl+ = "(:ParameterDecl" [1-9]? "+:)" {prefer}
   
+  // ### Binding
+                   
+  
+  
 // SDF comments
   
   // #2 Types
                 
   
   
+  // ## Integer Types
+                   
+  
+  
+  // ## Channel Types
+                   
+  
+  
   // ## Function Types
+                   
+  
+  
+  // ### Binding
                    
   
   

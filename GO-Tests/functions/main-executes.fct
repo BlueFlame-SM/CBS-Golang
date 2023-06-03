@@ -18,49 +18,40 @@ initialise-giving initialise-binding initialise-storing scope
                   (tuple-elements given)},
    handle-abrupt
      (sequential
-        (scope
+        (multithread scope
            (collateral
               (bind
                  ("main",
-                  alloc functions
+                  allocate-variable functions
                     (tuples
                        ((values)*),
                      null-type)),
                map
                  ( )),
             sequential
-              (sequential
-                 (assign
-                    (bound "main",
-                     function closure scope
-                       (collateral
-                          (match
-                             (given,
-                              tuple
-                                ( )),
-                           map
+              (assign
+                 (bound "main",
+                  function closure scope
+                    (collateral
+                       (match
+                          (given,
+                           tuple
                              ( )),
-                        handle-return sequential
-                          (apply
-                             (sequential
-                                (check-true not is-in-type
-                                   (bound "print",
-                                    types),
-                                 current-value bound
-                                   "print"),
-                              tuple
-                                (sequential
-                                   (check-true not is-in-type
-                                      (bound "int",
-                                       types),
-                                    current-value bound
-                                      "int"))),
-                           null-value))),
-                  null-value),
-               apply
-                 (assigned bound
+                        map
+                          ( )),
+                     handle-return sequential
+                       (apply
+                          (current-value bound
+                             "print",
+                           tuple l-to-r
+                             (current-value bound
+                                "true")),
+                        null-value))),
+               null-value,
+               effect apply
+                 (current-value bound
                     "main",
                   tuple
                     ( )))),
-         0),
-      1))
+         "succes"),
+      "failure"))

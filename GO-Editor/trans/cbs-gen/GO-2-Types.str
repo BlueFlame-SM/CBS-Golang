@@ -7,6 +7,7 @@ imports
   pp/GO-pp
 
 imports
+  cbs-gen/GO-B-Funcons
   cbs-gen/GO-1-Lexemes
 
 // Language "Golang"
@@ -16,37 +17,52 @@ rules
 // #2 Types
               
 
+
+// ## Integer Types
+                 
+
 to-funcons:
-  |[ typeof-gotype[: ((:GoType:)) :] ]| ->
-  |[ typeof-gotype[: (:GoType:) :] ]|
+  |[ type[: ((:T:)) :] ]| ->
+  |[ type[: (:T:) :] ]|
 to-funcons:
-  |[ typeof-gotype[: (:Identifier:) :] ]| ->
-  |[ sequential (check-true is-in-type (bound identifier[: (:Identifier:) :], 
+  |[ type[: (:Identifier:) :] ]| ->
+  |[ sequential (check-true is-in-type (bound id[: (:Identifier:) :], 
                             types), 
-             bound identifier[: (:Identifier:) :]) ]|
+             bound id[: (:Identifier:) :]) ]|
+
+// ## Channel Types
+                 
+
+to-funcons:
+  |[ type[: chan(:T:) :] ]| ->
+  |[ channels (type[: (:T:) :]) ]|
 
 // ## Function Types
                  
 
+
+// ### Binding
+                 
+
 to-funcons:
-  |[ parameters-patterns[: () :] ]| ->
+  |[ bind-parameters[: () :] ]| ->
   |[ () ]|
 to-funcons:
-  |[ parameters-patterns[: ((:ParameterList:)) :] ]| ->
-  |[ parameterlist-patterns[: (:ParameterList:) :] ]|
+  |[ bind-parameters[: ((:ParameterList:)) :] ]| ->
+  |[ bind-parameterlist[: (:ParameterList:) :] ]|
+to-desugared:
+  [: ((:ParameterList:),) :] : parameters ->
+  [: ((:ParameterList:)) :] : parameters
 to-funcons:
-  |[ parameters-patterns[: ((:ParameterList:),) :] ]| ->
-  |[ parameterlist-patterns[: (:ParameterList:) :] ]|
+  |[ bind-parameterlist[: (:ParameterDecl:) :] ]| ->
+  |[ bind-parameterdecl[: (:ParameterDecl:) :] ]|
 to-funcons:
-  |[ parameterlist-patterns[: (:ParameterDecl:) :] ]| ->
-  |[ parameterdecl-patterns[: (:ParameterDecl:) :] ]|
+  |[ bind-parameterlist[: (:ParameterDecl:),(:ParameterList:) :] ]| ->
+  |[ bind-parameterdecl[: (:ParameterDecl:) :], 
+     bind-parameterlist[: (:ParameterList:) :] ]|
 to-funcons:
-  |[ parameterlist-patterns[: (:ParameterDecl:),(:ParameterList:) :] ]| ->
-  |[ parameterlist-patterns[: (:ParameterDecl:) :], 
-     parameterlist-patterns[: (:ParameterList:) :] ]|
-to-funcons:
-  |[ parameterdecl-patterns[: (:Identifier:)(:GoType:) :] ]| ->
-  |[ pattern closure bind (identifier[: (:Identifier:) :], 
-                           alloc-init (values, 
+  |[ bind-parameterdecl[: (:Identifier:)(:T:) :] ]| ->
+  |[ pattern closure bind (id[: (:Identifier:) :], 
+                           alloc-init (type[: (:T:) :], 
                                    given)) ]|
 

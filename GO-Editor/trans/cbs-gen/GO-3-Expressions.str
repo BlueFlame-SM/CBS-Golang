@@ -21,47 +21,45 @@ rules
                  
 
 to-funcons:
-  |[ evaluate-operand[: (:Int-Lit:) :] ]| ->
+  |[ evaluate[: (:Int-Lit:) :] ]| ->
   |[ integer-value[: (:Int-Lit:) :] ]|
 to-funcons:
-  |[ evaluate-operand[: (:Identifier:) :] ]| ->
-  |[ sequential (check-true not is-in-type (bound identifier[: (:Identifier:) :], 
-                                   types), 
-             current-value bound identifier[: (:Identifier:) :]) ]|
+  |[ evaluate[: (:Identifier:) :] ]| ->
+  |[ current-value bound id[: (:Identifier:) :] ]|
 to-funcons:
-  |[ evaluate-operand[: ((:Expression:)) :] ]| ->
-  |[ evaluate-expression[: (:Expression:) :] ]|
+  |[ evaluate[: ((:Expression:)) :] ]| ->
+  |[ evaluate[: (:Expression:) :] ]|
 
 // ## Primary expressions
                  
 
 to-funcons:
-  |[ evaluate-primaryexpr[: (:Operand:) :] ]| ->
-  |[ evaluate-operand[: (:Operand:) :] ]|
+  |[ evaluate[: (:Operand:) :] ]| ->
+  |[ evaluate[: (:Operand:) :] ]|
 to-funcons:
-  |[ evaluate-primaryexpr[: (:PrimaryExpr:)(:Arguments:) :] ]| ->
-  |[ apply (evaluate-primaryexpr[: (:PrimaryExpr:) :], 
-             evaluate-arguments[: (:Arguments:) :]) ]|
+  |[ evaluate[: (:PrimaryExpr:)(:Arguments:) :] ]| ->
+  |[ apply (evaluate[: (:PrimaryExpr:) :], 
+             tuple-arguments[: (:Arguments:) :]) ]|
 
 // ### Arguments
                  
 
 to-funcons:
-  |[ evaluate-arguments[: () :] ]| ->
+  |[ tuple-arguments[: () :] ]| ->
   |[ tuple () ]|
 to-funcons:
-  |[ evaluate-arguments[: ((:ExpressionList:)) :] ]| ->
-  |[ tuple (evaluate-expressionlist[: (:ExpressionList:) :]) ]|
+  |[ tuple-arguments[: ((:ExpressionList:)) :] ]| ->
+  |[ tuple l-to-r (evaluate-expressions[: (:ExpressionList:) :]) ]|
+to-desugared:
+  [: ((:ExpressionList:),) :] : arguments ->
+  [: ((:ExpressionList:)) :] : arguments
 to-funcons:
-  |[ evaluate-arguments[: ((:ExpressionList:),) :] ]| ->
-  |[ tuple (evaluate-expressionlist[: (:ExpressionList:) :]) ]|
+  |[ evaluate-expressions[: (:Expression:) :] ]| ->
+  |[ evaluate[: (:Expression:) :] ]|
 to-funcons:
-  |[ evaluate-expressionlist[: (:Expression:) :] ]| ->
-  |[ evaluate-expression[: (:Expression:) :] ]|
-to-funcons:
-  |[ evaluate-expressionlist[: (:Expression:),(:ExpressionList:) :] ]| ->
-  |[ evaluate-expression[: (:Expression:) :], 
-     evaluate-expressionlist[: (:ExpressionList:) :] ]|
+  |[ evaluate-expressions[: (:Expression:),(:ExpressionList:) :] ]| ->
+  |[ evaluate[: (:Expression:) :], 
+     evaluate-expressions[: (:ExpressionList:) :] ]|
 
 // ## Operators
                  
@@ -70,93 +68,88 @@ to-funcons:
 // ### Binary operators
                  
 
-to-funcons:
-  |[ evaluate-expression[: (:UnaryExpr:) :] ]| ->
-  |[ evaluate-unaryexpr[: (:UnaryExpr:) :] ]|
 
 // #### Boolean expressions
                  
 
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)||(:Expression2:) :] ]| ->
-  |[ if-else (evaluate-expression[: (:Expression1:) :], 
-             true, 
-             evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)||(:Expression2:) :] ]| ->
+  |[ or (evaluate[: (:Expression1:) :], 
+             evaluate[: (:Expression2:) :]) ]|
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)&&(:Expression2:) :] ]| ->
-  |[ if-else (evaluate-expression[: (:Expression1:) :], 
-             evaluate-expression[: (:Expression2:) :], 
-             false) ]|
+  |[ evaluate[: (:Expression1:)&&(:Expression2:) :] ]| ->
+  |[ and (evaluate[: (:Expression1:) :], 
+             evaluate[: (:Expression2:) :]) ]|
 
 // #### Comparison expressions
                  
 
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)==(:Expression2:) :] ]| ->
-  |[ is-eq l-to-r (evaluate-expression[: (:Expression1:) :], 
-                    evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)==(:Expression2:) :] ]| ->
+  |[ is-eq l-to-r (evaluate[: (:Expression1:) :], 
+                    evaluate[: (:Expression2:) :]) ]|
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)!=(:Expression2:) :] ]| ->
-  |[ not is-eq l-to-r (evaluate-expression[: (:Expression1:) :], 
-                           evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)!=(:Expression2:) :] ]| ->
+  |[ not is-eq l-to-r (evaluate[: (:Expression1:) :], 
+                           evaluate[: (:Expression2:) :]) ]|
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)<(:Expression2:) :] ]| ->
-  |[ is-less l-to-r (evaluate-expression[: (:Expression1:) :], 
-                    evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)<(:Expression2:) :] ]| ->
+  |[ is-less l-to-r (evaluate[: (:Expression1:) :], 
+                    evaluate[: (:Expression2:) :]) ]|
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)<=(:Expression2:) :] ]| ->
-  |[ is-less-or-equal l-to-r (evaluate-expression[: (:Expression1:) :], 
-                    evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)<=(:Expression2:) :] ]| ->
+  |[ is-less-or-equal l-to-r (evaluate[: (:Expression1:) :], 
+                    evaluate[: (:Expression2:) :]) ]|
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)>(:Expression2:) :] ]| ->
-  |[ is-greater l-to-r (evaluate-expression[: (:Expression1:) :], 
-                    evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)>(:Expression2:) :] ]| ->
+  |[ is-greater l-to-r (evaluate[: (:Expression1:) :], 
+                    evaluate[: (:Expression2:) :]) ]|
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)>=(:Expression2:) :] ]| ->
-  |[ is-greater-or-equal l-to-r (evaluate-expression[: (:Expression1:) :], 
-                    evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)>=(:Expression2:) :] ]| ->
+  |[ is-greater-or-equal l-to-r (evaluate[: (:Expression1:) :], 
+                    evaluate[: (:Expression2:) :]) ]|
 
 // #### Additive expressions
                  
 
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)+(:Expression2:) :] ]| ->
-  |[ int-add l-to-r (evaluate-expression[: (:Expression1:) :], 
-                    evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)+(:Expression2:) :] ]| ->
+  |[ int-add l-to-r (evaluate[: (:Expression1:) :], 
+                    evaluate[: (:Expression2:) :]) ]|
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)-(:Expression2:) :] ]| ->
-  |[ integer-subtract l-to-r (evaluate-expression[: (:Expression1:) :], 
-                    evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)-(:Expression2:) :] ]| ->
+  |[ integer-subtract l-to-r (evaluate[: (:Expression1:) :], 
+                    evaluate[: (:Expression2:) :]) ]|
 
 // #### Multiplicative expressions
                  
 
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)*(:Expression2:) :] ]| ->
-  |[ int-mul l-to-r (evaluate-expression[: (:Expression1:) :], 
-                    evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)*(:Expression2:) :] ]| ->
+  |[ int-mul l-to-r (evaluate[: (:Expression1:) :], 
+                    evaluate[: (:Expression2:) :]) ]|
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)/(:Expression2:) :] ]| ->
-  |[ checked int-div l-to-r (evaluate-expression[: (:Expression1:) :], 
-                           evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)/(:Expression2:) :] ]| ->
+  |[ checked int-div l-to-r (evaluate[: (:Expression1:) :], 
+                           evaluate[: (:Expression2:) :]) ]|
 to-funcons:
-  |[ evaluate-expression[: (:Expression1:)%(:Expression2:) :] ]| ->
-  |[ checked int-mod l-to-r (evaluate-expression[: (:Expression1:) :], 
-                           evaluate-expression[: (:Expression2:) :]) ]|
+  |[ evaluate[: (:Expression1:)%(:Expression2:) :] ]| ->
+  |[ checked int-mod l-to-r (evaluate[: (:Expression1:) :], 
+                           evaluate[: (:Expression2:) :]) ]|
 
 // ### Unary expressions
                  
 
 to-funcons:
-  |[ evaluate-unaryexpr[: (:PrimaryExpr:) :] ]| ->
-  |[ evaluate-primaryexpr[: (:PrimaryExpr:) :] ]|
+  |[ evaluate[: (:PrimaryExpr:) :] ]| ->
+  |[ evaluate[: (:PrimaryExpr:) :] ]|
 to-funcons:
-  |[ evaluate-unaryexpr[: +(:UnaryExpr:) :] ]| ->
-  |[ evaluate-unaryexpr[: (:UnaryExpr:) :] ]|
+  |[ evaluate[: +(:UnaryExpr:) :] ]| ->
+  |[ evaluate[: (:UnaryExpr:) :] ]|
 to-funcons:
-  |[ evaluate-unaryexpr[: -(:UnaryExpr:) :] ]| ->
-  |[ integer-negate evaluate-unaryexpr[: (:UnaryExpr:) :] ]|
+  |[ evaluate[: -(:UnaryExpr:) :] ]| ->
+  |[ integer-negate evaluate[: (:UnaryExpr:) :] ]|
 to-funcons:
-  |[ evaluate-unaryexpr[: !(:UnaryExpr:) :] ]| ->
-  |[ not (evaluate-unaryexpr[: (:UnaryExpr:) :]) ]|
+  |[ evaluate[: !(:UnaryExpr:) :] ]| ->
+  |[ not evaluate[: (:UnaryExpr:) :] ]|
 

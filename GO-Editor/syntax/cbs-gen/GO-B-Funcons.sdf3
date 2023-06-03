@@ -1,0 +1,164 @@
+module GO-B-Funcons
+            
+imports 
+  
+  Funcons
+
+// Language "Golang"
+    
+lexical syntax // Language
+  
+  // #B Funcons
+                
+  
+  
+  // ## Lists
+                   
+  
+  
+  // ## Integers
+                   
+  
+  
+  // ## Variables
+                   
+  
+  
+  // ## Channels
+                   
+  
+  
+syntax // Language
+  
+  // #B Funcons
+                
+  
+  
+  // ## Lists
+                   
+  
+  
+  // ## Integers
+                   
+  
+  
+  // ## Variables
+                   
+  
+  
+  // ## Channels
+                   
+  
+  
+context-free syntax // Language
+  
+  // #B Funcons
+                
+  
+  
+  // ## Lists
+                   
+  
+  
+  // ## Integers
+                   
+  
+  
+  // ## Variables
+                   
+  
+  
+  // ## Channels
+                   
+  
+  
+context-free syntax // Semantics
+  
+  // #B Funcons
+                
+  
+  
+  // ## Lists
+                   
+  
+  
+  // ## Integers
+                   
+  
+  
+  // ## Variables
+                   
+  
+  
+  // ## Channels
+                   
+  
+  
+context-free syntax // Desugaring
+  
+  // #B Funcons
+                
+  
+  
+  // ## Lists
+                   
+  
+  
+  // ## Integers
+                   
+  
+  
+  // ## Variables
+                   
+  
+  
+  // ## Channels
+                   
+  
+  
+variables // Meta-variables
+  
+  // #B Funcons
+                
+  
+  
+  // ## Lists
+                   
+  
+  
+  // ## Integers
+                   
+  
+  
+  // ## Variables
+                   
+  
+  
+  // ## Channels
+                   
+  
+  
+// SDF comments
+  
+  // #B Funcons
+                
+  
+  
+  // ## Lists
+                   
+  
+  
+  // ## Integers
+                   
+  
+  
+  // ## Variables
+                   
+  
+  
+  // ## Channels
+                   
+  
+  
+sorts // ASTs
+  T-start

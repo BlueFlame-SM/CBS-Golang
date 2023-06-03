@@ -8,9 +8,10 @@ imports
 
 imports
   cbs-gen/GO-A-Disambiguation
+  cbs-gen/GO-B-Funcons
+  cbs-gen/GO-4-Statements
   cbs-gen/GO-3-Expressions
   cbs-gen/GO-1-Lexemes
-  cbs-gen/GO-4-Statements
   cbs-gen/GO-5-Declarations
   cbs-gen/GO-2-Types
 
@@ -40,26 +41,25 @@ to-funcons:
                                           "failure")) ]|
 to-funcons:
   |[ execute-sourcefile[: package main;(:TopLevelDeclSemic*:) :] ]| ->
-  |[ scope (allocate-topleveldeclsemic[: (:TopLevelDeclSemic*:) :], 
-             sequential (initialise-topleveldeclsemic[: (:TopLevelDeclSemic*:) :], 
-                     apply (assigned bound "main", 
-                             tuple ()))) ]|
+  |[ scope (collateral (allocate-topleveldecls[: (:TopLevelDeclSemic*:) :]), 
+             sequential (initialise-topleveldecls[: (:TopLevelDeclSemic*:) :], 
+                     effect evaluate[: main() :])) ]|
 to-funcons-default:
   |[ execute-sourcefile[: package(:Identifier:);(:TopLevelDeclSemic*:) :] ]| ->
-  |[ scope (allocate-topleveldeclsemic[: (:TopLevelDeclSemic*:) :], 
-             initialise-topleveldeclsemic[: (:TopLevelDeclSemic*:) :]) ]|
+  |[ scope (collateral (allocate-topleveldecls[: (:TopLevelDeclSemic*:) :]), 
+             sequential (initialise-topleveldecls[: (:TopLevelDeclSemic*:) :])) ]|
 to-funcons:
-  |[ allocate-topleveldeclsemic[:  :] ]| ->
+  |[ allocate-topleveldecls[:  :] ]| ->
   |[ map () ]|
 to-funcons:
-  |[ allocate-topleveldeclsemic[: (:TopLevelDecl:);(:TopLevelDeclSemic*:) :] ]| ->
-  |[ collateral (allocate-topleveldecl[: (:TopLevelDecl:) :], 
-             allocate-topleveldeclsemic[: (:TopLevelDeclSemic*:) :]) ]|
+  |[ allocate-topleveldecls[: (:TopLevelDecl:);(:TopLevelDeclSemic*:) :] ]| ->
+  |[ allocate[: (:TopLevelDecl:) :], 
+     allocate-topleveldecls[: (:TopLevelDeclSemic*:) :] ]|
 to-funcons:
-  |[ initialise-topleveldeclsemic[:  :] ]| ->
+  |[ initialise-topleveldecls[:  :] ]| ->
   |[ null-value ]|
 to-funcons:
-  |[ initialise-topleveldeclsemic[: (:TopLevelDecl:);(:TopLevelDeclSemic*:) :] ]| ->
-  |[ sequential (initialise-topleveldecl[: (:TopLevelDecl:) :], 
-             initialise-topleveldeclsemic[: (:TopLevelDeclSemic*:) :]) ]|
+  |[ initialise-topleveldecls[: (:TopLevelDecl:);(:TopLevelDeclSemic*:) :] ]| ->
+  |[ initialise[: (:TopLevelDecl:) :], 
+     initialise-topleveldecls[: (:TopLevelDeclSemic*:) :] ]|
 

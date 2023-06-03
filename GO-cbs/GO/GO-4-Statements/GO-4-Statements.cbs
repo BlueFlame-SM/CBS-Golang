@@ -21,46 +21,30 @@ Syntax
 //      | deferStmt  // TODO: concurrency
 
 Semantics
-  execute-statement[[_:statement]] : =>null-type
-
-Rule
-  execute-statement[[SimpleStmt]] = execute-simplestmt[[SimpleStmt]]
+  execute[[_:statement]] : =>null-type
 
 
 ## GO statement
 
 Syntax
-  GoStmt : goStmt ::= 'go' primaryExpr arguments
+  goStmt ::= 'go' primaryExpr arguments
 
 Rule
-  execute-statement[[GoStmt]] = execute-gostmt[[GoStmt]]
-
-Semantics
-  execute-gostmt[[_:goStmt]] : =>null-type
-
-Rule
-  execute-gostmt[['go' PrimaryExpr Arguments]]
-    = thread-detach thread-activate thread-joinable supply(
-        evaluate-primaryexpr[[PrimaryExpr]],
-        evaluate-arguments[[Arguments]])
+  execute[['go' PrimaryExpr Arguments]]
+    = thread-detach thread-activate thread-joinable
+        supply(evaluate[[PrimaryExpr]], tuple-arguments[[Arguments]])
 
 
 ## Return statement
 
 Syntax
-  ReturnStmt : returnStmt ::= 'return' expression?
+  returnStmt ::= 'return' expression?
 
 Rule
-  execute-statement[[ReturnStmt]] = execute-returnstmt[[ReturnStmt]]
-
-Semantics
-  execute-returnstmt[[_:returnStmt]] : =>null-type
+  execute[['return']] = return null
 
 Rule
-  execute-returnstmt[['return']] = return null
-
-Rule
-  execute-returnstmt[['return' Expression]] = return evaluate-expression[[Expression]]
+  execute[['return' Expression]] = return evaluate[[Expression]]
 
 ## Blocks
 
@@ -69,38 +53,33 @@ Syntax
   StatementSemic : statementSemic ::= statement ';'
 
 Rule
-  execute-statement[['{' StatementSemic* '}']]
-    = scope(allocate-statementsemic[[StatementSemic*]], execute-statementsemic[[StatementSemic*]])
+  execute[['{' StatementSemic* '}']]
+    = scope(
+        collateral(allocate-statements[[StatementSemic*]]),
+        sequential(execute-statements[[StatementSemic*]]))
 
 Semantics
-  execute-statementsemic[[_:statementSemic*]] : =>null-value
+  allocate-statements[[_:statementSemic*]] : =>envs
 
 Rule
-  execute-statementsemic[[ ]] = null-value
+  allocate-statements[[ ]] = map( )
 
 Rule
-  execute-statementsemic[[Statement ';' StatementSemic*]]
-    = sequential(execute-statement[[Statement]], execute-statementsemic[[StatementSemic*]])
+  allocate-statements[[VarDecl ';' StatementSemic*]]
+    = allocate[[VarDecl]], allocate-statements[[StatementSemic*]]
+
+Otherwise
+  allocate-statements[[Statement ';' StatementSemic*]] = allocate-statements[[StatementSemic*]]
 
 Semantics
-  allocate-statementsemic[[_:statementSemic*]] : =>envs
+  execute-statements[[_:statementSemic*]] : =>null-value
 
 Rule
-  allocate-statementsemic[[ ]] = map( )
+  execute-statements[[ ]] = null-value
 
 Rule
-  allocate-statementsemic[[VarDecl ';']] = allocate-vardecl[[VarDecl]]
-
-Otherwise
-  allocate-statementsemic[[Statement ';']] = map( )
-
-Rule
-  allocate-statementsemic[[VarDecl ';' StatementSemic*]]
-    = collateral(allocate-vardecl[[VarDecl]], allocate-statementsemic[[StatementSemic*]])
-
-Otherwise
-  allocate-statementsemic[[Statement ';' StatementSemic*]]
-    = allocate-statementsemic[[StatementSemic*]]
+  execute-statements[[Statement ';' StatementSemic*]]
+    = execute[[Statement]], execute-statements[[StatementSemic*]]
 
 
 ## If statements
@@ -119,12 +98,12 @@ Rule
     = [['if' Expression Block 'else' '{' '}']]
 
 Rule
-  execute-statement[['if' Expression Block1 'else' Block2]]
-    = if-else(evaluate-expression[[Expression]], execute-statement[[Block1]], execute-statement[[Block2]])
+  execute[['if' Expression Block1 'else' Block2]]
+    = if-else(evaluate[[Expression]], execute[[Block1]], execute[[Block2]])
 
 Rule
-  execute-statement[['if' Expression Block 'else' IfStmt]]
-    = if-else(evaluate-expression[[Expression]], execute-statement[[Block]], execute-statement[[IfStmt]])
+  execute[['if' Expression Block 'else' IfStmt]]
+    = if-else(evaluate[[Expression]], execute[[Block]], execute[[IfStmt]])
 
 Rule
   [['if' SimpleStmt ';' Expression Block]] : statement
@@ -148,10 +127,10 @@ Syntax  // TODO: range clause
       | 'for' simpleStmt? ';' expression? ';' simpleStmt? block
 
 Rule
-  execute-statement[['for' Block]] = while(true, execute-statement[[Block]])
+  execute[['for' Block]] = while(true, execute[[Block]])
 
 Rule
-  execute-statement[['for' Expression Block]] = while(evaluate-expression[[Expression]], execute-statement[[Block]])
+  execute[['for' Expression Block]] = while(evaluate[[Expression]], execute[[Block]])
 
 Rule
   [['for' SimpleStmt1 ';' Expression ';' SimpleStmt2 '{' StatementSemic* '}']] : statement
@@ -173,9 +152,6 @@ Syntax
       | assignment
       | shortVarDecl
 
-Semantics
-  execute-simplestmt[[_:simpleStmt]] : =>null-type
-
 
 ### Empty statements
 
@@ -183,7 +159,7 @@ Syntax
   emptyStmt ::= ( )
 
 Rule
-  execute-simplestmt[[ ]] = null-value
+  execute[[ ]] = null-value
 
 
 ### Expression statements
@@ -192,7 +168,7 @@ Syntax
   expressionStmt ::= expression
 
 Rule
-  execute-simplestmt[[Expression]] = evaluate-expression[[Expression]]
+  execute[[Expression]] = evaluate[[Expression]]
 
 
 ### IncDec statements
@@ -214,7 +190,7 @@ Rule
 ### Assignment statements
 
 Syntax
-  assignment  // TODO: expression resolution, multiple assignment
+  Assignment : assignment  // TODO: expression resolution, multiple assignment
     ::= identifier '=' expression
       | identifier '+=' expression
       | identifier '-=' expression
@@ -223,10 +199,19 @@ Syntax
       | identifier '%=' expression
 
 Rule
-  execute-simplestmt[[Identifier '=' Expression]]
-    = sequential(
-        check-true is-in-type(bound identifier[[Identifier]], variables),
-        assign(bound identifier[[Identifier]], evaluate-expression[[Expression]]))
+  execute[[Assignment]] = assign[[Assignment]]
+
+Semantics
+  assign[[_:assignment]] : =>null-type
+
+Rule
+  assign[[Identifier '=' Expression]]
+    = give(evaluate[[Expression]],
+        sequential(
+          check-true and(
+            is-in-type(bound id[[Identifier]], variables),
+            not is-in-type(given, types)),
+          assign(bound id[[Identifier]], given)))
 
 Rule
   [[Identifier '+=' Expression]] : assignment

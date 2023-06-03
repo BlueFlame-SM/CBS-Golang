@@ -83,8 +83,8 @@ context-free syntax // Semantics
   FCT-Quoted.LEX-octal-digit = LEX-octal-digit
   FCT-Quoted.LEX-hex-digit = LEX-hex-digit
   FCT-Quoted.L-identifier = L-identifier
-  FCT.T-identifier =
-    "identifier" "[:" L-identifier ":]"
+  FCT.T-id =
+    "id" "[:" L-identifier ":]"
   FCT-Quoted.L-int-lit = L-int-lit
   FCT.T-integer-value =
     "integer-value" "[:" L-int-lit ":]"

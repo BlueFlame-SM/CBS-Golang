@@ -248,28 +248,24 @@ context-free syntax // Semantics
   // #4 Statements
                 
   
-  FCT.T-execute-statement =
-    "execute-statement" "[:" L-statement ":]"
+  FCT.T-execute =
+    "execute" "[:" L-statement ":]"
   
   // ## GO statement
                    
   
-  FCT.T-execute-gostmt =
-    "execute-gostmt" "[:" L-goStmt ":]"
   
   // ## Return statement
                    
   
-  FCT.T-execute-returnstmt =
-    "execute-returnstmt" "[:" L-returnStmt ":]"
   
   // ## Blocks
                    
   
-  FCT.T-execute-statementsemic =
-    "execute-statementsemic" "[:" L-statementSemic* ":]"
-  FCT.T-allocate-statementsemic =
-    "allocate-statementsemic" "[:" L-statementSemic* ":]"
+  FCT.T-allocate-statements =
+    "allocate-statements" "[:" L-statementSemic* ":]"
+  FCT.T-execute-statements =
+    "execute-statements" "[:" L-statementSemic* ":]"
   
   // ## If statements
                    
@@ -282,8 +278,6 @@ context-free syntax // Semantics
   // ## Simple Statements
                    
   
-  FCT.T-execute-simplestmt =
-    "execute-simplestmt" "[:" L-simpleStmt ":]"
   
   // ### Empty statements
                    
@@ -300,6 +294,8 @@ context-free syntax // Semantics
   // ### Assignment statements
                    
   
+  FCT.T-assign =
+    "assign" "[:" L-assignment ":]"
   
   // ### Short variable declarations
                    
@@ -382,18 +378,10 @@ variables // Meta-variables
   // ## GO statement
                    
   
-  L-goStmt = "(:GoStmt" [1-9]? ":)" {prefer}
-  L-goStmt? = "(:GoStmt" [1-9]? "?:)" {prefer}
-  L-goStmt* = "(:GoStmt" [1-9]? "*:)" {prefer}
-  L-goStmt+ = "(:GoStmt" [1-9]? "+:)" {prefer}
   
   // ## Return statement
                    
   
-  L-returnStmt = "(:ReturnStmt" [1-9]? ":)" {prefer}
-  L-returnStmt? = "(:ReturnStmt" [1-9]? "?:)" {prefer}
-  L-returnStmt* = "(:ReturnStmt" [1-9]? "*:)" {prefer}
-  L-returnStmt+ = "(:ReturnStmt" [1-9]? "+:)" {prefer}
   
   // ## Blocks
                    
@@ -447,6 +435,10 @@ variables // Meta-variables
   // ### Assignment statements
                    
   
+  L-assignment = "(:Assignment" [1-9]? ":)" {prefer}
+  L-assignment? = "(:Assignment" [1-9]? "?:)" {prefer}
+  L-assignment* = "(:Assignment" [1-9]? "*:)" {prefer}
+  L-assignment+ = "(:Assignment" [1-9]? "+:)" {prefer}
   
   // ### Short variable declarations
                    

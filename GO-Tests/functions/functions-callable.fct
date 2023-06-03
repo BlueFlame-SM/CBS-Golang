@@ -1,151 +1,86 @@
-initialise-giving initialise-binding initialise-storing finalise-failing scope
-  (accumulate
-     (bind
-        ("any",
-         alloc-init
-           (types,
-            values)),
-      bind
-        ("bool",
-         alloc-init
-           (types,
-            bools)),
-      bind
-        ("int",
-         alloc-init
-           (types,
-            int)),
-      bind
-        ("int8",
-         alloc-init
-           (types,
-            int8)),
-      bind
-        ("int16",
-         alloc-init
-           (types,
-            int16)),
-      bind
-        ("int32",
-         alloc-init
-           (types,
-            int32)),
-      bind
-        ("int64",
-         alloc-init
-           (types,
-            int64)),
-      bind
-        ("uint",
-         alloc-init
-           (types,
-            uint)),
-      bind
-        ("uint8",
-         alloc-init
-           (types,
-            uint8)),
-      bind
-        ("uint16",
-         alloc-init
-           (types,
-            uint16)),
-      bind
-        ("uint32",
-         alloc-init
-           (types,
-            uint32)),
-      bind
-        ("uint64",
-         alloc-init
-           (types,
-            uint64)),
-      bind
-        ("true",
-         alloc-init
-           (bools,
-            true)),
-      bind
-        ("false",
-         alloc-init
-           (bools,
-            false)),
-      bind
-        ("nil",
-         alloc-init
-           (null-type,
-            null)),
-      bind
-        ("print",
-         alloc-init
-           (functions
-              ((values)*,
-               null-type),
-            function closure print
-              (tuple-elements given)))),
-   scope
-     (collateral
-        (bind
-           ("main",
-            alloc functions
-              (tuples
-                 ((values)*),
-               values)),
-         collateral
-           (bind
-              ("print_true",
-               alloc functions
-                 (tuples
-                    ((values)*),
-                  values)),
-            map
-              ( ))),
-      sequential
-        (sequential
-           (assign
-              (bound "main",
-               function closure scope
-                 (collateral
-                    (match
-                       (given,
-                        tuple
+initialise-giving initialise-binding initialise-storing scope
+  ({"any" |-> values,
+    "bool" |-> bools,
+    "int" |-> int,
+    "int8" |-> int8,
+    "int16" |-> int16,
+    "int32" |-> int32,
+    "int64" |-> int64,
+    "uint" |-> uint,
+    "uint8" |-> uint8,
+    "uint16" |-> uint16,
+    "uint32" |-> uint32,
+    "uint64" |-> uint64,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print
+                  (tuple-elements given)},
+   handle-abrupt
+     (sequential
+        (multithread scope
+           (collateral
+              (bind
+                 ("print_true",
+                  allocate-variable functions
+                    (tuples
+                       ((values)*),
+                     null-type)),
+               bind
+                 ("main",
+                  allocate-variable functions
+                    (tuples
+                       ((values)*),
+                     null-type)),
+               map
+                 ( )),
+            sequential
+              (assign
+                 (bound "print_true",
+                  function closure scope
+                    (collateral
+                       (match
+                          (given,
+                           tuple
+                             ( )),
+                        map
                           ( )),
-                     map
-                       ( )),
-                  handle-return sequential
-                    (apply
-                       (assigned bound
-                          "print",
-                        tuple
-                          (assigned bound
-                             "false")),
-                     apply
-                       (assigned bound
-                          "print_true",
-                        tuple
+                     handle-return sequential
+                       (apply
+                          (current-value bound
+                             "print",
+                           tuple l-to-r
+                             (current-value bound
+                                "true")),
+                        null-value))),
+               assign
+                 (bound "main",
+                  function closure scope
+                    (collateral
+                       (match
+                          (given,
+                           tuple
+                             ( )),
+                        map
                           ( )),
-                     null-value))),
-            assign
-              (bound "print_true",
-               function closure scope
-                 (collateral
-                    (match
-                       (given,
-                        tuple
-                          ( )),
-                     map
-                       ( )),
-                  handle-return sequential
-                    (apply
-                       (assigned bound
-                          "print",
-                        tuple
-                          (assigned bound
-                             "true")),
-                     null-value))),
-            null-value),
-         apply
-           (assigned bound
-              "main",
-            tuple
-              ( )))))
+                     handle-return sequential
+                       (apply
+                          (current-value bound
+                             "print",
+                           tuple l-to-r
+                             (current-value bound
+                                "false")),
+                        apply
+                          (current-value bound
+                             "print_true",
+                           tuple
+                             ( )),
+                        null-value))),
+               null-value,
+               effect apply
+                 (current-value bound
+                    "main",
+                  tuple
+                    ( )))),
+         "succes"),
+      "failure"))

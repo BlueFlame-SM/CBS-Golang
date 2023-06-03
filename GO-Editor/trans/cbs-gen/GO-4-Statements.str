@@ -18,64 +18,49 @@ rules
 // #4 Statements
               
 
-to-funcons:
-  |[ execute-statement[: (:SimpleStmt:) :] ]| ->
-  |[ execute-simplestmt[: (:SimpleStmt:) :] ]|
 
 // ## GO statement
                  
 
 to-funcons:
-  |[ execute-statement[: (:GoStmt:) :] ]| ->
-  |[ execute-gostmt[: (:GoStmt:) :] ]|
-to-funcons:
-  |[ execute-gostmt[: go(:PrimaryExpr:)(:Arguments:) :] ]| ->
-  |[ thread-detach thread-activate thread-joinable supply (evaluate-primaryexpr[: (:PrimaryExpr:) :], 
-                                  evaluate-arguments[: (:Arguments:) :]) ]|
+  |[ execute[: go(:PrimaryExpr:)(:Arguments:) :] ]| ->
+  |[ thread-detach thread-activate thread-joinable supply (evaluate[: (:PrimaryExpr:) :], 
+                                  tuple-arguments[: (:Arguments:) :]) ]|
 
 // ## Return statement
                  
 
 to-funcons:
-  |[ execute-statement[: (:ReturnStmt:) :] ]| ->
-  |[ execute-returnstmt[: (:ReturnStmt:) :] ]|
-to-funcons:
-  |[ execute-returnstmt[: return :] ]| ->
+  |[ execute[: return :] ]| ->
   |[ return null ]|
 to-funcons:
-  |[ execute-returnstmt[: return(:Expression:) :] ]| ->
-  |[ return evaluate-expression[: (:Expression:) :] ]|
+  |[ execute[: return(:Expression:) :] ]| ->
+  |[ return evaluate[: (:Expression:) :] ]|
 
 // ## Blocks
                  
 
 to-funcons:
-  |[ execute-statement[: {(:StatementSemic*:)} :] ]| ->
-  |[ scope (allocate-statementsemic[: (:StatementSemic*:) :], 
-             execute-statementsemic[: (:StatementSemic*:) :]) ]|
+  |[ execute[: {(:StatementSemic*:)} :] ]| ->
+  |[ scope (collateral (allocate-statements[: (:StatementSemic*:) :]), 
+             sequential (execute-statements[: (:StatementSemic*:) :])) ]|
 to-funcons:
-  |[ execute-statementsemic[:  :] ]| ->
+  |[ allocate-statements[:  :] ]| ->
+  |[ map () ]|
+to-funcons:
+  |[ allocate-statements[: (:VarDecl:);(:StatementSemic*:) :] ]| ->
+  |[ allocate[: (:VarDecl:) :], 
+     allocate-statements[: (:StatementSemic*:) :] ]|
+to-funcons-default:
+  |[ allocate-statements[: (:Statement:);(:StatementSemic*:) :] ]| ->
+  |[ allocate-statements[: (:StatementSemic*:) :] ]|
+to-funcons:
+  |[ execute-statements[:  :] ]| ->
   |[ null-value ]|
 to-funcons:
-  |[ execute-statementsemic[: (:Statement:);(:StatementSemic*:) :] ]| ->
-  |[ sequential (execute-statement[: (:Statement:) :], 
-             execute-statementsemic[: (:StatementSemic*:) :]) ]|
-to-funcons:
-  |[ allocate-statementsemic[:  :] ]| ->
-  |[ map () ]|
-to-funcons:
-  |[ allocate-statementsemic[: (:VarDecl:); :] ]| ->
-  |[ allocate-vardecl[: (:VarDecl:) :] ]|
-to-funcons-default:
-  |[ allocate-statementsemic[: (:Statement:); :] ]| ->
-  |[ map () ]|
-to-funcons:
-  |[ allocate-statementsemic[: (:VarDecl:);(:StatementSemic*:) :] ]| ->
-  |[ collateral (allocate-vardecl[: (:VarDecl:) :], 
-             allocate-statementsemic[: (:StatementSemic*:) :]) ]|
-to-funcons-default:
-  |[ allocate-statementsemic[: (:Statement:);(:StatementSemic*:) :] ]| ->
-  |[ allocate-statementsemic[: (:StatementSemic*:) :] ]|
+  |[ execute-statements[: (:Statement:);(:StatementSemic*:) :] ]| ->
+  |[ execute[: (:Statement:) :], 
+     execute-statements[: (:StatementSemic*:) :] ]|
 
 // ## If statements
                  
@@ -84,15 +69,15 @@ to-desugared:
   [: if(:Expression:)(:Block:) :] : ifStmt ->
   [: if(:Expression:)(:Block:)else{} :] : ifStmt
 to-funcons:
-  |[ execute-statement[: if(:Expression:)(:Block1:)else(:Block2:) :] ]| ->
-  |[ if-else (evaluate-expression[: (:Expression:) :], 
-             execute-statement[: (:Block1:) :], 
-             execute-statement[: (:Block2:) :]) ]|
+  |[ execute[: if(:Expression:)(:Block1:)else(:Block2:) :] ]| ->
+  |[ if-else (evaluate[: (:Expression:) :], 
+             execute[: (:Block1:) :], 
+             execute[: (:Block2:) :]) ]|
 to-funcons:
-  |[ execute-statement[: if(:Expression:)(:Block:)else(:IfStmt:) :] ]| ->
-  |[ if-else (evaluate-expression[: (:Expression:) :], 
-             execute-statement[: (:Block:) :], 
-             execute-statement[: (:IfStmt:) :]) ]|
+  |[ execute[: if(:Expression:)(:Block:)else(:IfStmt:) :] ]| ->
+  |[ if-else (evaluate[: (:Expression:) :], 
+             execute[: (:Block:) :], 
+             execute[: (:IfStmt:) :]) ]|
 to-desugared:
   [: if(:SimpleStmt:);(:Expression:)(:Block:) :] : statement ->
   [: {(:SimpleStmt:);if(:Expression:)(:Block:);} :] : statement
@@ -107,13 +92,13 @@ to-desugared:
                  
 
 to-funcons:
-  |[ execute-statement[: for(:Block:) :] ]| ->
+  |[ execute[: for(:Block:) :] ]| ->
   |[ while (true, 
-             execute-statement[: (:Block:) :]) ]|
+             execute[: (:Block:) :]) ]|
 to-funcons:
-  |[ execute-statement[: for(:Expression:)(:Block:) :] ]| ->
-  |[ while (evaluate-expression[: (:Expression:) :], 
-             execute-statement[: (:Block:) :]) ]|
+  |[ execute[: for(:Expression:)(:Block:) :] ]| ->
+  |[ while (evaluate[: (:Expression:) :], 
+             execute[: (:Block:) :]) ]|
 to-desugared:
   [: for(:SimpleStmt1:);(:Expression:);(:SimpleStmt2:){(:StatementSemic*:)} :] : statement ->
   [: {(:SimpleStmt1:);for(:Expression:){(:StatementSemic*:)(:SimpleStmt2:);};} :] : statement
@@ -129,15 +114,15 @@ to-desugared:
                  
 
 to-funcons:
-  |[ execute-simplestmt[:  :] ]| ->
+  |[ execute[:  :] ]| ->
   |[ null-value ]|
 
 // ### Expression statements
                  
 
 to-funcons:
-  |[ execute-simplestmt[: (:Expression:) :] ]| ->
-  |[ evaluate-expression[: (:Expression:) :] ]|
+  |[ execute[: (:Expression:) :] ]| ->
+  |[ evaluate[: (:Expression:) :] ]|
 
 // ### IncDec statements
                  
@@ -153,11 +138,17 @@ to-desugared:
                  
 
 to-funcons:
-  |[ execute-simplestmt[: (:Identifier:)=(:Expression:) :] ]| ->
-  |[ sequential (check-true is-in-type (bound identifier[: (:Identifier:) :], 
-                            variables), 
-             assign (bound identifier[: (:Identifier:) :], 
-                     evaluate-expression[: (:Expression:) :])) ]|
+  |[ execute[: (:Assignment:) :] ]| ->
+  |[ assign[: (:Assignment:) :] ]|
+to-funcons:
+  |[ assign[: (:Identifier:)=(:Expression:) :] ]| ->
+  |[ give (evaluate[: (:Expression:) :], 
+             sequential (check-true and (is-in-type (bound id[: (:Identifier:) :], 
+                                            variables), 
+                                    not is-in-type (given, 
+                                                   types)), 
+                     assign (bound id[: (:Identifier:) :], 
+                             given))) ]|
 to-desugared:
   [: (:Identifier:)+=(:Expression:) :] : assignment ->
   [: (:Identifier:)=(:Identifier:)+((:Expression:)) :] : assignment

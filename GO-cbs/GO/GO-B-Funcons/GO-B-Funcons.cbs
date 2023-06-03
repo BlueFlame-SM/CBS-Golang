@@ -92,12 +92,10 @@ Funcon
 
 Rule
   channel-send-else-wait(channel(Queue, N, Closed, SendCond, ReceiveCond), X)
-   ~> thread-atomic handle-break while(
+   ~> handle-return while(
         true,
-        else(
-          sequential(
-            channel-send(channel(Queue, N, Closed, SendCond, ReceiveCond)),
-            break),
+        thread-atomic else(
+          return channel-send(channel(Queue, N, Closed, SendCond, ReceiveCond), X),
           sequential(
             check-true not assigned Closed,
             condition-wait SendCond)))
@@ -123,12 +121,10 @@ Funcon
 
 Rule
   channel-receive-else-wait channel(Queue, N, Closed, SendCond, ReceiveCond)
-   ~> thread-atomic handle-break while(
+   ~> handle-return while(
         true,
-        else(
-          sequential(
-            channel-receive channel(Queue, N, Closed, SendCond, ReceiveCond),
-            break),
+        thread-atomic else(
+          return channel-receive channel(Queue, N, Closed, SendCond, ReceiveCond),
           sequential(
             check-true not assigned Closed,
             condition-wait ReceiveCond)))

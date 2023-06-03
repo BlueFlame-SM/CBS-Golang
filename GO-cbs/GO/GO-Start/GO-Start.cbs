@@ -14,7 +14,7 @@ Syntax
   START : start ::= sourceFile
 
 Semantics
-  start[[START:start]] : =>integers
+  start[[START:start]] : =>strings
 
 Rule
   start[[SourceFile]]
@@ -55,40 +55,36 @@ Semantics
 Rule
   execute-sourcefile[['package' 'main' ';' TopLevelDeclSemic*]]
     = scope(
-        allocate-topleveldeclsemic[[TopLevelDeclSemic*]],
+        collateral(allocate-topleveldecls[[TopLevelDeclSemic*]]),
         sequential(
-          initialise-topleveldeclsemic[[TopLevelDeclSemic*]],
-          apply(assigned bound "main", tuple())))
+          initialise-topleveldecls[[TopLevelDeclSemic*]],  // TODO: loop assign
+          effect evaluate[['main' '(' ')']]))
 
 Otherwise
   execute-sourcefile[['package' Identifier ';' TopLevelDeclSemic*]]
     = scope(
-        allocate-topleveldeclsemic[[TopLevelDeclSemic*]],
-        initialise-topleveldeclsemic[[TopLevelDeclSemic*]])
+        collateral(allocate-topleveldecls[[TopLevelDeclSemic*]]),
+        sequential(initialise-topleveldecls[[TopLevelDeclSemic*]]))
 
 Semantics
-  allocate-topleveldeclsemic[[_:topLevelDeclSemic*]] : =>envs
+  allocate-topleveldecls[[_:topLevelDeclSemic*]] : =>environments*
 
 Rule
-  allocate-topleveldeclsemic[[ ]] = map( )
+  allocate-topleveldecls[[ ]] = map( )
 
 Rule
-  allocate-topleveldeclsemic[[TopLevelDecl ';' TopLevelDeclSemic*]]
-    = collateral(
-        allocate-topleveldecl[[TopLevelDecl]],
-        allocate-topleveldeclsemic[[TopLevelDeclSemic*]])
+  allocate-topleveldecls[[TopLevelDecl ';' TopLevelDeclSemic*]]
+    = allocate[[TopLevelDecl]], allocate-topleveldecls[[TopLevelDeclSemic*]]
 
 Semantics
-  initialise-topleveldeclsemic[[_:topLevelDeclSemic*]] : =>null-value
+  initialise-topleveldecls[[_:topLevelDeclSemic*]] : =>null-value*
 
 Rule
-  initialise-topleveldeclsemic[[ ]] = null-value
+  initialise-topleveldecls[[ ]] = null-value
 
 Rule
-  initialise-topleveldeclsemic[[TopLevelDecl ';' TopLevelDeclSemic*]]
-    = sequential(
-        initialise-topleveldecl[[TopLevelDecl]],
-        initialise-topleveldeclsemic[[TopLevelDeclSemic*]])
+  initialise-topleveldecls[[TopLevelDecl ';' TopLevelDeclSemic*]]
+    = initialise[[TopLevelDecl]], initialise-topleveldecls[[TopLevelDeclSemic*]]
 
 
 

@@ -1,10 +1,10 @@
 module GO-5-Declarations
             
 imports 
-  GO-2-Types
-  GO-4-Statements
-  GO-3-Expressions
   GO-1-Lexemes
+  GO-3-Expressions
+  GO-4-Statements
+  GO-2-Types
   Funcons
 
 // Language "Golang"
@@ -78,8 +78,8 @@ context-free syntax // Language
   
   L-functionDecl.L-functionDecl--R-func-L-identifier-L-parameters-L-block =
     "func" L-identifier L-parameters L-block
-  L-functionDecl.L-functionDecl--R-func-L-identifier-L-parameters-L-goType-L-block =
-    "func" L-identifier L-parameters L-goType L-block
+  L-functionDecl.L-functionDecl--R-func-L-identifier-L-parameters-L-type-L-block =
+    "func" L-identifier L-parameters L-type L-block
   
   
 context-free syntax // Semantics
@@ -87,14 +87,10 @@ context-free syntax // Semantics
   // #5 Declarations
                 
   
-  FCT.T-allocate-declaration =
-    "allocate-declaration" "[:" L-declaration ":]"
-  FCT.T-allocate-topleveldecl =
-    "allocate-topleveldecl" "[:" L-topLevelDecl ":]"
-  FCT.T-initialise-declaration =
-    "initialise-declaration" "[:" L-declaration ":]"
-  FCT.T-initialise-topleveldecl =
-    "initialise-topleveldecl" "[:" L-topLevelDecl ":]"
+  FCT.T-allocate =
+    "allocate" "[:" L-topLevelDecl ":]"
+  FCT.T-initialise =
+    "initialise" "[:" L-topLevelDecl ":]"
   
   // ## Constant declarations
                    
@@ -103,18 +99,10 @@ context-free syntax // Semantics
   // ## Variable declarations
                    
   
-  FCT.T-allocate-vardecl =
-    "allocate-vardecl" "[:" L-varDecl ":]"
-  FCT.T-initialise-vardecl =
-    "initialise-vardecl" "[:" L-varDecl ":]"
   
   // ## Function declarations
                    
   
-  FCT.T-allocate-functiondecl =
-    "allocate-functiondecl" "[:" L-functionDecl ":]"
-  FCT.T-initialise-functiondecl =
-    "initialise-functiondecl" "[:" L-functionDecl ":]"
   
 context-free syntax // Desugaring
   

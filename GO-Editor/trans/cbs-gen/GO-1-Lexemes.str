@@ -20,7 +20,7 @@ to-funcons-lex:
   FCTDoubleQuoted(L-identifier(LEX-identifier(str))) -> 
   FCTString(<double-quote> str)
 to-funcons:
-  |[ identifier[: (:Identifier:) :] ]| ->
+  |[ id[: (:Identifier:) :] ]| ->
   |[ \"(:Identifier:)\" ]|
 to-funcons-lex: 
   FCTDoubleQuoted(L-int-lit(LEX-int-lit(str))) -> 

@@ -1,0 +1,35 @@
+module GO-B-Funcons
+
+imports
+  libstratego-gpp
+  signatures/-
+  pp/GO-parenthesize
+  pp/GO-pp
+
+imports
+  
+
+// Language "Golang"
+
+rules
+
+// #B Funcons
+              
+
+
+// ## Lists
+                 
+
+
+// ## Integers
+                 
+
+
+// ## Variables
+                 
+
+
+// ## Channels
+                 
+
+

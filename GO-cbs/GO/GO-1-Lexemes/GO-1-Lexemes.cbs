@@ -13,7 +13,7 @@ Lexis
   Identifier : identifier ::= letter (letter | decimal-digit)*
 
 Semantics
-  identifier[[Identifier:identifier]] : =>ids
+  id[[Identifier:identifier]] : =>ids
     = \"Identifier\"
 
 Lexis
@@ -45,7 +45,6 @@ Semantics
 //                      | '_'? hex-digits
 //                      | '.' hex-digits
 //  hex-exponent      ::= ('p' | 'P') ('+' | '-')? decimal-digits
-
 
 Lexis
   keyword

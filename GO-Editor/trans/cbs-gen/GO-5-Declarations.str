@@ -7,10 +7,10 @@ imports
   pp/GO-pp
 
 imports
-  cbs-gen/GO-2-Types
-  cbs-gen/GO-4-Statements
-  cbs-gen/GO-3-Expressions
   cbs-gen/GO-1-Lexemes
+  cbs-gen/GO-3-Expressions
+  cbs-gen/GO-4-Statements
+  cbs-gen/GO-2-Types
 
 // Language "Golang"
 
@@ -19,12 +19,6 @@ rules
 // #5 Declarations
               
 
-to-funcons:
-  |[ allocate-topleveldecl[: (:Declaration:) :] ]| ->
-  |[ allocate-declaration[: (:Declaration:) :] ]|
-to-funcons:
-  |[ initialise-topleveldecl[: (:Declaration:) :] ]| ->
-  |[ initialise-declaration[: (:Declaration:) :] ]|
 
 // ## Constant declarations
                  
@@ -34,54 +28,37 @@ to-funcons:
                  
 
 to-funcons:
-  |[ execute-statement[: (:VarDecl:) :] ]| ->
-  |[ initialise-vardecl[: (:VarDecl:) :] ]|
+  |[ execute[: var(:Identifier:)=(:Expression:) :] ]| ->
+  |[ initialise[: var(:Identifier:)=(:Expression:) :] ]|
 to-funcons:
-  |[ allocate-declaration[: (:VarDecl:) :] ]| ->
-  |[ allocate-vardecl[: (:VarDecl:) :] ]|
+  |[ allocate[: var(:Identifier:)=(:Expression:) :] ]| ->
+  |[ bind (id[: (:Identifier:) :], 
+             allocate-variable values) ]|
 to-funcons:
-  |[ initialise-declaration[: (:VarDecl:) :] ]| ->
-  |[ allocate-vardecl[: (:VarDecl:) :] ]|
-to-funcons:
-  |[ allocate-vardecl[: var(:Identifier:)=(:Expression:) :] ]| ->
-  |[ bind (identifier[: (:Identifier:) :], 
-             alloc values) ]|
-to-funcons:
-  |[ initialise-vardecl[: var(:Identifier:)=(:Expression:) :] ]| ->
-  |[ assign (bound identifier[: (:Identifier:) :], 
-             evaluate-expression[: (:Expression:) :]) ]|
+  |[ initialise[: var(:Identifier:)=(:Expression:) :] ]| ->
+  |[ assign[: (:Identifier:)=(:Expression:) :] ]|
 
 // ## Function declarations
                  
 
 to-funcons:
-  |[ allocate-topleveldecl[: (:FunctionDecl:) :] ]| ->
-  |[ allocate-functiondecl[: (:FunctionDecl:) :] ]|
-to-funcons:
-  |[ initialise-topleveldecl[: (:FunctionDecl:) :] ]| ->
-  |[ initialise-functiondecl[: (:FunctionDecl:) :] ]|
-to-funcons:
-  |[ allocate-functiondecl[: func(:Identifier:)(:Parameters:)(:Block:) :] ]| ->
-  |[ bind (identifier[: (:Identifier:) :], 
-             alloc functions (tuples ((values)*), 
+  |[ allocate[: func(:Identifier:)(:Parameters:)(:Block:) :] ]| ->
+  |[ bind (id[: (:Identifier:) :], 
+             allocate-variable functions (tuples ((values)*), 
                             null-type)) ]|
 to-funcons:
-  |[ allocate-functiondecl[: func(:Identifier:)(:Parameters:)(:GoType:)(:Block:) :] ]| ->
-  |[ bind (identifier[: (:Identifier:) :], 
-             alloc functions (tuples ((values)*), 
-                            typeof-gotype[: (:GoType:) :])) ]|
+  |[ allocate[: func(:Identifier:)(:Parameters:)(:T:)(:Block:) :] ]| ->
+  |[ bind (id[: (:Identifier:) :], 
+             allocate-variable functions (tuples ((values)*), 
+                            type[: (:T:) :])) ]|
 to-funcons:
-  |[ initialise-functiondecl[: func(:Identifier:)(:Parameters:){(:StatementSemic*:)} :] ]| ->
-  |[ assign (bound identifier[: (:Identifier:) :], 
+  |[ initialise[: func(:Identifier:)(:Parameters:){(:StatementSemic*:)} :] ]| ->
+  |[ assign (bound id[: (:Identifier:) :], 
              function closure scope (collateral (match (given, 
-                                                   tuple (parameters-patterns[: (:Parameters:) :])), 
-                                           allocate-statementsemic[: (:StatementSemic*:) :]), 
-                                   handle-return execute-statementsemic[: (:StatementSemic*:) :])) ]|
+                                                   tuple (bind-parameters[: (:Parameters:) :])), 
+                                           allocate-statements[: (:StatementSemic*:) :]), 
+                                   handle-return sequential (execute-statements[: (:StatementSemic*:) :]))) ]|
 to-funcons:
-  |[ initialise-functiondecl[: func(:Identifier:)(:Parameters:)(:GoType:){(:StatementSemic*:)} :] ]| ->
-  |[ assign (bound identifier[: (:Identifier:) :], 
-             function closure scope (collateral (match (given, 
-                                                   tuple (parameters-patterns[: (:Parameters:) :])), 
-                                           allocate-statementsemic[: (:StatementSemic*:) :]), 
-                                   handle-return execute-statementsemic[: (:StatementSemic*:) :])) ]|
+  |[ initialise[: func(:Identifier:)(:Parameters:)(:T:){(:StatementSemic*:)} :] ]| ->
+  |[ initialise[: func(:Identifier:)(:Parameters:){(:StatementSemic*:)} :] ]|
 
