@@ -41,7 +41,7 @@ Syntax
 //      | primaryExpr '[' expression? ':' expression ':' expression ']'  // TODO: slices
       // TypeAssertion
 //      | primaryExpr '.' '(' type ')'  // TODO: types
-      // Arguments
+      // Call
       | primaryExpr arguments
 
 Rule
@@ -57,8 +57,16 @@ Rule
 Syntax
   Arguments : arguments  // TODO: Variadic
     ::= '(' ')'
-      | '(' expressionList ')'
-      | '(' expressionList ',' ')'
+      | '(' typeExpr commaExpression* ')'
+      | '(' expression commaExpression* ')'
+      | '(' typeExpr commaExpression* ',' ')'
+      | '(' expression commaExpression* ',' ')'
+
+Rule
+  [['(' TypeExpr CommaExpression* ',' ')']] : arguments = [['(' TypeExpr CommaExpression* ')']]
+
+Rule
+  [['(' Expression CommaExpression* ',' ')']] : arguments = [['(' Expression CommaExpression* ')']]
 
 Semantics
   tuple-arguments[[_:arguments]] : =>tuple(values)
@@ -67,24 +75,25 @@ Rule
   tuple-arguments[['(' ')']] = tuple( )
 
 Rule
-  tuple-arguments[['(' ExpressionList ')']]
-    = tuple l-to-r(evaluate-expressions[[ExpressionList]])
+  tuple-arguments[['(' Expression CommaExpression* ')']]
+    = tuple l-to-r(evaluate[[Expression]], evaluate-expressions[[CommaExpression*]])
 
 Rule
-  [['(' ExpressionList ',' ')']] : arguments = [['(' ExpressionList ')']]
+  tuple-arguments[['(' TypeExpr CommaExpression* ')']]
+    = tuple l-to-r(type-construct[[TypeExpr]], evaluate-expressions[[CommaExpression*]])
 
 Syntax
-  ExpressionList : expressionList ::= expression (',' expressionList)?
+  CommaExpression : commaExpression ::= ',' expression
 
 Semantics
-  evaluate-expressions[[_:expressionList]] : =>values*
+  evaluate-expressions[[_:commaExpression*]] : =>values*
 
 Rule
-  evaluate-expressions[[Expression]] = evaluate[[Expression]]
+  evaluate-expressions[[ ]] = ( )
 
 Rule
-  evaluate-expressions[[Expression ',' ExpressionList]]
-    = evaluate[[Expression]], evaluate-expressions[[ExpressionList]]
+  evaluate-expressions[[',' Expression CommaExpression*]]
+    = evaluate[[Expression]], evaluate-expressions[[CommaExpression*]]
 
 
 ## Operators
@@ -96,26 +105,9 @@ Syntax
     ::= unaryExpr
       | expression '||' expression
       | expression '&&' expression
-      // rel_op
-      | expression '==' expression
-      | expression '!=' expression
-      | expression '<' expression
-      | expression '<=' expression
-      | expression '>' expression
-      | expression '>=' expression
-      // add_op
-      | expression '+' expression
-      | expression '-' expression
-//      | expression '|' expression  // TODO: bitwise
-//      | expression '^' expression  // TODO: bitwise
-      // mul_op
-      | expression '*' expression
-      | expression '/' expression
-      | expression '%' expression
-//      | expression '<<' expression  // TODO: bitwise
-//      | expression '>>' expression  // TODO: bitwise
-//      | expression '&' expression  // TODO: bitwise
-//      | expression '&^' expression  //TODO: bitwise
+      | expression rel-op expression
+      | expression add-op expression
+      | expression mul-op expression
 
 Semantics
   evaluate[[_:expression]] : =>values
@@ -188,15 +180,7 @@ Rule
 ### Unary expressions
 
 Syntax
-  UnaryExpr : unaryExpr
-    ::= primaryExpr
-      | '+' unaryExpr
-      | '-' unaryExpr
-      | '!' unaryExpr
-//      | '^' unaryExpr  // TODO: bitwise
-//      | '*' unaryExpr  // TODO: pointers
-//      | '&' unaryExpr  // TODO: pointers
-//      | '<-' unaryExpr  // TODO: concurrency
+  UnaryExpr : unaryExpr ::= primaryExpr | unary-op unaryExpr
 
 Rule
   evaluate[[PrimaryExpr]] = evaluate[[PrimaryExpr]]

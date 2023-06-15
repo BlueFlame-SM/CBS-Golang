@@ -46,6 +46,7 @@ Semantics
 //                      | '.' hex-digits
 //  hex-exponent      ::= ('p' | 'P') ('+' | '-')? decimal-digits
 
+
 Lexis
   keyword
     ::= 'break'       | 'default'     | 'func'        | 'interface'   | 'select'
@@ -53,3 +54,17 @@ Lexis
       | 'chan'        | 'else'        | 'goto'        | 'package'     | 'switch'
       | 'const'       | 'fallthrough' | 'if'          | 'range'       | 'type'
       | 'continue'    | 'for'         | 'import'      | 'return'      | 'var'
+
+
+Lexis
+  binary-op ::= '||' | '&&' | rel-op | add-op | mul-op
+  rel-op    ::= '==' | '!=' | '<' | '<=' | '>' | '>='
+  add-op    ::= '+' | '-' // | '|' | '^'  // TODO: bitwise
+  mul-op    ::= '*' | '/'| '%' // | '<<' | '>>' | '&' | '&^'  // TODO: bitwise
+
+
+Lexis
+  unary-op ::= '+' | '-' | '!' // | '<-' | '^' | '*' | '&'  // TODO: bitwise, pointers, concurrency
+
+Lexis
+  assign-op ::= (add-op | mul-op)? '='

@@ -7,10 +7,10 @@ imports
   pp/GO-pp
 
 imports
-  cbs-gen/GO-1-Lexemes
+  cbs-gen/GO-2-Types
   cbs-gen/GO-3-Expressions
   cbs-gen/GO-4-Statements
-  cbs-gen/GO-2-Types
+  cbs-gen/GO-1-Lexemes
 
 // Language "Golang"
 
@@ -47,10 +47,10 @@ to-funcons:
              allocate-variable functions (tuples ((values)*), 
                             null-type)) ]|
 to-funcons:
-  |[ allocate[: func(:Identifier:)(:Parameters:)(:T:)(:Block:) :] ]| ->
+  |[ allocate[: func(:Identifier:)(:Parameters:)(:TypeExpr:)(:Block:) :] ]| ->
   |[ bind (id[: (:Identifier:) :], 
              allocate-variable functions (tuples ((values)*), 
-                            type[: (:T:) :])) ]|
+                            type[: (:TypeExpr:) :])) ]|
 to-funcons:
   |[ initialise[: func(:Identifier:)(:Parameters:){(:StatementSemic*:)} :] ]| ->
   |[ assign (bound id[: (:Identifier:) :], 
@@ -59,6 +59,6 @@ to-funcons:
                                            allocate-statements[: (:StatementSemic*:) :]), 
                                    handle-return sequential (execute-statements[: (:StatementSemic*:) :]))) ]|
 to-funcons:
-  |[ initialise[: func(:Identifier:)(:Parameters:)(:T:){(:StatementSemic*:)} :] ]| ->
-  |[ initialise[: func(:Identifier:)(:Parameters:){(:StatementSemic*:)} :] ]|
+  |[ initialise[: func(:Identifier:)(:Parameters:)(:TypeExpr:)(:Block:) :] ]| ->
+  |[ initialise[: func(:Identifier:)(:Parameters:)(:Block:) :] ]|
 

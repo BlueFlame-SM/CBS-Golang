@@ -43,6 +43,21 @@ lexical syntax // Language
   LEX-keyword = "import"
   LEX-keyword = "return"
   LEX-keyword = "var"
+  LEX-binary-op = "||"
+  LEX-binary-op = "&&"
+  LEX-binary-op = LEX-rel-op
+  LEX-binary-op = LEX-add-op
+  LEX-binary-op = LEX-mul-op
+  LEX-rel-op = "=="
+  LEX-rel-op = "!="
+  LEX-rel-op = "<"
+  LEX-rel-op = "<="
+  LEX-rel-op = ">"
+  LEX-rel-op = ">="
+  LEX-add-op = [\+\-]
+  LEX-mul-op = [\*\/\%]
+  LEX-unary-op = [\+\-\!]
+  LEX-assign-op = ( LEX-add-op | LEX-mul-op )? "="
   
 syntax // Language
   
@@ -71,6 +86,18 @@ context-free syntax // Language
     LEX-int-lit
   L-keyword.LEX-keyword = 
     LEX-keyword
+  L-binary-op.LEX-binary-op = 
+    LEX-binary-op
+  L-rel-op.LEX-rel-op = 
+    LEX-rel-op
+  L-add-op.LEX-add-op = 
+    LEX-add-op
+  L-mul-op.LEX-mul-op = 
+    LEX-mul-op
+  L-unary-op.LEX-unary-op = 
+    LEX-unary-op
+  L-assign-op.LEX-assign-op = 
+    LEX-assign-op
   
 context-free syntax // Semantics
   
@@ -89,6 +116,12 @@ context-free syntax // Semantics
   FCT.T-integer-value =
     "integer-value" "[:" L-int-lit ":]"
   FCT-Quoted.LEX-keyword = LEX-keyword
+  FCT-Quoted.LEX-binary-op = LEX-binary-op
+  FCT-Quoted.LEX-rel-op = LEX-rel-op
+  FCT-Quoted.LEX-add-op = LEX-add-op
+  FCT-Quoted.LEX-mul-op = LEX-mul-op
+  FCT-Quoted.LEX-unary-op = LEX-unary-op
+  FCT-Quoted.LEX-assign-op = LEX-assign-op
   
 context-free syntax // Desugaring
   

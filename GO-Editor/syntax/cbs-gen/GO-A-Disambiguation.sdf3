@@ -13,10 +13,42 @@ lexical syntax // Language
                 
   
   
+  // ## Identifiers
+                   
+  
+  
+  // ## Keywords
+                   
+  
+  
+  // ## Expressions
+                   
+  
+  
+  // ## Arguments
+                   
+  
+  
 syntax // Language
   
   // #A Disambiguation
                 
+  
+  
+  // ## Identifiers
+                   
+  
+  
+  // ## Keywords
+                   
+  
+  
+  // ## Expressions
+                   
+  
+  
+  // ## Arguments
+                   
   
   
 context-free syntax // Language
@@ -25,10 +57,42 @@ context-free syntax // Language
                 
   
   
+  // ## Identifiers
+                   
+  
+  
+  // ## Keywords
+                   
+  
+  
+  // ## Expressions
+                   
+  
+  
+  // ## Arguments
+                   
+  
+  
 context-free syntax // Semantics
   
   // #A Disambiguation
                 
+  
+  
+  // ## Identifiers
+                   
+  
+  
+  // ## Keywords
+                   
+  
+  
+  // ## Expressions
+                   
+  
+  
+  // ## Arguments
+                   
   
   
 context-free syntax // Desugaring
@@ -37,10 +101,42 @@ context-free syntax // Desugaring
                 
   
   
+  // ## Identifiers
+                   
+  
+  
+  // ## Keywords
+                   
+  
+  
+  // ## Expressions
+                   
+  
+  
+  // ## Arguments
+                   
+  
+  
 variables // Meta-variables
   
   // #A Disambiguation
                 
+  
+  
+  // ## Identifiers
+                   
+  
+  
+  // ## Keywords
+                   
+  
+  
+  // ## Expressions
+                   
+  
+  
+  // ## Arguments
+                   
   
   
 // SDF comments
@@ -49,104 +145,79 @@ variables // Meta-variables
                 
   
   
+  // ## Identifiers
+                   
+  
+  
   lexical syntax
-    LEX-identifier = LEX-keyword {reject}
+  LEX-identifier = LEX-keyword {reject}
+  
+  lexical restrictions
+  LEX-identifier -/- [a-zA-Z0-9\_]
+  
+  // ## Keywords
+                   
+  
+  
+  lexical restrictions
+  LEX-keyword -/- [a-zA-Z0-9\_]
+  
+  // ## Expressions
+                   
+  
+  
+  lexical restrictions
+  "<" -/- [\-]
   
   context-free syntax
-  
   L-expression.L-expression--L-expression-BAR-BAR-L-expression =
     L-expression "||" L-expression
      {left}
   L-expression.L-expression--L-expression-AMPERSAND-AMPERSAND-L-expression =
     L-expression "&&" L-expression
      {left}
-  
-  // rel_op
-  L-expression.L-expression--L-expression-EQUALS-EQUALS-L-expression =
-    L-expression "==" L-expression
-     {left}
-  L-expression.L-expression--L-expression-BANG-EQUALS-L-expression =
-    L-expression "!=" L-expression
-     {left}
-  L-expression.L-expression--L-expression-LESS-L-expression =
-    L-expression "<" L-expression
-      {left}
-  L-expression.L-expression--L-expression-LESS-EQUALS-L-expression =
-    L-expression "<=" L-expression
-     {left}
-  L-expression.L-expression--L-expression-GREATER-L-expression =
-    L-expression ">" L-expression
-      {left}
-  L-expression.L-expression--L-expression-GREATER-EQUALS-L-expression =
-    L-expression ">=" L-expression
-     {left}
-  
-  // add_op
-  L-expression.L-expression--L-expression-PLUS-L-expression =
-    L-expression "+" L-expression
-      {left}
-  L-expression.L-expression--L-expression-DASH-L-expression =
-    L-expression "-" L-expression
-      {left}
-  
-  // mul_op
-  L-expression.L-expression--L-expression-STAR-L-expression =
-    L-expression "*" L-expression
-      {left}
-  L-expression.L-expression--L-expression-SLASH-L-expression =
-    L-expression "/" L-expression
-      {left}
-  L-expression.L-expression--L-expression-PERCENT-L-expression =
-    L-expression "%" L-expression
-      {left}
+  L-expression.L-expression--L-expression-L-rel-op-L-expression =
+    L-expression L-rel-op L-expression
+   {left}
+  L-expression.L-expression--L-expression-L-add-op-L-expression =
+    L-expression L-add-op L-expression
+   {left}
+  L-expression.L-expression--L-expression-L-mul-op-L-expression =
+    L-expression L-mul-op L-expression
+   {left}
   
   context-free priorities
+  L-expression.L-expression--L-expression-L-mul-op-L-expression =
+    L-expression L-mul-op L-expression
   
-  {
-    L-expression.L-expression--L-expression-STAR-L-expression =
-    L-expression "*" L-expression
+  >
+  L-expression.L-expression--L-expression-L-add-op-L-expression =
+    L-expression L-add-op L-expression
   
-    L-expression.L-expression--L-expression-SLASH-L-expression =
-    L-expression "/" L-expression
+  >
+  L-expression.L-expression--L-expression-L-rel-op-L-expression =
+    L-expression L-rel-op L-expression
   
-    L-expression.L-expression--L-expression-PERCENT-L-expression =
-    L-expression "%" L-expression
-  
-  } > {
-    L-expression.L-expression--L-expression-PLUS-L-expression =
-    L-expression "+" L-expression
-  
-    L-expression.L-expression--L-expression-DASH-L-expression =
-    L-expression "-" L-expression
-  
-  } > {
-    L-expression.L-expression--L-expression-EQUALS-EQUALS-L-expression =
-    L-expression "==" L-expression
-  
-    L-expression.L-expression--L-expression-BANG-EQUALS-L-expression =
-    L-expression "!=" L-expression
-  
-    L-expression.L-expression--L-expression-LESS-L-expression =
-    L-expression "<" L-expression
-  
-    L-expression.L-expression--L-expression-LESS-EQUALS-L-expression =
-    L-expression "<=" L-expression
-  
-    L-expression.L-expression--L-expression-GREATER-L-expression =
-    L-expression ">" L-expression
-  
-    L-expression.L-expression--L-expression-GREATER-EQUALS-L-expression =
-    L-expression ">=" L-expression
-  
-  } > {
-    L-expression.L-expression--L-expression-AMPERSAND-AMPERSAND-L-expression =
+  >
+  L-expression.L-expression--L-expression-AMPERSAND-AMPERSAND-L-expression =
     L-expression "&&" L-expression
   
-  } > {
-    L-expression.L-expression--L-expression-BAR-BAR-L-expression =
+  >
+  L-expression.L-expression--L-expression-BAR-BAR-L-expression =
     L-expression "||" L-expression
   
-  }
+  
+  // ## Arguments
+                   
+  
+  
+  context-free syntax
+  L-arguments.L-arguments--LPAREN-L-expression-L-commaExpression-S-RPAREN =
+    "(" L-expression L-commaExpression* ")"
+       {prefer}
+  L-arguments.L-arguments--LPAREN-L-expression-L-commaExpression-S-COMMA-RPAREN =
+    "(" L-expression L-commaExpression* "," ")"
+   {prefer}
   
 sorts // ASTs
   T-start

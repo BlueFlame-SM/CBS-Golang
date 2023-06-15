@@ -1,0 +1,121 @@
+L-start--L-sourceFile(
+  L-sourceFile--R-package-L-identifier-SEMI-L-topLevelDeclSemic-S(
+    LEX-identifier("main")
+  , [ L-topLevelDeclSemic--L-topLevelDecl-SEMI(
+        L-topLevelDecl--L-functionDecl(
+          L-functionDecl--R-func-L-identifier-L-parameters-L-typeExpr-Q-L-block(
+            LEX-identifier("main")
+          , L-parameters--LPAREN-C-L-parameterList-COMMA-Q-D-Q-RPAREN(None())
+          , None()
+          , L-block--LBRACE-L-statementSemic-S-RBRACE(
+              [ L-statementSemic--L-statement-SEMI(L-statement--L-goStmt(L-goStmt--R-go-L-primaryExpr-L-arguments(L-primaryExpr--L-operand(L-operand--L-identifier(LEX-identifier("thread"))), L-arguments--LPAREN-RPAREN())))
+              , L-statementSemic--L-statement-SEMI(
+                  L-statement--L-forStmt(
+                    L-forStmt--R-for-L-simpleStmt-Q-SEMI-L-expression-Q-SEMI-L-simpleStmt-Q-L-block(
+                      Some(
+                        L-simpleStmt--L-shortVarDecl(
+                          L-shortVarDecl--L-identifier-COLON-EQUALS-L-expression(
+                            LEX-identifier("i")
+                          , L-expression--L-unaryExpr(L-unaryExpr--L-primaryExpr(L-primaryExpr--L-operand(L-operand--L-int-lit(LEX-int-lit("5")))))
+                          )
+                        )
+                      )
+                    , Some(
+                        L-expression--L-expression-L-rel-op-L-expression(
+                          L-expression--L-unaryExpr(L-unaryExpr--L-primaryExpr(L-primaryExpr--L-operand(L-operand--L-identifier(LEX-identifier("i")))))
+                        , LEX-rel-op("<")
+                        , L-expression--L-unaryExpr(L-unaryExpr--L-primaryExpr(L-primaryExpr--L-operand(L-operand--L-int-lit(LEX-int-lit("10")))))
+                        )
+                      )
+                    , Some(L-simpleStmt--L-incDecStmt(L-incDecStmt--L-identifier-PLUS-PLUS(LEX-identifier("i"))))
+                    , L-block--LBRACE-L-statementSemic-S-RBRACE(
+                        [ L-statementSemic--L-statement-SEMI(
+                            L-statement--L-simpleStmt(
+                              L-simpleStmt--L-expressionStmt(
+                                L-expressionStmt--L-expression(
+                                  L-expression--L-unaryExpr(
+                                    L-unaryExpr--L-primaryExpr(
+                                      L-primaryExpr--L-primaryExpr-L-arguments(
+                                        L-primaryExpr--L-operand(L-operand--L-identifier(LEX-identifier("print")))
+                                      , amb(
+                                          [ L-arguments--LPAREN-L-typeExpr-L-commaExpression-S-RPAREN(L-typeExpr--L-identifier(LEX-identifier("i")), [])
+                                          , L-arguments--LPAREN-L-expression-L-commaExpression-S-RPAREN(L-expression--L-unaryExpr(L-unaryExpr--L-primaryExpr(L-primaryExpr--L-operand(L-operand--L-identifier(LEX-identifier("i"))))), [])
+                                          ]
+                                        )
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        ]
+                      )
+                    )
+                  )
+                )
+              ]
+            )
+          )
+        )
+      )
+    , L-topLevelDeclSemic--L-topLevelDecl-SEMI(
+        L-topLevelDecl--L-functionDecl(
+          L-functionDecl--R-func-L-identifier-L-parameters-L-typeExpr-Q-L-block(
+            LEX-identifier("thread")
+          , L-parameters--LPAREN-C-L-parameterList-COMMA-Q-D-Q-RPAREN(None())
+          , None()
+          , L-block--LBRACE-L-statementSemic-S-RBRACE(
+              [ L-statementSemic--L-statement-SEMI(
+                  L-statement--L-forStmt(
+                    L-forStmt--R-for-L-simpleStmt-Q-SEMI-L-expression-Q-SEMI-L-simpleStmt-Q-L-block(
+                      Some(
+                        L-simpleStmt--L-shortVarDecl(
+                          L-shortVarDecl--L-identifier-COLON-EQUALS-L-expression(
+                            LEX-identifier("i")
+                          , L-expression--L-unaryExpr(L-unaryExpr--L-primaryExpr(L-primaryExpr--L-operand(L-operand--L-int-lit(LEX-int-lit("0")))))
+                          )
+                        )
+                      )
+                    , Some(
+                        L-expression--L-expression-L-rel-op-L-expression(
+                          L-expression--L-unaryExpr(L-unaryExpr--L-primaryExpr(L-primaryExpr--L-operand(L-operand--L-identifier(LEX-identifier("i")))))
+                        , LEX-rel-op("<")
+                        , L-expression--L-unaryExpr(L-unaryExpr--L-primaryExpr(L-primaryExpr--L-operand(L-operand--L-int-lit(LEX-int-lit("5")))))
+                        )
+                      )
+                    , Some(L-simpleStmt--L-incDecStmt(L-incDecStmt--L-identifier-PLUS-PLUS(LEX-identifier("i"))))
+                    , L-block--LBRACE-L-statementSemic-S-RBRACE(
+                        [ L-statementSemic--L-statement-SEMI(
+                            L-statement--L-simpleStmt(
+                              L-simpleStmt--L-expressionStmt(
+                                L-expressionStmt--L-expression(
+                                  L-expression--L-unaryExpr(
+                                    L-unaryExpr--L-primaryExpr(
+                                      L-primaryExpr--L-primaryExpr-L-arguments(
+                                        L-primaryExpr--L-operand(L-operand--L-identifier(LEX-identifier("print")))
+                                      , amb(
+                                          [ L-arguments--LPAREN-L-typeExpr-L-commaExpression-S-RPAREN(L-typeExpr--L-identifier(LEX-identifier("i")), [])
+                                          , L-arguments--LPAREN-L-expression-L-commaExpression-S-RPAREN(L-expression--L-unaryExpr(L-unaryExpr--L-primaryExpr(L-primaryExpr--L-operand(L-operand--L-identifier(LEX-identifier("i"))))), [])
+                                          ]
+                                        )
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        ]
+                      )
+                    )
+                  )
+                )
+              ]
+            )
+          )
+        )
+      )
+    ]
+  )
+)

@@ -8,6 +8,7 @@ imports
 
 imports
   cbs-gen/GO-5-Declarations
+  cbs-gen/GO-B-Funcons
   cbs-gen/GO-1-Lexemes
   cbs-gen/GO-3-Expressions
 
@@ -46,7 +47,7 @@ to-funcons:
              sequential (execute-statements[: (:StatementSemic*:) :])) ]|
 to-funcons:
   |[ allocate-statements[:  :] ]| ->
-  |[ map () ]|
+  |[ () ]|
 to-funcons:
   |[ allocate-statements[: (:VarDecl:);(:StatementSemic*:) :] ]| ->
   |[ allocate[: (:VarDecl:) :], 
@@ -123,6 +124,14 @@ to-funcons:
 to-funcons:
   |[ execute[: (:Expression:) :] ]| ->
   |[ evaluate[: (:Expression:) :] ]|
+
+// ### Send statements
+                 
+
+to-funcons:
+  |[ execute[: (:Identifier:)<-(:Expression:) :] ]| ->
+  |[ channel-send-else-wait (evaluate[: (:Identifier:) :], 
+             evaluate[: (:Expression:) :]) ]|
 
 // ### IncDec statements
                  

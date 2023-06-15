@@ -53,17 +53,15 @@ Rule
 ## Function declarations
 
 Syntax
-  FunctionDecl : functionDecl
-    ::= 'func' identifier parameters block
-      | 'func' identifier parameters type block
+  FunctionDecl : functionDecl ::= 'func' identifier parameters typeExpr? block
 
 Rule
   allocate[['func' Identifier Parameters Block]]
     = bind(id[[Identifier]], allocate-variable functions(tuples(values*), null-type))
 
 Rule
-  allocate[['func' Identifier Parameters T Block]]
-    = bind(id[[Identifier]], allocate-variable functions(tuples(values*), type[[T]]))
+  allocate[['func' Identifier Parameters TypeExpr Block]]
+    = bind(id[[Identifier]], allocate-variable functions(tuples(values*), type[[TypeExpr]]))
 
 Rule
   initialise[['func' Identifier Parameters '{' StatementSemic* '}']]
@@ -76,8 +74,8 @@ Rule
           handle-return sequential(execute-statements[[StatementSemic*]])))
 
 Rule
-  initialise[['func' Identifier Parameters T '{' StatementSemic* '}']]
-    = initialise[['func' Identifier Parameters '{' StatementSemic* '}']]
+  initialise[['func' Identifier Parameters TypeExpr Block]]
+    = initialise[['func' Identifier Parameters Block]]
 
 
 

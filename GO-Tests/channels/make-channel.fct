@@ -1,0 +1,90 @@
+initialise-giving initialise-binding initialise-storing scope
+  ({"any" |-> values,
+    "bool" |-> bools,
+    "int" |-> int,
+    "int8" |-> int8,
+    "int16" |-> int16,
+    "int32" |-> int32,
+    "int64" |-> int64,
+    "uint" |-> uint,
+    "uint8" |-> uint8,
+    "uint16" |-> uint16,
+    "uint32" |-> uint32,
+    "uint64" |-> uint64,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print
+                  (tuple-elements given),
+    "make" |-> function closure case-match
+                 (tuple
+                    (type-construct
+                       (channels,
+                        pattern-bind
+                          ("type"))),
+                  channel-create
+                    (bound "type",
+                     0))},
+   handle-abrupt
+     (sequential
+        (multithread scope
+           (collateral
+              (bind
+                 ("main",
+                  allocate-variable functions
+                    (tuples
+                       ((values)*),
+                     null-type)),
+               map
+                 ( )),
+            sequential
+              (assign
+                 (bound "main",
+                  function closure scope
+                    (collateral
+                       (match
+                          (given,
+                           tuple
+                             ( )),
+                        bind
+                          ("c",
+                           allocate-variable values),
+                        ( )),
+                     handle-return sequential
+                       (give
+                          (apply
+                             (current-value bound
+                                "make",
+                              tuple l-to-r
+                                (type-construct
+                                   (channels,
+                                    current-value bound
+                                      "int"),
+                                 ( ))),
+                           sequential
+                             (check-true and
+                                (is-in-type
+                                   (bound "c",
+                                    variables),
+                                 not is-in-type
+                                   (given,
+                                    types)),
+                              assign
+                                (bound "c",
+                                 given))),
+                        apply
+                          (current-value bound
+                             "print",
+                           tuple l-to-r
+                             (current-value bound
+                                "c",
+                              ( ))),
+                        null-value))),
+               null-value,
+               effect apply
+                 (current-value bound
+                    "main",
+                  tuple
+                    ( )))),
+         "succes"),
+      "failure"))

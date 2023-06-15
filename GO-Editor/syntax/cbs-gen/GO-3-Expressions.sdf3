@@ -1,6 +1,7 @@
 module GO-3-Expressions
             
 imports 
+  GO-2-Types
   GO-1-Lexemes
   Funcons
 
@@ -129,17 +130,17 @@ context-free syntax // Language
   
   L-arguments.L-arguments--LPAREN-RPAREN =
     "(" ")"
-  L-arguments.L-arguments--LPAREN-L-expressionList-RPAREN =
-    "(" L-expressionList ")"
-  L-arguments.L-arguments--LPAREN-L-expressionList-COMMA-RPAREN =
-    "(" L-expressionList "," ")"
+  L-arguments.L-arguments--LPAREN-L-typeExpr-L-commaExpression-S-RPAREN =
+    "(" L-typeExpr L-commaExpression* ")"
+  L-arguments.L-arguments--LPAREN-L-expression-L-commaExpression-S-RPAREN =
+    "(" L-expression L-commaExpression* ")"
+  L-arguments.L-arguments--LPAREN-L-typeExpr-L-commaExpression-S-COMMA-RPAREN =
+    "(" L-typeExpr L-commaExpression* "," ")"
+  L-arguments.L-arguments--LPAREN-L-expression-L-commaExpression-S-COMMA-RPAREN =
+    "(" L-expression L-commaExpression* "," ")"
   
-  L-expressionList.L-expressionList--L-expression-C-COMMA-L-expressionList-D-Q =
-    L-expression L-COMMA-L-expressionList?
-  
-  L-COMMA-L-expressionList.L-COMMA-L-expressionList--COMMA-L-expressionList =
-    "," L-expressionList
-  
+  L-commaExpression.L-commaExpression--COMMA-L-expression =
+    "," L-expression
   
   
   // ## Operators
@@ -155,28 +156,12 @@ context-free syntax // Language
     L-expression "||" L-expression
   L-expression.L-expression--L-expression-AMPERSAND-AMPERSAND-L-expression =
     L-expression "&&" L-expression
-  L-expression.L-expression--L-expression-EQUALS-EQUALS-L-expression =
-    L-expression "==" L-expression
-  L-expression.L-expression--L-expression-BANG-EQUALS-L-expression =
-    L-expression "!=" L-expression
-  L-expression.L-expression--L-expression-LESS-L-expression =
-    L-expression "<" L-expression
-  L-expression.L-expression--L-expression-LESS-EQUALS-L-expression =
-    L-expression "<=" L-expression
-  L-expression.L-expression--L-expression-GREATER-L-expression =
-    L-expression ">" L-expression
-  L-expression.L-expression--L-expression-GREATER-EQUALS-L-expression =
-    L-expression ">=" L-expression
-  L-expression.L-expression--L-expression-PLUS-L-expression =
-    L-expression "+" L-expression
-  L-expression.L-expression--L-expression-DASH-L-expression =
-    L-expression "-" L-expression
-  L-expression.L-expression--L-expression-STAR-L-expression =
-    L-expression "*" L-expression
-  L-expression.L-expression--L-expression-SLASH-L-expression =
-    L-expression "/" L-expression
-  L-expression.L-expression--L-expression-PERCENT-L-expression =
-    L-expression "%" L-expression
+  L-expression.L-expression--L-expression-L-rel-op-L-expression =
+    L-expression L-rel-op L-expression
+  L-expression.L-expression--L-expression-L-add-op-L-expression =
+    L-expression L-add-op L-expression
+  L-expression.L-expression--L-expression-L-mul-op-L-expression =
+    L-expression L-mul-op L-expression
   
   
   // #### Boolean expressions
@@ -200,12 +185,8 @@ context-free syntax // Language
   
   L-unaryExpr.L-unaryExpr--L-primaryExpr =
     L-primaryExpr
-  L-unaryExpr.L-unaryExpr--PLUS-L-unaryExpr =
-    "+" L-unaryExpr
-  L-unaryExpr.L-unaryExpr--DASH-L-unaryExpr =
-    "-" L-unaryExpr
-  L-unaryExpr.L-unaryExpr--BANG-L-unaryExpr =
-    "!" L-unaryExpr
+  L-unaryExpr.L-unaryExpr--L-unary-op-L-unaryExpr =
+    L-unary-op L-unaryExpr
   
   
 context-free syntax // Semantics
@@ -228,7 +209,7 @@ context-free syntax // Semantics
   FCT.T-tuple-arguments =
     "tuple-arguments" "[:" L-arguments ":]"
   FCT.T-evaluate-expressions =
-    "evaluate-expressions" "[:" L-expressionList ":]"
+    "evaluate-expressions" "[:" L-commaExpression* ":]"
   
   // ## Operators
                    
@@ -277,6 +258,7 @@ context-free syntax // Desugaring
   // ### Arguments
                    
   
+  Term.ToTerm = "[:" L-arguments  ":]" ":" "arguments"
   Term.ToTerm = "[:" L-arguments  ":]" ":" "arguments"
   
   // ## Operators
@@ -336,10 +318,14 @@ variables // Meta-variables
   L-arguments? = "(:Arguments" [1-9]? "?:)" {prefer}
   L-arguments* = "(:Arguments" [1-9]? "*:)" {prefer}
   L-arguments+ = "(:Arguments" [1-9]? "+:)" {prefer}
-  L-expressionList = "(:ExpressionList" [1-9]? ":)" {prefer}
-  L-expressionList? = "(:ExpressionList" [1-9]? "?:)" {prefer}
-  L-expressionList* = "(:ExpressionList" [1-9]? "*:)" {prefer}
-  L-expressionList+ = "(:ExpressionList" [1-9]? "+:)" {prefer}
+  L-commaExpression* = "..." [1-9]? {prefer}
+  L-commaExpression* = "..." [1-9]? {prefer}
+  L-commaExpression* = "..." [1-9]? {prefer}
+  L-commaExpression* = "..." [1-9]? {prefer}
+  L-commaExpression = "(:CommaExpression" [1-9]? ":)" {prefer}
+  L-commaExpression? = "(:CommaExpression" [1-9]? "?:)" {prefer}
+  L-commaExpression* = "(:CommaExpression" [1-9]? "*:)" {prefer}
+  L-commaExpression+ = "(:CommaExpression" [1-9]? "+:)" {prefer}
   
   // ## Operators
                    

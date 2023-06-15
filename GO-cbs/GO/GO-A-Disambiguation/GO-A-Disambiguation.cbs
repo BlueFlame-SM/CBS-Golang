@@ -2,56 +2,62 @@ Language "Golang"
 
 #A Disambiguation
 
+## Identifiers
+
 Lexis SDF
 /*
 lexical syntax
-  ``identifier`` = ``keyword`` {reject}
+``identifier`` = ``keyword`` {reject}
+
+lexical restrictions
+``identifier`` -/- [a-zA-Z0-9\_]
 */
 
+
+## Keywords
+
+Lexis SDF
+/*
+lexical restrictions
+``keyword`` -/- [a-zA-Z0-9\_]
+*/
+
+
+## Expressions
+
+Lexis SDF
+/*
+lexical restrictions
+"<" -/- [\-]
+*/
 
 Syntax SDF
 /*
 context-free syntax
-
 ``expression ::= expression '||' expression``   {left}
 ``expression ::= expression '&&' expression``   {left}
-
-// rel_op
-``expression ::= expression '==' expression``   {left}
-``expression ::= expression '!=' expression``   {left}
-``expression ::= expression '<' expression``    {left}
-``expression ::= expression '<=' expression``   {left}
-``expression ::= expression '>' expression``    {left}
-``expression ::= expression '>=' expression``   {left}
-
-// add_op
-``expression ::= expression '+' expression``    {left}
-``expression ::= expression '-' expression``    {left}
-
-// mul_op
-``expression ::= expression '*' expression``    {left}
-``expression ::= expression '/' expression``    {left}
-``expression ::= expression '%' expression``    {left}
+``expression ::= expression rel-op expression`` {left}
+``expression ::= expression add-op expression`` {left}
+``expression ::= expression mul-op expression`` {left}
 
 context-free priorities
+``expression ::= expression mul-op expression``
+>
+``expression ::= expression add-op expression``
+>
+``expression ::= expression rel-op expression``
+>
+``expression ::= expression '&&' expression``
+>
+``expression ::= expression '||' expression``
+*/
 
-{
-  ``expression ::= expression '*' expression``
-  ``expression ::= expression '/' expression``
-  ``expression ::= expression '%' expression``
-} > {
-  ``expression ::= expression '+' expression``
-  ``expression ::= expression '-' expression``
-} > {
-  ``expression ::= expression '==' expression``
-  ``expression ::= expression '!=' expression``
-  ``expression ::= expression '<' expression``
-  ``expression ::= expression '<=' expression``
-  ``expression ::= expression '>' expression``
-  ``expression ::= expression '>=' expression``
-} > {
-  ``expression ::= expression '&&' expression``
-} > {
-  ``expression ::= expression '||' expression``
-}
+
+## Arguments
+
+Syntax SDF
+/*
+context-free syntax
+``arguments ::= '(' expression commaExpression* ')'``     {prefer}
+``arguments ::= '(' expression commaExpression* ',' ')'`` {prefer}
 */

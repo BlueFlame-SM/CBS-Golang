@@ -2,6 +2,7 @@ module GO-4-Statements
             
 imports 
   GO-5-Declarations
+  GO-B-Funcons
   GO-1-Lexemes
   GO-3-Expressions
   Funcons
@@ -43,6 +44,10 @@ lexical syntax // Language
   
   
   // ### Expression statements
+                   
+  
+  
+  // ### Send statements
                    
   
   
@@ -93,6 +98,10 @@ syntax // Language
   
   
   // ### Expression statements
+                   
+  
+  
+  // ### Send statements
                    
   
   
@@ -188,6 +197,8 @@ context-free syntax // Language
     L-emptyStmt
   L-simpleStmt.L-simpleStmt--L-expressionStmt =
     L-expressionStmt
+  L-simpleStmt.L-simpleStmt--L-sendStmt =
+    L-sendStmt
   L-simpleStmt.L-simpleStmt--L-incDecStmt =
     L-incDecStmt
   L-simpleStmt.L-simpleStmt--L-assignment =
@@ -210,6 +221,13 @@ context-free syntax // Language
     L-expression
   
   
+  // ### Send statements
+                   
+  
+  L-sendStmt.L-sendStmt--L-identifier-LESS-DASH-L-expression =
+    L-identifier "<-" L-expression
+  
+  
   // ### IncDec statements
                    
   
@@ -222,18 +240,8 @@ context-free syntax // Language
   // ### Assignment statements
                    
   
-  L-assignment.L-assignment--L-identifier-EQUALS-L-expression =
-    L-identifier "=" L-expression
-  L-assignment.L-assignment--L-identifier-PLUS-EQUALS-L-expression =
-    L-identifier "+=" L-expression
-  L-assignment.L-assignment--L-identifier-DASH-EQUALS-L-expression =
-    L-identifier "-=" L-expression
-  L-assignment.L-assignment--L-identifier-STAR-EQUALS-L-expression =
-    L-identifier "*=" L-expression
-  L-assignment.L-assignment--L-identifier-SLASH-EQUALS-L-expression =
-    L-identifier "/=" L-expression
-  L-assignment.L-assignment--L-identifier-PERCENT-EQUALS-L-expression =
-    L-identifier "%=" L-expression
+  L-assignment.L-assignment--L-identifier-L-assign-op-L-expression =
+    L-identifier L-assign-op L-expression
   
   
   // ### Short variable declarations
@@ -262,9 +270,9 @@ context-free syntax // Semantics
   // ## Blocks
                    
   
-  FCT.T-allocate-statements =
+  FCT-SEQ.T-allocate-statements =
     "allocate-statements" "[:" L-statementSemic* ":]"
-  FCT.T-execute-statements =
+  FCT-SEQ.T-execute-statements =
     "execute-statements" "[:" L-statementSemic* ":]"
   
   // ## If statements
@@ -284,6 +292,10 @@ context-free syntax // Semantics
   
   
   // ### Expression statements
+                   
+  
+  
+  // ### Send statements
                    
   
   
@@ -342,6 +354,10 @@ context-free syntax // Desugaring
   
   
   // ### Expression statements
+                   
+  
+  
+  // ### Send statements
                    
   
   
@@ -428,6 +444,10 @@ variables // Meta-variables
                    
   
   
+  // ### Send statements
+                   
+  
+  
   // ### IncDec statements
                    
   
@@ -479,6 +499,10 @@ variables // Meta-variables
   
   
   // ### Expression statements
+                   
+  
+  
+  // ### Send statements
                    
   
   

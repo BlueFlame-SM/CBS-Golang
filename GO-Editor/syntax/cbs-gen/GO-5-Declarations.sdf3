@@ -1,10 +1,10 @@
 module GO-5-Declarations
             
 imports 
-  GO-1-Lexemes
+  GO-2-Types
   GO-3-Expressions
   GO-4-Statements
-  GO-2-Types
+  GO-1-Lexemes
   Funcons
 
 // Language "Golang"
@@ -76,10 +76,8 @@ context-free syntax // Language
   // ## Function declarations
                    
   
-  L-functionDecl.L-functionDecl--R-func-L-identifier-L-parameters-L-block =
-    "func" L-identifier L-parameters L-block
-  L-functionDecl.L-functionDecl--R-func-L-identifier-L-parameters-L-type-L-block =
-    "func" L-identifier L-parameters L-type L-block
+  L-functionDecl.L-functionDecl--R-func-L-identifier-L-parameters-L-typeExpr-Q-L-block =
+    "func" L-identifier L-parameters L-typeExpr? L-block
   
   
 context-free syntax // Semantics

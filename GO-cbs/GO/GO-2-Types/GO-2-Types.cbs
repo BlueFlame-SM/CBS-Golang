@@ -19,8 +19,8 @@ Alias uint = uint32
 
 
 Syntax
-  T : type
-    ::= '(' type ')'
+  TypeExpr : typeExpr
+    ::= '(' typeExpr ')'
 //      | arrayType  // TODO: arrays
 //      | structType  // TODO: structs
 //      | pointerTypegoType  // TODO: pointers
@@ -32,30 +32,32 @@ Syntax
       | identifier  // TODO: typeargs
 //      | qualifiedIdent  // TODO: typeargs
 
+
 //Syntax
 //  typeArgs ::= '[' typeList ','? ']'
 //  typeList ::= type (',' type)*
 
 Semantics
-  type[[_:type]] : =>types
+  type[[TypeExpr:typeExpr]] : =>types
+    = type-construct-type(type-construct[[TypeExpr]])
+
+Semantics
+  type-construct[[_:typeExpr]] : =>type-constructs
 
 Rule
-  type[['(' T ')']] = type[[T]]
+  type-construct[['(' TypeExpr ')']] = type-construct[[TypeExpr]]
 
 Rule
-  type[[Identifier]]
-    = sequential(
-        check-true is-in-type(bound id[[Identifier]], types),
-        bound id[[Identifier]])
+  type-construct[[Identifier]] = evaluate[[Identifier]]
 
 
 ## Channel Types
 
 Syntax
-  channelType ::= 'chan' type
+  channelType ::= 'chan' typeExpr
 
 Rule
-  type[['chan' T]] = channels(type[[T]])
+  type-construct[['chan' TypeExpr]] = type-construct(channels, type-construct[[TypeExpr]])
 
 
 ## Function Types
@@ -63,10 +65,10 @@ Rule
 Syntax
   FunctionType  : functionType  ::= 'func' signature
   Signature     : signature     ::= parameters result?
-  Result        : result        ::= type  // TODO: add parameters (requires multiple assignment / tuples)
+  Result        : result        ::= typeExpr  // TODO: add parameters (requires multiple assignment / tuples)
   Parameters    : parameters    ::= '(' (parameterList ','?)? ')'
   ParameterList : parameterList ::= parameterDecl (',' parameterList)?
-  ParameterDecl : parameterDecl ::= identifier type  // TODO: identifierList
+  ParameterDecl : parameterDecl ::= identifier typeExpr  // TODO: identifierList
 
 
 ### Binding
@@ -78,27 +80,27 @@ Rule
   bind-parameters[['(' ')']] = ( )
 
 Rule
-  bind-parameters[['(' ParameterList ')']] = bind-parameterlist[[ParameterList]]
+  bind-parameters[['(' ParameterList ')']] = bind-parameterdecls[[ParameterList]]
 
 Rule
   [['(' ParameterList ',' ')']] : parameters = [['(' ParameterList ')']]
 
 Semantics
-  bind-parameterlist[[_:parameterList]] : =>patterns*
+  bind-parameterdecls[[_:parameterList]] : =>patterns*
 
 Rule
-  bind-parameterlist[[ParameterDecl]] = bind-parameterdecl[[ParameterDecl]]
+  bind-parameterdecls[[ParameterDecl]] = bind-parameterdecl[[ParameterDecl]]
 
 Rule
-  bind-parameterlist[[ParameterDecl ',' ParameterList]]
-    = bind-parameterdecl[[ParameterDecl]], bind-parameterlist[[ParameterList]]
+  bind-parameterdecls[[ParameterDecl ',' ParameterList]]
+    = bind-parameterdecl[[ParameterDecl]], bind-parameterdecls[[ParameterList]]
 
 Semantics
-  bind-parameterdecl[[_:parameterDecl]] : =>pattern
+  bind-parameterdecl[[_:parameterDecl]] : =>patterns
 
 Rule
-  bind-parameterdecl[[Identifier T]]
-    = pattern closure bind(id[[Identifier]], alloc-init(type[[T]], given))
+  bind-parameterdecl[[Identifier TypeExpr]]
+    = pattern closure bind(id[[Identifier]], alloc-init(type[[TypeExpr]], given))
 
 
 

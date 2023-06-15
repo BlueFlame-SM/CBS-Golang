@@ -7,7 +7,7 @@ Syntax
     ::= simpleStmt
       | declaration
 //      | labeledStmt  // TODO: goto
-      | goStmt  // TODO: concurrency
+      | goStmt
       | returnStmt
 //      | breakStmt  // TODO: loops
 //      | continueStmt  // TODO: loops
@@ -59,20 +59,21 @@ Rule
         sequential(execute-statements[[StatementSemic*]]))
 
 Semantics
-  allocate-statements[[_:statementSemic*]] : =>envs
+  allocate-statements[[_:statementSemic*]] : (=>environments)*
 
 Rule
-  allocate-statements[[ ]] = map( )
+  allocate-statements[[ ]] = ( )
 
 Rule
   allocate-statements[[VarDecl ';' StatementSemic*]]
     = allocate[[VarDecl]], allocate-statements[[StatementSemic*]]
 
 Otherwise
-  allocate-statements[[Statement ';' StatementSemic*]] = allocate-statements[[StatementSemic*]]
+  allocate-statements[[Statement ';' StatementSemic*]]
+    = allocate-statements[[StatementSemic*]]
 
 Semantics
-  execute-statements[[_:statementSemic*]] : =>null-value
+  execute-statements[[_:statementSemic*]] : (=>null-type)+
 
 Rule
   execute-statements[[ ]] = null-value
@@ -147,7 +148,7 @@ Syntax
   SimpleStmt : simpleStmt
     ::= emptyStmt
       | expressionStmt
-//      | sendStmt  // TODO: concurrency
+      | sendStmt
       | incDecStmt
       | assignment
       | shortVarDecl
@@ -171,6 +172,16 @@ Rule
   execute[[Expression]] = evaluate[[Expression]]
 
 
+### Send statements
+
+Syntax
+  sendStmt ::= identifier '<-' expression
+
+Rule
+  execute[[Identifier '<-' Expression]]
+    = channel-send-else-wait(evaluate[[Identifier]], evaluate[[Expression]])
+
+
 ### IncDec statements
 
 Syntax
@@ -190,13 +201,7 @@ Rule
 ### Assignment statements
 
 Syntax
-  Assignment : assignment  // TODO: expression resolution, multiple assignment
-    ::= identifier '=' expression
-      | identifier '+=' expression
-      | identifier '-=' expression
-      | identifier '*=' expression
-      | identifier '/=' expression
-      | identifier '%=' expression
+  Assignment : assignment ::= identifier assign-op expression  // TODO: expression resolution, multiple assignment
 
 Rule
   execute[[Assignment]] = assign[[Assignment]]

@@ -24,6 +24,10 @@ lexical syntax // Language
                    
   
   
+  // ## Typeconstructs
+                   
+  
+  
   // ## Channels
                    
   
@@ -43,6 +47,10 @@ syntax // Language
   
   
   // ## Variables
+                   
+  
+  
+  // ## Typeconstructs
                    
   
   
@@ -68,6 +76,10 @@ context-free syntax // Language
                    
   
   
+  // ## Typeconstructs
+                   
+  
+  
   // ## Channels
                    
   
@@ -87,6 +99,10 @@ context-free syntax // Semantics
   
   
   // ## Variables
+                   
+  
+  
+  // ## Typeconstructs
                    
   
   
@@ -112,6 +128,10 @@ context-free syntax // Desugaring
                    
   
   
+  // ## Typeconstructs
+                   
+  
+  
   // ## Channels
                    
   
@@ -134,6 +154,10 @@ variables // Meta-variables
                    
   
   
+  // ## Typeconstructs
+                   
+  
+  
   // ## Channels
                    
   
@@ -153,6 +177,10 @@ variables // Meta-variables
   
   
   // ## Variables
+                   
+  
+  
+  // ## Typeconstructs
                    
   
   

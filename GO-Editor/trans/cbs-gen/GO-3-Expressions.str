@@ -7,6 +7,7 @@ imports
   pp/GO-pp
 
 imports
+  cbs-gen/GO-2-Types
   cbs-gen/GO-1-Lexemes
 
 // Language "Golang"
@@ -44,22 +45,30 @@ to-funcons:
 // ### Arguments
                  
 
+to-desugared:
+  [: ((:TypeExpr:)(:CommaExpression*:),) :] : arguments ->
+  [: ((:TypeExpr:)(:CommaExpression*:)) :] : arguments
+to-desugared:
+  [: ((:Expression:)(:CommaExpression*:),) :] : arguments ->
+  [: ((:Expression:)(:CommaExpression*:)) :] : arguments
 to-funcons:
   |[ tuple-arguments[: () :] ]| ->
   |[ tuple () ]|
 to-funcons:
-  |[ tuple-arguments[: ((:ExpressionList:)) :] ]| ->
-  |[ tuple l-to-r (evaluate-expressions[: (:ExpressionList:) :]) ]|
-to-desugared:
-  [: ((:ExpressionList:),) :] : arguments ->
-  [: ((:ExpressionList:)) :] : arguments
+  |[ tuple-arguments[: ((:Expression:)(:CommaExpression*:)) :] ]| ->
+  |[ tuple l-to-r (evaluate[: (:Expression:) :], 
+                    evaluate-expressions[: (:CommaExpression*:) :]) ]|
 to-funcons:
-  |[ evaluate-expressions[: (:Expression:) :] ]| ->
-  |[ evaluate[: (:Expression:) :] ]|
+  |[ tuple-arguments[: ((:TypeExpr:)(:CommaExpression*:)) :] ]| ->
+  |[ tuple l-to-r (type-construct[: (:TypeExpr:) :], 
+                    evaluate-expressions[: (:CommaExpression*:) :]) ]|
 to-funcons:
-  |[ evaluate-expressions[: (:Expression:),(:ExpressionList:) :] ]| ->
+  |[ evaluate-expressions[:  :] ]| ->
+  |[ () ]|
+to-funcons:
+  |[ evaluate-expressions[: ,(:Expression:)(:CommaExpression*:) :] ]| ->
   |[ evaluate[: (:Expression:) :], 
-     evaluate-expressions[: (:ExpressionList:) :] ]|
+     evaluate-expressions[: (:CommaExpression*:) :] ]|
 
 // ## Operators
                  

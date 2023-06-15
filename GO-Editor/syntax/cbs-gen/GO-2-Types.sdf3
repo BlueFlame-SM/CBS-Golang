@@ -1,6 +1,7 @@
 module GO-2-Types
             
 imports 
+  GO-3-Expressions
   GO-B-Funcons
   GO-1-Lexemes
   Funcons
@@ -61,19 +62,19 @@ context-free syntax // Language
   // ## Integer Types
                    
   
-  L-type.L-type--LPAREN-L-type-RPAREN =
-    "(" L-type ")"
-  L-type.L-type--L-channelType =
+  L-typeExpr.L-typeExpr--LPAREN-L-typeExpr-RPAREN =
+    "(" L-typeExpr ")"
+  L-typeExpr.L-typeExpr--L-channelType =
     L-channelType
-  L-type.L-type--L-identifier =
+  L-typeExpr.L-typeExpr--L-identifier =
     L-identifier
   
   
   // ## Channel Types
                    
   
-  L-channelType.L-channelType--R-chan-L-type =
-    "chan" L-type
+  L-channelType.L-channelType--R-chan-L-typeExpr =
+    "chan" L-typeExpr
   
   
   // ## Function Types
@@ -85,8 +86,8 @@ context-free syntax // Language
   L-signature.L-signature--L-parameters-L-result-Q =
     L-parameters L-result?
   
-  L-result.L-result--L-type =
-    L-type
+  L-result.L-result--L-typeExpr =
+    L-typeExpr
   
   L-parameters.L-parameters--LPAREN-C-L-parameterList-COMMA-Q-D-Q-RPAREN =
     "(" L-L-parameterList-COMMA-Q? ")"
@@ -102,8 +103,8 @@ context-free syntax // Language
     "," L-parameterList
   
   
-  L-parameterDecl.L-parameterDecl--L-identifier-L-type =
-    L-identifier L-type
+  L-parameterDecl.L-parameterDecl--L-identifier-L-typeExpr =
+    L-identifier L-typeExpr
   
   
   // ### Binding
@@ -120,7 +121,9 @@ context-free syntax // Semantics
                    
   
   FCT.T-type =
-    "type" "[:" L-type ":]"
+    "type" "[:" L-typeExpr ":]"
+  FCT.T-type-construct =
+    "type-construct" "[:" L-typeExpr ":]"
   
   // ## Channel Types
                    
@@ -135,8 +138,8 @@ context-free syntax // Semantics
   
   FCT.T-bind-parameters =
     "bind-parameters" "[:" L-parameters ":]"
-  FCT.T-bind-parameterlist =
-    "bind-parameterlist" "[:" L-parameterList ":]"
+  FCT.T-bind-parameterdecls =
+    "bind-parameterdecls" "[:" L-parameterList ":]"
   FCT.T-bind-parameterdecl =
     "bind-parameterdecl" "[:" L-parameterDecl ":]"
   
@@ -172,10 +175,10 @@ variables // Meta-variables
   // ## Integer Types
                    
   
-  L-type = "(:T" [1-9]? ":)" {prefer}
-  L-type? = "(:T" [1-9]? "?:)" {prefer}
-  L-type* = "(:T" [1-9]? "*:)" {prefer}
-  L-type+ = "(:T" [1-9]? "+:)" {prefer}
+  L-typeExpr = "(:TypeExpr" [1-9]? ":)" {prefer}
+  L-typeExpr? = "(:TypeExpr" [1-9]? "?:)" {prefer}
+  L-typeExpr* = "(:TypeExpr" [1-9]? "*:)" {prefer}
+  L-typeExpr+ = "(:TypeExpr" [1-9]? "+:)" {prefer}
   
   // ## Channel Types
                    

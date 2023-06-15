@@ -7,6 +7,7 @@ imports
   pp/GO-pp
 
 imports
+  cbs-gen/GO-3-Expressions
   cbs-gen/GO-B-Funcons
   cbs-gen/GO-1-Lexemes
 
@@ -22,20 +23,22 @@ rules
                  
 
 to-funcons:
-  |[ type[: ((:T:)) :] ]| ->
-  |[ type[: (:T:) :] ]|
+  |[ type[: (:TypeExpr:) :] ]| ->
+  |[ type-construct-type (type-construct[: (:TypeExpr:) :]) ]|
 to-funcons:
-  |[ type[: (:Identifier:) :] ]| ->
-  |[ sequential (check-true is-in-type (bound id[: (:Identifier:) :], 
-                            types), 
-             bound id[: (:Identifier:) :]) ]|
+  |[ type-construct[: ((:TypeExpr:)) :] ]| ->
+  |[ type-construct[: (:TypeExpr:) :] ]|
+to-funcons:
+  |[ type-construct[: (:Identifier:) :] ]| ->
+  |[ evaluate[: (:Identifier:) :] ]|
 
 // ## Channel Types
                  
 
 to-funcons:
-  |[ type[: chan(:T:) :] ]| ->
-  |[ channels (type[: (:T:) :]) ]|
+  |[ type-construct[: chan(:TypeExpr:) :] ]| ->
+  |[ type-construct (channels, 
+             type-construct[: (:TypeExpr:) :]) ]|
 
 // ## Function Types
                  
@@ -49,20 +52,20 @@ to-funcons:
   |[ () ]|
 to-funcons:
   |[ bind-parameters[: ((:ParameterList:)) :] ]| ->
-  |[ bind-parameterlist[: (:ParameterList:) :] ]|
+  |[ bind-parameterdecls[: (:ParameterList:) :] ]|
 to-desugared:
   [: ((:ParameterList:),) :] : parameters ->
   [: ((:ParameterList:)) :] : parameters
 to-funcons:
-  |[ bind-parameterlist[: (:ParameterDecl:) :] ]| ->
+  |[ bind-parameterdecls[: (:ParameterDecl:) :] ]| ->
   |[ bind-parameterdecl[: (:ParameterDecl:) :] ]|
 to-funcons:
-  |[ bind-parameterlist[: (:ParameterDecl:),(:ParameterList:) :] ]| ->
+  |[ bind-parameterdecls[: (:ParameterDecl:),(:ParameterList:) :] ]| ->
   |[ bind-parameterdecl[: (:ParameterDecl:) :], 
-     bind-parameterlist[: (:ParameterList:) :] ]|
+     bind-parameterdecls[: (:ParameterList:) :] ]|
 to-funcons:
-  |[ bind-parameterdecl[: (:Identifier:)(:T:) :] ]| ->
+  |[ bind-parameterdecl[: (:Identifier:)(:TypeExpr:) :] ]| ->
   |[ pattern closure bind (id[: (:Identifier:) :], 
-                           alloc-init (type[: (:T:) :], 
+                           alloc-init (type[: (:TypeExpr:) :], 
                                    given)) ]|
 
