@@ -64,7 +64,7 @@ Lexis
 
 
 Lexis
-  unary-op ::= '+' | '-' | '!' // | '<-' | '^' | '*' | '&'  // TODO: bitwise, pointers, concurrency
+  unary-op ::= '+' | '-' | '!' | '<-' // | '^' | '*' | '&'  // TODO: bitwise, pointers, concurrency
 
 Lexis
   assign-op ::= (add-op | mul-op)? '='

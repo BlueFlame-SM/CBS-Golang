@@ -193,3 +193,6 @@ Rule
 
 Rule
   evaluate[['!' UnaryExpr]] = not evaluate[[UnaryExpr]]
+
+Rule
+  evaluate[['<-' UnaryExpr]] = channel-recv-else-wait evaluate[[UnaryExpr]]

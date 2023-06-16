@@ -1,6 +1,7 @@
 module GO-3-Expressions
             
 imports 
+  GO-B-Funcons
   GO-2-Types
   GO-1-Lexemes
   Funcons

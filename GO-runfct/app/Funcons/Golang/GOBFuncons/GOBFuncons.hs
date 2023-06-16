@@ -12,7 +12,15 @@ types = typeEnvFromList
     [("type-constructs",DataTypeMemberss "type-constructs" [] [DataTypeInclusionn (TName "types"),DataTypeMemberConstructor "type-construct" [TName "types",TSortSeq (TName "type-constructs") StarOp] (Just [])]),("channels",DataTypeMemberss "channels" [] [DataTypeMemberConstructor "channel" [TName "vars",TName "vars",TName "vars",TName "syncs",TName "syncs",TName "syncs"] (Just [])])]
 
 funcons = libFromList
-    [("list-snoc",StrictFuncon stepList_snoc),("list-init",StrictFuncon stepList_init),("list-last",StrictFuncon stepList_last),("variable-type",StrictFuncon stepVariable_type),("type-construct",StrictFuncon stepType_construct),("type-construct-type",StrictFuncon stepType_construct_type),("type-construct-args",StrictFuncon stepType_construct_args),("channel",StrictFuncon stepChannel),("channel-create",StrictFuncon stepChannel_create),("channel-send-wait",StrictFuncon stepChannel_send_wait),("channel-recv-wait",StrictFuncon stepChannel_recv_wait),("channel-sync-else-wait",StrictFuncon stepChannel_sync_else_wait),("channel-release",StrictFuncon stepChannel_release),("channel-closed",StrictFuncon stepChannel_closed),("channel-send",StrictFuncon stepChannel_send),("channel-send-else-wait",StrictFuncon stepChannel_send_else_wait),("channel-recv",StrictFuncon stepChannel_recv),("channel-recv-else-wait",StrictFuncon stepChannel_recv_else_wait),("type-constructs",NullaryFuncon stepType_constructs),("channels",NullaryFuncon stepChannels)]
+    [("passthrough",NonStrictFuncon stepPassthrough),("list-snoc",StrictFuncon stepList_snoc),("list-init",StrictFuncon stepList_init),("list-last",StrictFuncon stepList_last),("variable-type",StrictFuncon stepVariable_type),("type-construct",StrictFuncon stepType_construct),("type-construct-type",StrictFuncon stepType_construct_type),("type-construct-args",StrictFuncon stepType_construct_args),("channel",StrictFuncon stepChannel),("channel-create",StrictFuncon stepChannel_create),("channel-await-send",StrictFuncon stepChannel_await_send),("channel-await-recv",StrictFuncon stepChannel_await_recv),("channel-sync-else-wait",StrictFuncon stepChannel_sync_else_wait),("channel-release",StrictFuncon stepChannel_release),("channel-closed",StrictFuncon stepChannel_closed),("channel-send",StrictFuncon stepChannel_send),("channel-send-else-wait",StrictFuncon stepChannel_send_else_wait),("channel-recv",StrictFuncon stepChannel_recv),("channel-recv-else-wait",StrictFuncon stepChannel_recv_else_wait),("type-constructs",NullaryFuncon stepType_constructs),("channels",NullaryFuncon stepChannels)]
+
+passthrough_ fargs = FApp "passthrough" (fargs)
+stepPassthrough fargs =
+    evalRules [rewrite1] []
+    where rewrite1 = do
+            let env = emptyEnv
+            env <- fsMatch fargs [PMetaVar "Res",PSeqVar "Comp*" StarOp] env
+            rewriteTermTo (TApp "give" [TVar "Res",TApp "sequential" [TVar "Comp*",TName "given"]]) env
 
 list_snoc_ fargs = FApp "list-snoc" (fargs)
 stepList_snoc fargs =
@@ -110,21 +118,21 @@ stepChannel_create fargs =
             env <- vsMatch fargs [VPAnnotated (VPMetaVar "T") (TName "types"),VPAnnotated (VPMetaVar "N") (TName "nats")] env
             rewriteTermTo (TApp "channel" [TApp "alloc-init" [TApp "lists" [TVar "T"],TApp "list" []],TApp "alloc-init" [TName "nats",TVar "N"],TApp "alloc-init" [TName "bools",TName "false"],TName "condition-create",TName "condition-create",TName "exclusive-lock-create"]) env
 
-channel_send_wait_ fargs = FApp "channel-send-wait" (fargs)
-stepChannel_send_wait fargs =
+channel_await_send_ fargs = FApp "channel-await-send" (fargs)
+stepChannel_await_send fargs =
     evalRules [rewrite1] []
     where rewrite1 = do
             let env = emptyEnv
-            env <- vsMatch fargs [PADT "channel" [VPWildCard,VPWildCard,VPWildCard,VPMetaVar "SendWait",VPWildCard,VPMetaVar "Mutex"]] env
-            rewriteTermTo (TApp "condition-wait-with-lock" [TVar "SendWait",TVar "Mutex"]) env
+            env <- vsMatch fargs [PADT "channel" [VPWildCard,VPWildCard,VPWildCard,VPMetaVar "AwaitingSend",VPWildCard,VPMetaVar "Mutex"]] env
+            rewriteTermTo (TApp "condition-wait-with-lock" [TVar "AwaitingSend",TVar "Mutex"]) env
 
-channel_recv_wait_ fargs = FApp "channel-recv-wait" (fargs)
-stepChannel_recv_wait fargs =
+channel_await_recv_ fargs = FApp "channel-await-recv" (fargs)
+stepChannel_await_recv fargs =
     evalRules [rewrite1] []
     where rewrite1 = do
             let env = emptyEnv
-            env <- vsMatch fargs [PADT "channel" [VPWildCard,VPWildCard,VPWildCard,VPWildCard,VPMetaVar "RecvWait",VPMetaVar "Mutex"]] env
-            rewriteTermTo (TApp "condition-wait-with-lock" [TVar "RecvWait",TVar "Mutex"]) env
+            env <- vsMatch fargs [PADT "channel" [VPWildCard,VPWildCard,VPWildCard,VPWildCard,VPMetaVar "AwaitingRecv",VPMetaVar "Mutex"]] env
+            rewriteTermTo (TApp "condition-wait-with-lock" [TVar "AwaitingRecv",TVar "Mutex"]) env
 
 channel_sync_else_wait_ fargs = FApp "channel-sync-else-wait" (fargs)
 stepChannel_sync_else_wait fargs =
@@ -148,31 +156,31 @@ stepChannel_closed fargs =
     where rewrite1 = do
             let env = emptyEnv
             env <- vsMatch fargs [PADT "channel" [VPWildCard,VPWildCard,VPMetaVar "Closed",VPWildCard,VPWildCard,VPWildCard]] env
-            rewriteTermTo (TApp "assigned" [TVar "Closed"]) env
+            rewriteTermTo (TApp "thread-atomic" [TApp "assigned" [TVar "Closed"]]) env
 
 channel_send_ fargs = FApp "channel-send" (fargs)
 stepChannel_send fargs =
     evalRules [rewrite1] []
     where rewrite1 = do
             let env = emptyEnv
-            env <- vsMatch fargs [PADT "channel" [VPMetaVar "Queue",VPMetaVar "N",VPMetaVar "Closed",VPWildCard,VPMetaVar "RecvWait",VPWildCard],VPMetaVar "Val"] env
-            rewriteTermTo (TApp "thread-atomic" [TApp "sequential" [TApp "check-true" [TApp "and" [TApp "not" [TApp "assigned" [TVar "Closed"]],TApp "is-greater" [TApp "assigned" [TVar "N"],TFuncon (FValue (Nat 0))],TApp "is-in-type" [TApp "list" [TVar "Val"],TApp "variable-type" [TVar "Queue"]]]],TApp "assign" [TVar "N",TApp "integer-subtract" [TApp "assigned" [TVar "N"],TFuncon (FValue (Nat 1))]],TApp "assign" [TVar "Queue",TApp "list-snoc" [TApp "assigned" [TVar "Queue"],TVar "Val"]],TApp "finalise-failing" [TApp "condition-notify-first" [TVar "RecvWait"]]]]) env
+            env <- vsMatch fargs [PADT "channel" [VPMetaVar "Queue",VPMetaVar "N",VPMetaVar "Closed",VPWildCard,VPMetaVar "AwaitingRecv",VPWildCard],VPMetaVar "Val"] env
+            rewriteTermTo (TApp "thread-atomic" [TApp "sequential" [TApp "check-true" [TApp "and" [TApp "not" [TApp "assigned" [TVar "Closed"]],TApp "is-greater" [TApp "assigned" [TVar "N"],TFuncon (FValue (Nat 0))],TApp "is-in-type" [TApp "list" [TVar "Val"],TApp "variable-type" [TVar "Queue"]]]],TApp "assign" [TVar "N",TApp "integer-subtract" [TApp "assigned" [TVar "N"],TFuncon (FValue (Nat 1))]],TApp "assign" [TVar "Queue",TApp "list-snoc" [TApp "assigned" [TVar "Queue"],TVar "Val"]],TApp "finalise-failing" [TApp "condition-notify-first" [TVar "AwaitingRecv"]]]]) env
 
 channel_send_else_wait_ fargs = FApp "channel-send-else-wait" (fargs)
 stepChannel_send_else_wait fargs =
     evalRules [rewrite1] []
     where rewrite1 = do
             let env = emptyEnv
-            env <- vsMatch fargs [VPAnnotated (VPMetaVar "Channel") (TName "channels"),VPMetaVar "Val"] env
-            rewriteTermTo (TApp "sequential" [TApp "channel-sync-else-wait" [TVar "Channel"],TApp "if-true-else" [TApp "channel-closed" [TVar "Channel"],TApp "sequential" [TApp "channel-release" [TVar "Channel"],TName "fail"],TApp "else" [TApp "channel-send" [TVar "Channel",TVar "Val"],TApp "sequential" [TApp "channel-send-wait" [TVar "Channel"]],TApp "channel-send-else-wait" [TVar "Channel",TVar "Val"]]]]) env
+            env <- vsMatch fargs [VPMetaVar "Channel",VPMetaVar "Val"] env
+            rewriteTermTo (TApp "sequential" [TApp "channel-sync-else-wait" [TVar "Channel"],TApp "if-true-else" [TApp "channel-closed" [TVar "Channel"],TApp "sequential" [TApp "channel-release" [TVar "Channel"],TName "fail"],TApp "else" [TApp "sequential" [TApp "channel-send" [TVar "Channel",TVar "Val"],TApp "channel-release" [TVar "Channel"]],TApp "sequential" [TApp "channel-await-recv" [TVar "Channel"]],TApp "channel-send-else-wait" [TVar "Channel",TVar "Val"]]]]) env
 
 channel_recv_ fargs = FApp "channel-recv" (fargs)
 stepChannel_recv fargs =
     evalRules [rewrite1] []
     where rewrite1 = do
             let env = emptyEnv
-            env <- vsMatch fargs [PADT "channel" [VPMetaVar "Queue",VPMetaVar "N",VPMetaVar "Closed",VPMetaVar "SendWait",VPWildCard,VPWildCard]] env
-            rewriteTermTo (TApp "thread-atomic" [TApp "sequential" [TApp "check-true" [TApp "and" [TApp "not" [TApp "assigned" [TVar "Closed"]],TApp "is-greater" [TApp "list-length" [TApp "assigned" [TVar "Queue"]],TFuncon (FValue (Nat 0))]]],TApp "give" [TApp "list-head" [TApp "assigned" [TVar "Queue"]],TApp "sequential" [TApp "assign" [TVar "N",TApp "integer-add" [TVar "N",TFuncon (FValue (Nat 1))]],TApp "assign" [TVar "Queue",TApp "list-tail" [TApp "assigned" [TVar "Queue"]]],TApp "finalise-failing" [TApp "condition-notify-first" [TVar "SendWait"]],TName "given"]]]]) env
+            env <- vsMatch fargs [PADT "channel" [VPMetaVar "Queue",VPMetaVar "N",VPMetaVar "Closed",VPMetaVar "AwaitingSend",VPWildCard,VPWildCard]] env
+            rewriteTermTo (TApp "thread-atomic" [TApp "sequential" [TApp "check-true" [TApp "and" [TApp "not" [TApp "assigned" [TVar "Closed"]],TApp "is-greater" [TApp "list-length" [TApp "assigned" [TVar "Queue"]],TFuncon (FValue (Nat 0))]]],TApp "give" [TApp "list-head" [TApp "assigned" [TVar "Queue"]],TApp "sequential" [TApp "assign" [TVar "N",TApp "integer-add" [TApp "assigned" [TVar "N"],TFuncon (FValue (Nat 1))]],TApp "assign" [TVar "Queue",TApp "list-tail" [TApp "assigned" [TVar "Queue"]]],TApp "finalise-failing" [TApp "condition-notify-first" [TVar "AwaitingSend"]],TName "given"]]]]) env
 
 channel_recv_else_wait_ fargs = FApp "channel-recv-else-wait" (fargs)
 stepChannel_recv_else_wait fargs =
@@ -180,7 +188,7 @@ stepChannel_recv_else_wait fargs =
     where rewrite1 = do
             let env = emptyEnv
             env <- vsMatch fargs [VPMetaVar "Channel"] env
-            rewriteTermTo (TApp "sequential" [TApp "channel-sync-else-wait" [TVar "Channel"],TApp "if-true-else" [TApp "channel-closed" [TVar "Channel"],TApp "sequential" [TApp "channel-release" [TVar "Channel"],TName "fail"],TApp "else" [TApp "channel-recv" [TVar "Channel"],TApp "sequential" [TApp "channel-recv-wait" [TVar "Channel"],TApp "channel-recv-else-wait" [TVar "Channel"]]]]]) env
+            rewriteTermTo (TApp "sequential" [TApp "channel-sync-else-wait" [TVar "Channel"],TApp "if-true-else" [TApp "channel-closed" [TVar "Channel"],TApp "sequential" [TApp "channel-release" [TVar "Channel"],TName "fail"],TApp "else" [TApp "passthrough" [TApp "channel-recv" [TVar "Channel"],TApp "channel-release" [TVar "Channel"]],TApp "sequential" [TApp "channel-await-send" [TVar "Channel"],TApp "channel-recv-else-wait" [TVar "Channel"]]]]]) env
 
 type_constructs_ = FName "type-constructs"
 stepType_constructs = rewriteType "type-constructs" []

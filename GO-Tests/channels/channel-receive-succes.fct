@@ -1,0 +1,104 @@
+initialise-giving initialise-binding initialise-storing multithread scope
+  ({"any" |-> values,
+    "bool" |-> bools,
+    "int" |-> int,
+    "int8" |-> int8,
+    "int16" |-> int16,
+    "int32" |-> int32,
+    "int64" |-> int64,
+    "uint" |-> uint,
+    "uint8" |-> uint8,
+    "uint16" |-> uint16,
+    "uint32" |-> uint32,
+    "uint64" |-> uint64,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print
+                  (tuple-elements given),
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (type-construct
+                          (channels,
+                           pattern-bind "type")),
+                     channel-create
+                       (bound "type",
+                        0)),
+                  case-match
+                    (tuple
+                       (type-construct
+                          (channels,
+                           pattern-bind "type"),
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "type",
+                           bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         map
+           ( )),
+      sequential
+        (assign
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  bind
+                    ("c",
+                     allocate-variable values),
+                  ( )),
+               handle-return sequential
+                 (give
+                    (apply
+                       (current-value bound
+                          "make",
+                        tuple l-to-r
+                          (type-construct
+                             (channels,
+                              current-value bound
+                                "int"),
+                           decimal-natural "10",
+                           ( ))),
+                     sequential
+                       (check-true and
+                          (is-in-type
+                             (bound "c",
+                              variables),
+                           not is-in-type
+                             (given,
+                              types)),
+                        assign
+                          (bound "c",
+                           given))),
+                  channel-send-else-wait
+                    (current-value bound
+                       "c",
+                     decimal-natural "13"),
+                  apply
+                    (current-value bound
+                       "print",
+                     tuple l-to-r
+                       (channel-recv-else-wait current-value bound
+                          "c",
+                        ( ))),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))

@@ -7,6 +7,7 @@ imports
   pp/GO-pp
 
 imports
+  cbs-gen/GO-B-Funcons
   cbs-gen/GO-2-Types
   cbs-gen/GO-1-Lexemes
 
@@ -161,4 +162,7 @@ to-funcons:
 to-funcons:
   |[ evaluate[: !(:UnaryExpr:) :] ]| ->
   |[ not evaluate[: (:UnaryExpr:) :] ]|
+to-funcons:
+  |[ evaluate[: <-(:UnaryExpr:) :] ]| ->
+  |[ channel-recv-else-wait evaluate[: (:UnaryExpr:) :] ]|
 

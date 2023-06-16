@@ -5,6 +5,13 @@ Language "Golang"
 Meta-variables
   T <: values
 
+## Flowing
+
+Funcon
+  passthrough(Res:=>T, Comp*:(=>null-value)*) : =>T
+     ~> give(Res, sequential(Comp*, given))
+
+
 ## Lists
 
 Funcon
@@ -88,25 +95,25 @@ Funcon
           exclusive-lock-create)
 
 Funcon
-  channel-send-wait(_:channels, _:syncs) : =>null-type
+  channel-await-send(_:channels, _:syncs) : =>null-type
 
 Rule
-  channel-send-wait channel(_, _, _, SendWait, _, Mutex)
-     ~> condition-wait-with-lock(SendWait, Mutex)
+  channel-await-send channel(_, _, _, AwaitingSend, _, Mutex)
+     ~> condition-wait-with-lock(AwaitingSend, Mutex)
 
 Funcon
-  channel-recv-wait(_:channels, _:syncs) : =>null-type
+  channel-await-recv(_:channels, _:syncs) : =>null-type
 
 Rule
-  channel-recv-wait channel(_, _, _, _, RecvWait, Mutex)
-     ~> condition-wait-with-lock(RecvWait, Mutex)
+  channel-await-recv channel(_, _, _, _, AwaitingRecv, Mutex)
+     ~> condition-wait-with-lock(AwaitingRecv, Mutex)
 
 Funcon
   channel-sync-else-wait(_:channels) : =>null-type
 
 Rule
   channel-sync-else-wait channel(_, _, _, _, _, Mutex)
-     ~> exclusive-lock-sync-else-wait(Mutex)
+     ~> exclusive-lock-sync-else-wait Mutex
 
 Funcon
   channel-release(_:channels) : =>null-type
@@ -120,14 +127,14 @@ Funcon
 
 Rule
   channel-closed channel(_, _, Closed, _, _, _)
-     ~> assigned Closed
+     ~> thread-atomic assigned Closed
 
 Funcon
   channel-send(_:channels, _:values) : =>null-type
 
 
 Rule
-  channel-send(channel(Queue, N, Closed, _, RecvWait, _), Val)
+  channel-send(channel(Queue, N, Closed, _, AwaitingRecv, _), Val)
      ~> thread-atomic sequential(
           check-true and(
             not assigned Closed,
@@ -135,29 +142,33 @@ Rule
             is-in-type([Val], variable-type Queue)),
           assign(N, integer-subtract(assigned N, 1)),
           assign(Queue, list-snoc(assigned Queue, Val)),
-          finalise-failing condition-notify-first RecvWait)
+          finalise-failing condition-notify-first AwaitingRecv)
 
 Funcon
   channel-send-else-wait(_:channels, _:values) : =>null-type
 
 Rule
-  channel-send-else-wait(Channel:channels, Val)
+  channel-send-else-wait(Channel, Val)
      ~> sequential(
           channel-sync-else-wait Channel,
           if-true-else(
             channel-closed Channel,
-            sequential(channel-release Channel, fail),
+            sequential(
+              channel-release Channel,
+              fail),
             else(
-              channel-send(Channel, Val),
               sequential(
-                channel-send-wait Channel),
+                channel-send(Channel, Val),
+                channel-release Channel),
+              sequential(
+                channel-await-recv Channel),
                 channel-send-else-wait(Channel, Val))))
 
 Funcon
   channel-recv(_:channels) : =>values
 
 Rule
-  channel-recv(channel(Queue, N, Closed, SendWait, _, _))
+  channel-recv channel(Queue, N, Closed, AwaitingSend, _, _)
      ~> thread-atomic sequential(
           check-true and(
             not assigned Closed,
@@ -165,24 +176,26 @@ Rule
           give(
             list-head assigned Queue,
             sequential(
-              assign(N, integer-add(N, 1)),
+              assign(N, integer-add(assigned N, 1)),
               assign(Queue, list-tail assigned Queue),
-              finalise-failing condition-notify-first SendWait,
+              finalise-failing condition-notify-first AwaitingSend,
               given)))
 
 Funcon
   channel-recv-else-wait(_:channels) : =>values
 
 Rule
-  channel-recv-else-wait(Channel)
+  channel-recv-else-wait Channel
      ~> sequential(
           channel-sync-else-wait Channel,
           if-true-else(
             channel-closed Channel,
             sequential(channel-release Channel, fail),
             else(
-              channel-recv Channel,
+              passthrough(
+                channel-recv Channel,
+                channel-release Channel),
               sequential(
-                channel-recv-wait Channel,
+                channel-await-send Channel,
                 channel-recv-else-wait Channel))))
 

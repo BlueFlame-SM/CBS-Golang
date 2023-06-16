@@ -56,7 +56,10 @@ lexical syntax // Language
   LEX-rel-op = ">="
   LEX-add-op = [\+\-]
   LEX-mul-op = [\*\/\%]
-  LEX-unary-op = [\+\-\!]
+  LEX-unary-op = "+"
+  LEX-unary-op = "-"
+  LEX-unary-op = "!"
+  LEX-unary-op = "<-"
   LEX-assign-op = ( LEX-add-op | LEX-mul-op )? "="
   
 syntax // Language

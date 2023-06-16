@@ -31,7 +31,7 @@ Syntax
 
 Rule
   execute[['go' PrimaryExpr Arguments]]
-    = thread-detach thread-activate thread-joinable
+    = effect thread-activate thread-detached
         supply(evaluate[[PrimaryExpr]], tuple-arguments[[Arguments]])
 
 
