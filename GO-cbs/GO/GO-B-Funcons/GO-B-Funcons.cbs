@@ -75,7 +75,7 @@ Rule
 ## Channels
 
 Datatype
-  channels ::= channel(_:vars, _:vars, _:vars, _:syncs, _:syncs)
+  channels ::= channel(_:vars, _:vars, _:vars, _:syncs, _:syncs, _:syncs)
 
 Funcon
   channel-create(T:types, N:nats) : =>channels
@@ -84,42 +84,82 @@ Funcon
           alloc-init(nats, N),
           alloc-init(bools, false),
           condition-create,
-          condition-create)
+          condition-create,
+          exclusive-lock-create)
+
+Funcon
+  channel-send-wait(_:channels, _:syncs) : =>null-type
+
+Rule
+  channel-send-wait channel(_, _, _, SendWait, _, Mutex)
+     ~> condition-wait-with-lock(SendWait, Mutex)
+
+Funcon
+  channel-recv-wait(_:channels, _:syncs) : =>null-type
+
+Rule
+  channel-recv-wait channel(_, _, _, _, RecvWait, Mutex)
+     ~> condition-wait-with-lock(RecvWait, Mutex)
+
+Funcon
+  channel-sync-else-wait(_:channels) : =>null-type
+
+Rule
+  channel-sync-else-wait channel(_, _, _, _, _, Mutex)
+     ~> exclusive-lock-sync-else-wait(Mutex)
+
+Funcon
+  channel-release(_:channels) : =>null-type
+
+Rule
+  channel-release channel(_, _, _, _, _, Mutex)
+     ~> exclusive-lock-release(Mutex)
+
+Funcon
+  channel-closed(_:channels) : =>bools
+
+Rule
+  channel-closed channel(_, _, Closed, _, _, _)
+     ~> assigned Closed
 
 Funcon
   channel-send(_:channels, _:values) : =>null-type
 
+
 Rule
-  channel-send(channel(Queue, N, Closed, SendCond, ReceiveCond), Val)
-     ~> thread-atomic checked when-true(
-          and(
+  channel-send(channel(Queue, N, Closed, _, RecvWait, _), Val)
+     ~> thread-atomic sequential(
+          check-true and(
             not assigned Closed,
-            is-in-type([Val], variable-type Queue),
-            is-greater(assigned N, 0)),
-          sequential(
-            assign(N, integer-subtract(assigned N, 1)),
-            assign(Queue, list-snoc(assigned Queue, Val)),
-            finalise-failing condition-notify-first ReceiveCond))
+            is-greater(assigned N, 0),
+            is-in-type([Val], variable-type Queue)),
+          assign(N, integer-subtract(assigned N, 1)),
+          assign(Queue, list-snoc(assigned Queue, Val)),
+          finalise-failing condition-notify-first RecvWait)
 
 Funcon
   channel-send-else-wait(_:channels, _:values) : =>null-type
 
 Rule
-  channel-send-else-wait(channel(Queue, N, Closed, SendCond, ReceiveCond), Val)
-     ~> handle-return while(true,
-          thread-atomic else(
-            return channel-send(channel(Queue, N, Closed, SendCond, ReceiveCond), Val),
-            sequential(
-              check-true not assigned Closed,
-              condition-wait SendCond)))
+  channel-send-else-wait(Channel:channels, Val)
+     ~> sequential(
+          channel-sync-else-wait Channel,
+          if-true-else(
+            channel-closed Channel,
+            sequential(channel-release Channel, fail),
+            else(
+              channel-send(Channel, Val),
+              sequential(
+                channel-send-wait Channel),
+                channel-send-else-wait(Channel, Val))))
 
 Funcon
-  channel-receive(_:channels) : =>values
+  channel-recv(_:channels) : =>values
 
 Rule
-  channel-receive(channel(Queue, N, Closed, SendCond, ReceiveCond))
-     ~> thread-atomic checked when-true(
-          and(
+  channel-recv(channel(Queue, N, Closed, SendWait, _, _))
+     ~> thread-atomic sequential(
+          check-true and(
             not assigned Closed,
             is-greater(list-length assigned Queue, 0)),
           give(
@@ -127,19 +167,22 @@ Rule
             sequential(
               assign(N, integer-add(N, 1)),
               assign(Queue, list-tail assigned Queue),
-              finalise-failing condition-notify-first SendCond,
+              finalise-failing condition-notify-first SendWait,
               given)))
 
 Funcon
-  channel-receive-else-wait(_:channels) : =>values
+  channel-recv-else-wait(_:channels) : =>values
 
 Rule
-  channel-receive-else-wait channel(Queue, N, Closed, SendCond, ReceiveCond)
-   ~> handle-return while(
-        true,
-        thread-atomic else(
-          return channel-receive channel(Queue, N, Closed, SendCond, ReceiveCond),
-          sequential(
-            check-true not assigned Closed,
-            condition-wait ReceiveCond)))
+  channel-recv-else-wait(Channel)
+     ~> sequential(
+          channel-sync-else-wait Channel,
+          if-true-else(
+            channel-closed Channel,
+            sequential(channel-release Channel, fail),
+            else(
+              channel-recv Channel,
+              sequential(
+                channel-recv-wait Channel,
+                channel-recv-else-wait Channel))))
 
