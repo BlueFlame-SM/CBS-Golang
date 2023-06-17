@@ -8,12 +8,12 @@ imports
 
 imports
   cbs-gen/GO-A-Disambiguation
-  cbs-gen/GO-3-Expressions
   cbs-gen/GO-4-Statements
-  cbs-gen/GO-5-Declarations
+  cbs-gen/GO-3-Expressions
   cbs-gen/GO-2-Types
   cbs-gen/GO-B-Funcons
   cbs-gen/GO-1-Lexemes
+  cbs-gen/GO-5-Declarations
 
 // Language "Golang"
 
@@ -38,15 +38,13 @@ to-funcons:
                                           "print" |-> function closure print (tuple-elements given), 
                                           "make" |-> function closure else (case-match (tuple (type-construct (channels, 
                                                                                                                    pattern-bind "type")), 
-                                                                                                   channel-create (bound "type", 
-                                                                                                           0)), 
+                                                                                                   channel-create (0)), 
                                                                                            case-match (tuple (type-construct (channels, 
                                                                                                                    pattern-bind "type"), 
                                                                                                            pattern-bind "N"), 
                                                                                                    checked when-true (is-greater-or-equal (bound "N", 
                                                                                                                           0), 
-                                                                                                                  channel-create (bound "type", 
-                                                                                                                          bound "N"))))}, 
+                                                                                                                  channel-create (bound "N"))))}, 
                                          execute-sourcefile[: (:SourceFile:) :]) ]|
 to-funcons:
   |[ execute-sourcefile[: package main;(:TopLevelDeclSemic*:) :] ]| ->

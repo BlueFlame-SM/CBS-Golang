@@ -12,11 +12,11 @@ lexical syntax // Language
                 
   
   
-  // ## Lists
+  // ## Flowing
                    
   
   
-  // ## Integers
+  // ## Lists
                    
   
   
@@ -25,6 +25,10 @@ lexical syntax // Language
   
   
   // ## Typeconstructs
+                   
+  
+  
+  // ## Exclusive locks
                    
   
   
@@ -38,11 +42,11 @@ syntax // Language
                 
   
   
-  // ## Lists
+  // ## Flowing
                    
   
   
-  // ## Integers
+  // ## Lists
                    
   
   
@@ -51,6 +55,10 @@ syntax // Language
   
   
   // ## Typeconstructs
+                   
+  
+  
+  // ## Exclusive locks
                    
   
   
@@ -64,11 +72,11 @@ context-free syntax // Language
                 
   
   
-  // ## Lists
+  // ## Flowing
                    
   
   
-  // ## Integers
+  // ## Lists
                    
   
   
@@ -77,6 +85,10 @@ context-free syntax // Language
   
   
   // ## Typeconstructs
+                   
+  
+  
+  // ## Exclusive locks
                    
   
   
@@ -90,11 +102,11 @@ context-free syntax // Semantics
                 
   
   
-  // ## Lists
+  // ## Flowing
                    
   
   
-  // ## Integers
+  // ## Lists
                    
   
   
@@ -103,6 +115,10 @@ context-free syntax // Semantics
   
   
   // ## Typeconstructs
+                   
+  
+  
+  // ## Exclusive locks
                    
   
   
@@ -116,11 +132,11 @@ context-free syntax // Desugaring
                 
   
   
-  // ## Lists
+  // ## Flowing
                    
   
   
-  // ## Integers
+  // ## Lists
                    
   
   
@@ -129,6 +145,10 @@ context-free syntax // Desugaring
   
   
   // ## Typeconstructs
+                   
+  
+  
+  // ## Exclusive locks
                    
   
   
@@ -142,11 +162,11 @@ variables // Meta-variables
                 
   
   
-  // ## Lists
+  // ## Flowing
                    
   
   
-  // ## Integers
+  // ## Lists
                    
   
   
@@ -155,6 +175,10 @@ variables // Meta-variables
   
   
   // ## Typeconstructs
+                   
+  
+  
+  // ## Exclusive locks
                    
   
   
@@ -168,11 +192,11 @@ variables // Meta-variables
                 
   
   
-  // ## Lists
+  // ## Flowing
                    
   
   
-  // ## Integers
+  // ## Lists
                    
   
   
@@ -181,6 +205,10 @@ variables // Meta-variables
   
   
   // ## Typeconstructs
+                   
+  
+  
+  // ## Exclusive locks
                    
   
   

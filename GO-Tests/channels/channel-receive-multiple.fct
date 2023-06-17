@@ -23,8 +23,7 @@ initialise-giving initialise-binding initialise-storing multithread scope
                           (channels,
                            pattern-bind "type")),
                      channel-create
-                       (bound "type",
-                        0)),
+                       (0)),
                   case-match
                     (tuple
                        (type-construct
@@ -36,8 +35,7 @@ initialise-giving initialise-binding initialise-storing multithread scope
                           (bound "N",
                            0),
                         channel-create
-                          (bound "type",
-                           bound "N"))))},
+                          (bound "N"))))},
    scope
      (collateral
         (bind

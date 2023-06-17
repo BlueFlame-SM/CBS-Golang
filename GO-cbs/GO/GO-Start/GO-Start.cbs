@@ -46,14 +46,14 @@ Rule
           "make"    |-> function closure else(
                           case-match(
                             tuple(type-construct(channels, pattern-bind "type")),
-                            channel-create(bound "type", 0)),
+                            channel-create(0)),
                           case-match(
                             tuple(
                               type-construct(channels, pattern-bind "type"),
                               pattern-bind "N"),
                             checked when-true(
                               is-greater-or-equal(bound "N", 0),
-                              channel-create(bound "type", bound "N"))))
+                              channel-create(bound "N"))))
         },
         execute-sourcefile[[SourceFile]])
 

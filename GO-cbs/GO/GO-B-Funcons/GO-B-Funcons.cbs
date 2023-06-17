@@ -12,48 +12,6 @@ Funcon
      ~> give(Res, sequential(Comp*, given))
 
 
-## Lists
-
-Funcon
-  list-snoc(_:lists(T), _:T) : => lists(T)
-
-Rule
-  list-snoc([V*:values*], V:values) ~> [V*, V]
-
-Funcon
-  list-init(_:lists(T)) : =>(lists(T))?
-
-Rule
-  list-init[V*:values*, _:values] ~> [V*]
-
-Rule
-  list-init[ ] ~> ( )
-
-Funcon
-  list-last(_:lists(T)) : =>(T)?
-
-Rule
-  list-last[_*:values*, V:values] ~> V
-
-Rule
-  list-last[ ] ~> ( )
-
-
-## Integers
-
-//Alias
-//  int-sub = integer-subtract
-
-
-## Variables
-
-Funcon
-  variable-type(_:variables) : =>types
-
-Rule
-  variable-type variable(_:locations, T:types) ~> T
-
-
 ## Typeconstructs
 
 Datatype
@@ -79,34 +37,69 @@ Rule
   type-construct-args(type-construct(_, Args*)) ~> Args*
 
 
+## Exclusive locks
+
+Funcon
+  exclusive-lock-held(SY:syncs) : =>booleans
+     ~> assigned sync-feature(SY, sync-held)
+
+Funcon
+  exclusive-lock-holder(SY:syncs) : =>thread-ids?
+     ~> assigned sync-feature(SY, sync-holder)
+
+Funcon
+  exclusive-lock-owner(SY:syncs) : =>booleans
+     ~> and(
+          exclusive-lock-held SY,
+          is-equal(exclusive-lock-holder SY, current-thread))
+
+
 ## Channels
 
 Datatype
-  channels ::= channel(_:vars, _:vars, _:vars, _:syncs, _:syncs, _:syncs)
+  pseudo-threads ::= pseudo-thread(
+    ID     : thread-ids,
+    Elem   : variables,
+    Succes : variables)
 
 Funcon
-  channel-create(T:types, N:nats) : =>channels
+  pseudo-thread-create : =>pseudo-threads
+     ~> pseudo-thread(
+          current-thread,
+          alloc variables,
+          alloc booleans)
+
+Funcon
+  pseudo-thread-thread-id(_:pseudo-threads) : =>thread-ids
+Rule
+  pseudo-thread-thread-id pseudo-thread(ID, _, _) ~> ID
+
+Funcon
+  pseudo-thread-element(_:pseudo-threads) : =>thread-ids
+Rule
+  pseudo-thread-element pseudo-thread(_, Elem, _) ~> Elem
+
+
+
+
+Datatype
+  channels ::= channel(
+    DataQ  : variables,
+    Size   : variables,
+    Closed : variables,
+    RecvQ  : syncs,
+    SendQ  : syncs,
+    Mutex  : syncs)
+
+Funcon
+  channel-create(Size:nats) : =>channels
      ~> channel(
-          alloc-init(lists(T), [ ]),
-          alloc-init(nats, N),
+          alloc-init(lists values, [ ]),
+          alloc-init(nats, Size),
           alloc-init(bools, false),
           condition-create,
           condition-create,
           exclusive-lock-create)
-
-Funcon
-  channel-await-send(_:channels, _:syncs) : =>null-type
-
-Rule
-  channel-await-send channel(_, _, _, AwaitingSend, _, Mutex)
-     ~> condition-wait-with-lock(AwaitingSend, Mutex)
-
-Funcon
-  channel-await-recv(_:channels, _:syncs) : =>null-type
-
-Rule
-  channel-await-recv channel(_, _, _, _, AwaitingRecv, Mutex)
-     ~> condition-wait-with-lock(AwaitingRecv, Mutex)
 
 Funcon
   channel-sync-else-wait(_:channels) : =>null-type
@@ -120,7 +113,7 @@ Funcon
 
 Rule
   channel-release channel(_, _, _, _, _, Mutex)
-     ~> exclusive-lock-release(Mutex)
+     ~> exclusive-lock-release Mutex
 
 Funcon
   channel-closed(_:channels) : =>bools
@@ -129,20 +122,49 @@ Rule
   channel-closed channel(_, _, Closed, _, _, _)
      ~> thread-atomic assigned Closed
 
+Rule
+  channel-await-send channel(_, _, Closed, AwaitingSend, _, Mutex)
+     ~> else(
+          check-true assigned Closed,
+          condition-wait-with-lock(AwaitingSend, Mutex))
+
+Funcon
+  channel-await-recv(_:channels) : =>null-type
+
+Rule
+  channel-await-recv channel(_, _, Closed, _, AwaitingRecv, Mutex)
+     ~> else(
+          check-true assigned Closed,
+          condition-wait-with-lock(AwaitingRecv, Mutex))
+
 Funcon
   channel-send(_:channels, _:values) : =>null-type
 
-
 Rule
-  channel-send(channel(Queue, N, Closed, _, AwaitingRecv, _), Val)
+  channel-send(channel(Queue, Size, Closed, AwaitingSend, _, _), Val)
      ~> thread-atomic sequential(
           check-true and(
             not assigned Closed,
-            is-greater(assigned N, 0),
-            is-in-type([Val], variable-type Queue)),
-          assign(N, integer-subtract(assigned N, 1)),
-          assign(Queue, list-snoc(assigned Queue, Val)),
-          finalise-failing condition-notify-first AwaitingRecv)
+            is-less(list-length assigned Queue, assigned Size)),
+          assign(Queue, list-append(assigned Queue, [Val])),
+          finalise-failing condition-notify-first AwaitingSend)
+
+Funcon
+  channel-recv(_:channels) : =>values
+
+Rule
+  channel-recv channel(Queue, _, Closed, _, AwaitingRecv, _)
+     ~> thread-atomic sequential(
+          check-true and(
+            not assigned Closed,
+            is-greater(list-length assigned Queue, 0)),
+          passthrough(
+            list-head assigned Queue,
+            assign(Queue, list-tail assigned Queue),
+            finalise-failing condition-notify-first AwaitingRecv))
+
+Funcon
+  channel-await-send(_:channels) : =>null-type
 
 Funcon
   channel-send-else-wait(_:channels, _:values) : =>null-type
@@ -151,35 +173,20 @@ Rule
   channel-send-else-wait(Channel, Val)
      ~> sequential(
           channel-sync-else-wait Channel,
+          print(100),
           if-true-else(
             channel-closed Channel,
-            sequential(
-              channel-release Channel,
-              fail),
+            sequential(print(200), channel-release Channel, fail),
             else(
               sequential(
                 channel-send(Channel, Val),
+                print(300),
                 channel-release Channel),
               sequential(
-                channel-await-recv Channel),
-                channel-send-else-wait(Channel, Val))))
-
-Funcon
-  channel-recv(_:channels) : =>values
-
-Rule
-  channel-recv channel(Queue, N, Closed, AwaitingSend, _, _)
-     ~> thread-atomic sequential(
-          check-true and(
-            not assigned Closed,
-            is-greater(list-length assigned Queue, 0)),
-          give(
-            list-head assigned Queue,
-            sequential(
-              assign(N, integer-add(assigned N, 1)),
-              assign(Queue, list-tail assigned Queue),
-              finalise-failing condition-notify-first AwaitingSend,
-              given)))
+                print(400),
+                channel-await-recv Channel,
+                print(500),
+                channel-send-else-wait(Channel, Val)))))
 
 Funcon
   channel-recv-else-wait(_:channels) : =>values
@@ -196,6 +203,7 @@ Rule
                 channel-recv Channel,
                 channel-release Channel),
               sequential(
+                channel-size-add(Channel, 1),
                 channel-await-send Channel,
+                channel-size-sub(Channel, 1),
                 channel-recv-else-wait Channel))))
-

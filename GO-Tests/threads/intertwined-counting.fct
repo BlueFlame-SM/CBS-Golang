@@ -1,4 +1,4 @@
-initialise-giving initialise-binding initialise-storing scope
+initialise-giving initialise-binding initialise-storing multithread scope
   ({"any" |-> values,
     "bool" |-> bools,
     "int" |-> int,
@@ -16,174 +16,181 @@ initialise-giving initialise-binding initialise-storing scope
     "nil" |-> null,
     "print" |-> function closure print
                   (tuple-elements given),
-    "make" |-> function closure case-match
-                 (tuple
-                    (type-construct
-                       (channels,
-                        pattern-bind
-                          ("type"))),
-                  channel-create
-                    (bound "type",
-                     0))},
-   handle-abrupt
-     (sequential
-        (multithread scope
-           (collateral
-              (bind
-                 ("main",
-                  allocate-variable functions
-                    (tuples
-                       ((values)*),
-                     null-type)),
-               bind
-                 ("thread",
-                  allocate-variable functions
-                    (tuples
-                       ((values)*),
-                     null-type)),
-               map
-                 ( )),
-            sequential
-              (assign
-                 (bound "main",
-                  function closure scope
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (type-construct
+                          (channels,
+                           pattern-bind "type")),
+                     channel-create
+                       (0)),
+                  case-match
+                    (tuple
+                       (type-construct
+                          (channels,
+                           pattern-bind "type"),
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         bind
+           ("thread",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         map
+           ( )),
+      sequential
+        (assign
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  ( )),
+               handle-return sequential
+                 (effect thread-activate thread-detached supply
+                    (current-value bound
+                       "thread",
+                     tuple
+                       ( )),
+                  scope
                     (collateral
-                       (match
-                          (given,
-                           tuple
-                             ( )),
+                       (bind
+                          ("i",
+                           allocate-variable values),
                         ( )),
-                     handle-return sequential
-                       (thread-detach thread-activate thread-joinable supply
-                          (current-value bound
-                             "thread",
-                           tuple
-                             ( )),
-                        scope
-                          (collateral
-                             (bind
-                                ("i",
-                                 allocate-variable values),
-                              ( )),
+                     sequential
+                       (give
+                          (decimal-natural "5",
                            sequential
-                             (give
-                                (decimal-natural "5",
-                                 sequential
-                                   (check-true and
-                                      (is-in-type
-                                         (bound "i",
-                                          variables),
-                                       not is-in-type
-                                         (given,
-                                          types)),
-                                    assign
-                                      (bound "i",
-                                       given))),
-                              while
-                                (is-less l-to-r
+                             (check-true and
+                                (is-in-type
+                                   (bound "i",
+                                    variables),
+                                 not is-in-type
+                                   (given,
+                                    types)),
+                              assign
+                                (bound "i",
+                                 given))),
+                        while
+                          (is-less l-to-r
+                             (current-value bound
+                                "i",
+                              decimal-natural "10"),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (apply
                                    (current-value bound
-                                      "i",
-                                    decimal-natural "10"),
-                                 scope
-                                   (collateral
-                                      ( ),
+                                      "print",
+                                    tuple l-to-r
+                                      (current-value bound
+                                         "i",
+                                       ( ))),
+                                 give
+                                   (int-add l-to-r
+                                      (current-value bound
+                                         "i",
+                                       decimal-natural "1"),
                                     sequential
-                                      (apply
-                                         (current-value bound
-                                            "print",
-                                          tuple l-to-r
-                                            (current-value bound
-                                               "i",
-                                             ( ))),
-                                       give
-                                         (int-add l-to-r
-                                            (current-value bound
-                                               "i",
-                                             decimal-natural "1"),
-                                          sequential
-                                            (check-true and
-                                               (is-in-type
-                                                  (bound "i",
-                                                   variables),
-                                                not is-in-type
-                                                  (given,
-                                                   types)),
-                                             assign
-                                               (bound "i",
-                                                given))),
-                                       null-value))),
-                              null-value)),
-                        null-value))),
-               assign
-                 (bound "thread",
-                  function closure scope
+                                      (check-true and
+                                         (is-in-type
+                                            (bound "i",
+                                             variables),
+                                          not is-in-type
+                                            (given,
+                                             types)),
+                                       assign
+                                         (bound "i",
+                                          given))),
+                                 null-value))),
+                        null-value)),
+                  null-value))),
+         assign
+           (bound "thread",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  ( )),
+               handle-return sequential
+                 (scope
                     (collateral
-                       (match
-                          (given,
-                           tuple
-                             ( )),
+                       (bind
+                          ("i",
+                           allocate-variable values),
                         ( )),
-                     handle-return sequential
-                       (scope
-                          (collateral
-                             (bind
-                                ("i",
-                                 allocate-variable values),
-                              ( )),
+                     sequential
+                       (give
+                          (decimal-natural "0",
                            sequential
-                             (give
-                                (decimal-natural "0",
-                                 sequential
-                                   (check-true and
-                                      (is-in-type
-                                         (bound "i",
-                                          variables),
-                                       not is-in-type
-                                         (given,
-                                          types)),
-                                    assign
-                                      (bound "i",
-                                       given))),
-                              while
-                                (is-less l-to-r
+                             (check-true and
+                                (is-in-type
+                                   (bound "i",
+                                    variables),
+                                 not is-in-type
+                                   (given,
+                                    types)),
+                              assign
+                                (bound "i",
+                                 given))),
+                        while
+                          (is-less l-to-r
+                             (current-value bound
+                                "i",
+                              decimal-natural "5"),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (apply
                                    (current-value bound
-                                      "i",
-                                    decimal-natural "5"),
-                                 scope
-                                   (collateral
-                                      ( ),
+                                      "print",
+                                    tuple l-to-r
+                                      (current-value bound
+                                         "i",
+                                       ( ))),
+                                 give
+                                   (int-add l-to-r
+                                      (current-value bound
+                                         "i",
+                                       decimal-natural "1"),
                                     sequential
-                                      (apply
-                                         (current-value bound
-                                            "print",
-                                          tuple l-to-r
-                                            (current-value bound
-                                               "i",
-                                             ( ))),
-                                       give
-                                         (int-add l-to-r
-                                            (current-value bound
-                                               "i",
-                                             decimal-natural "1"),
-                                          sequential
-                                            (check-true and
-                                               (is-in-type
-                                                  (bound "i",
-                                                   variables),
-                                                not is-in-type
-                                                  (given,
-                                                   types)),
-                                             assign
-                                               (bound "i",
-                                                given))),
-                                       null-value))),
-                              null-value)),
-                        null-value))),
-               null-value,
-               effect apply
-                 (current-value bound
-                    "main",
-                  tuple
-                    ( )))),
-         "succes"),
-      "failure"))
+                                      (check-true and
+                                         (is-in-type
+                                            (bound "i",
+                                             variables),
+                                          not is-in-type
+                                            (given,
+                                             types)),
+                                       assign
+                                         (bound "i",
+                                          given))),
+                                 null-value))),
+                        null-value)),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))
