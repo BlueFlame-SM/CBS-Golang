@@ -3,13 +3,15 @@ initialise-binding
 initialise-storing
 multithread
 scope(
-  bind("channel", channel-create(0)),
+  bind("channel", channel-create(10)),
   sequential(
-    effect thread-activate thread-detached thunk closure channel-send-else-wait(bound "channel", "foo"),
-    print 1,
-    print 2,
-    print 3,
-    print 4,
-    print 5,
-    print 6,
-    print channel-recv-else-wait(bound "channel")))
+    effect thread-activate thread-detached thunk closure
+      sequential(
+        print 1,
+        print 2,
+        print 3,
+        print 4,
+        print 5,
+        channel-send-else-wait(bound "channel", "foo")),
+    print "",
+    print channel-receive-else-wait(bound "channel")))

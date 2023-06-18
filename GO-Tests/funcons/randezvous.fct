@@ -1,0 +1,9 @@
+initialise-giving
+initialise-binding
+initialise-storing
+multithread
+scope(
+  bind("rdvs", randezvous-create),
+  sequential(
+    effect thread-activate thread-detached thunk closure sequential(
+      

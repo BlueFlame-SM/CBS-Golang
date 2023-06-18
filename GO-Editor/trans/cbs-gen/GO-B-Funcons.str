@@ -21,11 +21,7 @@ rules
                  
 
 
-// ## Lists
-                 
-
-
-// ## Variables
+// ## Sequences
                  
 
 
@@ -33,11 +29,15 @@ rules
                  
 
 
-// ## Exclusive locks
+// ## Safeguarding
                  
 
 
-// ## Channels
+// ## Syncs
+                 
+
+
+// ## Exclusive locks
                  
 
 

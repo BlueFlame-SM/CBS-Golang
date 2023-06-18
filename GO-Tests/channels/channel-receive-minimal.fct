@@ -3,9 +3,10 @@ initialise-binding
 initialise-storing
 multithread
 give(
-    channel-create(ints, 10),
-    sequential(
-      channel-send-else-wait(given, 13),
-      print(channel-recv-else-wait given),
-      null-type))
+  channel-create(0),
+  sequential(
+    channel-send-else-wait(given, 0),
+    print([]),
+    channel-print(given),
+    channel-receive-else-wait given))
 
