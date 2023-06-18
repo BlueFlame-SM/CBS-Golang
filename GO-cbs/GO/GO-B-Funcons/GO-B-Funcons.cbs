@@ -165,17 +165,13 @@ Funcon
         first-pseudo-thread-match(
           assigned sync-feature(SY, sync-waiting-list), sending),
         sequential(
-          print("1"),
           sync-count-increase(SY),
-          print("2"),
           sync-feature-modify(SY, sync-waiting-list,
             drop-first-pseudo-thread-match(given, sending)),
-          print("3"),
           if-true-else(
             assigned pseudo-thread-waiting given,
             thread-resume pseudo-thread-id given,
             null-value),
-          print("4"),
           assigned pseudo-thread-value given))
 
 Funcon
@@ -202,7 +198,10 @@ Funcon
             assign(
               pseudo-thread-value given,
               channel-receive(SY)),
-            thread-suspend current-thread),
+            sequential(
+              sync-waiting-list-add(SY, given),
+              print("why dis solve it???"),
+              thread-suspend current-thread)),
           assigned pseudo-thread-value given))
 
 Auxiliary Datatype
@@ -223,7 +222,7 @@ Rule
    ~> pseudo-thread(sending, alloc-init(values, V), current-thread, alloc-init(booleans, W))
 Rule
   pseudo-thread-create(receiving)
-   ~> pseudo-thread(receiving, alloc values, current-thread, alloc-init(booleans, true))
+   ~> pseudo-thread(receiving, alloc-init(values, null), current-thread, alloc-init(booleans, true))
 
 Auxiliary Funcon
   pseudo-thread-value(_:pseudo-threads) : =>variables

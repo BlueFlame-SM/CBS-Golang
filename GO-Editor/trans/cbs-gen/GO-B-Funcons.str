@@ -17,7 +17,7 @@ rules
               
 
 
-// ## Flowing
+// ## Postponing
                  
 
 
@@ -29,15 +29,19 @@ rules
                  
 
 
-// ## Safeguarding
-                 
-
-
 // ## Syncs
                  
 
 
 // ## Exclusive locks
+                 
+
+
+// ## Conditions
+                 
+
+
+// ## Channels
                  
 
 

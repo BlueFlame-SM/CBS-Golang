@@ -4,14 +4,10 @@ initialise-storing
 multithread
 scope(
   bind("channel", channel-create(10)),
-  sequential(
-    effect thread-activate thread-detached thunk closure
-      sequential(
-        print 1,
-        print 2,
-        print 3,
-        print 4,
-        print 5,
-        channel-send-else-wait(bound "channel", "foo")),
-    print "",
-    print channel-receive-else-wait(bound "channel")))
+    sequential(
+      effect thread-activate thread-detached thunk closure
+        sequential(
+          channel-send-else-wait(bound "channel", "foo")),
+      effect thread-activate thread-detached thunk closure
+        sequential(
+          print channel-receive-else-wait(bound "channel"))))

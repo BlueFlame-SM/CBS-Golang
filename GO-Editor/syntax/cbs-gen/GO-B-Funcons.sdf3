@@ -12,7 +12,7 @@ lexical syntax // Language
                 
   
   
-  // ## Flowing
+  // ## Postponing
                    
   
   
@@ -24,15 +24,19 @@ lexical syntax // Language
                    
   
   
-  // ## Safeguarding
-                   
-  
-  
   // ## Syncs
                    
   
   
   // ## Exclusive locks
+                   
+  
+  
+  // ## Conditions
+                   
+  
+  
+  // ## Channels
                    
   
   
@@ -42,7 +46,7 @@ syntax // Language
                 
   
   
-  // ## Flowing
+  // ## Postponing
                    
   
   
@@ -54,15 +58,19 @@ syntax // Language
                    
   
   
-  // ## Safeguarding
-                   
-  
-  
   // ## Syncs
                    
   
   
   // ## Exclusive locks
+                   
+  
+  
+  // ## Conditions
+                   
+  
+  
+  // ## Channels
                    
   
   
@@ -72,7 +80,7 @@ context-free syntax // Language
                 
   
   
-  // ## Flowing
+  // ## Postponing
                    
   
   
@@ -84,15 +92,19 @@ context-free syntax // Language
                    
   
   
-  // ## Safeguarding
-                   
-  
-  
   // ## Syncs
                    
   
   
   // ## Exclusive locks
+                   
+  
+  
+  // ## Conditions
+                   
+  
+  
+  // ## Channels
                    
   
   
@@ -102,7 +114,7 @@ context-free syntax // Semantics
                 
   
   
-  // ## Flowing
+  // ## Postponing
                    
   
   
@@ -114,15 +126,19 @@ context-free syntax // Semantics
                    
   
   
-  // ## Safeguarding
-                   
-  
-  
   // ## Syncs
                    
   
   
   // ## Exclusive locks
+                   
+  
+  
+  // ## Conditions
+                   
+  
+  
+  // ## Channels
                    
   
   
@@ -132,7 +148,7 @@ context-free syntax // Desugaring
                 
   
   
-  // ## Flowing
+  // ## Postponing
                    
   
   
@@ -144,15 +160,19 @@ context-free syntax // Desugaring
                    
   
   
-  // ## Safeguarding
-                   
-  
-  
   // ## Syncs
                    
   
   
   // ## Exclusive locks
+                   
+  
+  
+  // ## Conditions
+                   
+  
+  
+  // ## Channels
                    
   
   
@@ -162,7 +182,7 @@ variables // Meta-variables
                 
   
   
-  // ## Flowing
+  // ## Postponing
                    
   
   
@@ -174,15 +194,19 @@ variables // Meta-variables
                    
   
   
-  // ## Safeguarding
-                   
-  
-  
   // ## Syncs
                    
   
   
   // ## Exclusive locks
+                   
+  
+  
+  // ## Conditions
+                   
+  
+  
+  // ## Channels
                    
   
   
@@ -192,7 +216,7 @@ variables // Meta-variables
                 
   
   
-  // ## Flowing
+  // ## Postponing
                    
   
   
@@ -204,15 +228,19 @@ variables // Meta-variables
                    
   
   
-  // ## Safeguarding
-                   
-  
-  
   // ## Syncs
                    
   
   
   // ## Exclusive locks
+                   
+  
+  
+  // ## Conditions
+                   
+  
+  
+  // ## Channels
                    
   
   
