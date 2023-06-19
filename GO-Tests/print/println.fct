@@ -1,0 +1,77 @@
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
+  ({"any" |-> values,
+    "bool" |-> booleans,
+    "int" |-> integers,
+    "uint" |-> natural-numbers,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print to-strings tuple-elements
+                  given,
+    "println" |-> function closure print to-strings
+                    (intersperse
+                       (" ",
+                        tuple-elements given),
+                     "
+"),
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (channels),
+                     channel-create
+                       (0)),
+                  case-match
+                    (tuple
+                       (channels,
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         ( )),
+      sequential
+        (initialise-variable
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  ( )),
+               handle-return sequential
+                 (apply
+                    (current-value bound
+                       "println",
+                     tuple l-to-r
+                       (decimal-natural "1",
+                        (decimal-natural "2",
+                         (decimal-natural "3",
+                          current-value bound
+                            "true")))),
+                  apply
+                    (current-value bound
+                       "println",
+                     tuple l-to-r
+                       (decimal-natural "4",
+                        (decimal-natural "5",
+                         (decimal-natural "6",
+                          current-value bound
+                            "false")))),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))

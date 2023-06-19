@@ -270,7 +270,7 @@ context-free syntax // Semantics
   // ## Blocks
                    
   
-  FCT-SEQ.T-allocate-statements =
+  FCT.T-allocate-statements =
     "allocate-statements" "[:" L-statementSemic* ":]"
   FCT-SEQ.T-execute-statements =
     "execute-statements" "[:" L-statementSemic* ":]"

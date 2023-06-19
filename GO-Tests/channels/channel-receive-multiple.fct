@@ -1,4 +1,4 @@
-initialise-giving initialise-binding initialise-storing multithread scope
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
   ({"any" |-> values,
     "bool" |-> bools,
     "int" |-> int,
@@ -111,11 +111,13 @@ initialise-giving initialise-binding initialise-storing multithread scope
                              (collateral
                                 ( ),
                               sequential
-                                (channel-send-else-wait
-                                   (current-value bound
-                                      "c",
-                                    current-value bound
-                                      "i"),
+                                (sequential
+                                   (channel-send-else-wait
+                                      (current-value bound
+                                         "c",
+                                       current-value bound
+                                         "i"),
+                                    postpone null),
                                  give
                                    (int-add l-to-r
                                       (current-value bound
@@ -167,8 +169,10 @@ initialise-giving initialise-binding initialise-storing multithread scope
                                    (current-value bound
                                       "print",
                                     tuple l-to-r
-                                      (channel-recv-else-wait current-value bound
-                                         "c",
+                                      (after-effect
+                                         (channel-receive-else-wait current-value bound
+                                            "c",
+                                          postpone null),
                                        ( ))),
                                  give
                                    (int-add l-to-r

@@ -1,16 +1,8 @@
-initialise-giving initialise-binding initialise-storing multithread scope
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
   ({"any" |-> values,
-    "bool" |-> bools,
-    "int" |-> int,
-    "int8" |-> int8,
-    "int16" |-> int16,
-    "int32" |-> int32,
-    "int64" |-> int64,
-    "uint" |-> uint,
-    "uint8" |-> uint8,
-    "uint16" |-> uint16,
-    "uint32" |-> uint32,
-    "uint64" |-> uint64,
+    "bool" |-> booleans,
+    "int" |-> integers,
+    "uint" |-> natural-numbers,
     "true" |-> true,
     "false" |-> false,
     "nil" |-> null,
@@ -19,16 +11,12 @@ initialise-giving initialise-binding initialise-storing multithread scope
     "make" |-> function closure else
                  (case-match
                     (tuple
-                       (type-construct
-                          (channels,
-                           pattern-bind "type")),
+                       (channels),
                      channel-create
                        (0)),
                   case-match
                     (tuple
-                       (type-construct
-                          (channels,
-                           pattern-bind "type"),
+                       (channels,
                         pattern-bind "N"),
                      checked when-true
                        (is-greater-or-equal
@@ -45,7 +33,7 @@ initialise-giving initialise-binding initialise-storing multithread scope
                  ((values)*),
                null-type)),
          bind
-           ("thread",
+           ("sender",
             allocate-variable functions
               (tuples
                  ((values)*),
@@ -66,92 +54,32 @@ initialise-giving initialise-binding initialise-storing multithread scope
                      allocate-variable values),
                   ( )),
                handle-return sequential
-                 (give
-                    (apply
+                 (assign
+                    (bound "c",
+                     apply
                        (current-value bound
                           "make",
                         tuple l-to-r
-                          (type-construct
-                             (channels,
-                              current-value bound
-                                "int"),
+                          (channels,
                            decimal-natural "10",
-                           ( ))),
-                     sequential
-                       (check-true and
-                          (is-in-type
-                             (bound "c",
-                              variables),
-                           not is-in-type
-                             (given,
-                              types)),
-                        assign
-                          (bound "c",
-                           given))),
+                           ( )))),
                   effect thread-activate thread-detached supply
                     (current-value bound
-                       "thread",
+                       "sender",
                      tuple l-to-r
                        (current-value bound
                           "c",
                         ( ))),
-                  scope
-                    (collateral
-                       (bind
-                          ("i",
-                           allocate-variable values),
-                        ( )),
-                     sequential
-                       (give
-                          (decimal-natural "1",
-                           sequential
-                             (check-true and
-                                (is-in-type
-                                   (bound "i",
-                                    variables),
-                                 not is-in-type
-                                   (given,
-                                    types)),
-                              assign
-                                (bound "i",
-                                 given))),
-                        while
-                          (is-less l-to-r
-                             (current-value bound
-                                "i",
-                              decimal-natural "10"),
-                           scope
-                             (collateral
-                                ( ),
-                              sequential
-                                (apply
-                                   (current-value bound
-                                      "print",
-                                    tuple l-to-r
-                                      (channel-recv-else-wait current-value bound
-                                         "c",
-                                       ( ))),
-                                 give
-                                   (int-add l-to-r
-                                      (current-value bound
-                                         "i",
-                                       decimal-natural "1"),
-                                    sequential
-                                      (check-true and
-                                         (is-in-type
-                                            (bound "i",
-                                             variables),
-                                          not is-in-type
-                                            (given,
-                                             types)),
-                                       assign
-                                         (bound "i",
-                                          given))),
-                                 null-value))),
-                        null-value)),
+                  apply
+                    (current-value bound
+                       "print",
+                     tuple l-to-r
+                       (channel-receive-else-wait current-value bound
+                          "c",
+                        ( ))),
                   null-value))),
          assign
-           (bound "thread",
+           (bound "sender",
             function closure scope
               (collateral
                  (match
@@ -160,64 +88,14 @@ initialise-giving initialise-binding initialise-storing multithread scope
                        (pattern closure bind
                           ("c",
                            alloc-init
-                             (type-construct-type
-                                (current-value bound
-                                   "any"),
+                             (values,
                               given)))),
                   ( )),
                handle-return sequential
-                 (scope
-                    (collateral
-                       (bind
-                          ("i",
-                           allocate-variable values),
-                        ( )),
-                     sequential
-                       (give
-                          (decimal-natural "1",
-                           sequential
-                             (check-true and
-                                (is-in-type
-                                   (bound "i",
-                                    variables),
-                                 not is-in-type
-                                   (given,
-                                    types)),
-                              assign
-                                (bound "i",
-                                 given))),
-                        while
-                          (is-less l-to-r
-                             (current-value bound
-                                "i",
-                              decimal-natural "10"),
-                           scope
-                             (collateral
-                                ( ),
-                              sequential
-                                (channel-send-else-wait
-                                   (current-value bound
-                                      "c",
-                                    current-value bound
-                                      "i"),
-                                 give
-                                   (int-add l-to-r
-                                      (current-value bound
-                                         "i",
-                                       decimal-natural "1"),
-                                    sequential
-                                      (check-true and
-                                         (is-in-type
-                                            (bound "i",
-                                             variables),
-                                          not is-in-type
-                                            (given,
-                                             types)),
-                                       assign
-                                         (bound "i",
-                                          given))),
-                                 null-value))),
-                        null-value)),
+                 (channel-send-else-wait
+                    (current-value bound
+                       "c",
+                     decimal-natural "1"),
                   null-value))),
          null-value,
          effect apply

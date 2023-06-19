@@ -1,0 +1,100 @@
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
+  ({"any" |-> values,
+    "bool" |-> booleans,
+    "int" |-> integers,
+    "uint" |-> natural-numbers,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print to-strings tuple-elements
+                  given,
+    "println" |-> function closure print to-strings
+                    (intersperse
+                       (" ",
+                        tuple-elements given),
+                     "
+"),
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (channels),
+                     channel-create
+                       (0)),
+                  case-match
+                    (tuple
+                       (channels,
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("add",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               values)),
+         bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         ( )),
+      sequential
+        (initialise-variable
+           (bound "add",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       (pattern abstraction bind
+                          ("x",
+                           alloc-init
+                             (values,
+                              given)),
+                        pattern abstraction bind
+                          ("y",
+                           alloc-init
+                             (values,
+                              given)))),
+                  ( )),
+               handle-return sequential
+                 (return int-add l-to-r
+                    (current-value bound
+                       "x",
+                     current-value bound
+                       "y"),
+                  null-value))),
+         initialise-variable
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  ( )),
+               handle-return sequential
+                 (apply
+                    (current-value bound
+                       "println",
+                     tuple
+                       (apply
+                          (current-value bound
+                             "add",
+                           tuple l-to-r
+                             (decimal-natural "42",
+                              decimal-natural "13")))),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))

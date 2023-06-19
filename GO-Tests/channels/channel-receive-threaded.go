@@ -2,14 +2,10 @@ package main;
 
 func main() {
   c := make(chan int, 10);
-  go thread(c);
-  for i := 1; i < 10; i++ {
-    print(<-c);
-  };
+  go sender(c);
+  print(<-c);
 };
 
-func thread(c any) {
-  for i := 1; i < 10; i++ {
-    c <- i;
-  };
+func sender(c any) {
+  c <- 1;
 };

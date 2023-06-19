@@ -21,35 +21,29 @@ Rule
     = initialise-giving
       initialise-binding
       initialise-storing
+      postpone-after-effect
       multithread
       scope(
         {
           // Types:
           "any"     |-> values,
-          "bool"    |-> bools,
-          "int"     |-> int,
-          "int8"    |-> int8,
-          "int16"   |-> int16,
-          "int32"   |-> int32,
-          "int64"   |-> int64,
-          "uint"    |-> uint,
-          "uint8"   |-> uint8,
-          "uint16"  |-> uint16,
-          "uint32"  |-> uint32,
-          "uint64"  |-> uint64,
+          "bool"    |-> booleans,
+          "int"     |-> integers,
+          "uint"    |-> natural-numbers,
           // Constants:
           "true"    |-> true,
           "false"   |-> false,
           // Zero value:
           "nil"     |-> null,
-          "print"   |-> function closure print(tuple-elements given),
+          "print"   |-> function closure print to-strings tuple-elements given,
+          "println" |-> function closure print to-strings(intersperse(" ", tuple-elements given), "\n"),
           "make"    |-> function closure else(
                           case-match(
-                            tuple(type-construct(channels, pattern-bind "type")),
+                            tuple(channels),
                             channel-create(0)),
                           case-match(
                             tuple(
-                              type-construct(channels, pattern-bind "type"),
+                              channels,
                               pattern-bind "N"),
                             checked when-true(
                               is-greater-or-equal(bound "N", 0),
@@ -79,17 +73,17 @@ Otherwise
         sequential(initialise-topleveldecls[[TopLevelDeclSemic*]]))
 
 Semantics
-  allocate-topleveldecls[[_:topLevelDeclSemic*]] : =>environments*
+  allocate-topleveldecls[[_:topLevelDeclSemic*]] : (=>environments)*
 
 Rule
-  allocate-topleveldecls[[ ]] = map( )
+  allocate-topleveldecls[[ ]] = ( )
 
 Rule
   allocate-topleveldecls[[TopLevelDecl ';' TopLevelDeclSemic*]]
     = allocate[[TopLevelDecl]], allocate-topleveldecls[[TopLevelDeclSemic*]]
 
 Semantics
-  initialise-topleveldecls[[_:topLevelDeclSemic*]] : =>null-value*
+  initialise-topleveldecls[[_:topLevelDeclSemic*]] : (=>null-value)+
 
 Rule
   initialise-topleveldecls[[ ]] = null-value

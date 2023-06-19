@@ -12,27 +12,7 @@ lexical syntax // Language
                 
   
   
-  // ## Postponing
-                   
-  
-  
-  // ## Sequences
-                   
-  
-  
-  // ## Typeconstructs
-                   
-  
-  
-  // ## Syncs
-                   
-  
-  
-  // ## Exclusive locks
-                   
-  
-  
-  // ## Conditions
+  // ## Strings
                    
   
   
@@ -46,27 +26,7 @@ syntax // Language
                 
   
   
-  // ## Postponing
-                   
-  
-  
-  // ## Sequences
-                   
-  
-  
-  // ## Typeconstructs
-                   
-  
-  
-  // ## Syncs
-                   
-  
-  
-  // ## Exclusive locks
-                   
-  
-  
-  // ## Conditions
+  // ## Strings
                    
   
   
@@ -80,27 +40,7 @@ context-free syntax // Language
                 
   
   
-  // ## Postponing
-                   
-  
-  
-  // ## Sequences
-                   
-  
-  
-  // ## Typeconstructs
-                   
-  
-  
-  // ## Syncs
-                   
-  
-  
-  // ## Exclusive locks
-                   
-  
-  
-  // ## Conditions
+  // ## Strings
                    
   
   
@@ -114,27 +54,7 @@ context-free syntax // Semantics
                 
   
   
-  // ## Postponing
-                   
-  
-  
-  // ## Sequences
-                   
-  
-  
-  // ## Typeconstructs
-                   
-  
-  
-  // ## Syncs
-                   
-  
-  
-  // ## Exclusive locks
-                   
-  
-  
-  // ## Conditions
+  // ## Strings
                    
   
   
@@ -148,27 +68,7 @@ context-free syntax // Desugaring
                 
   
   
-  // ## Postponing
-                   
-  
-  
-  // ## Sequences
-                   
-  
-  
-  // ## Typeconstructs
-                   
-  
-  
-  // ## Syncs
-                   
-  
-  
-  // ## Exclusive locks
-                   
-  
-  
-  // ## Conditions
+  // ## Strings
                    
   
   
@@ -182,27 +82,7 @@ variables // Meta-variables
                 
   
   
-  // ## Postponing
-                   
-  
-  
-  // ## Sequences
-                   
-  
-  
-  // ## Typeconstructs
-                   
-  
-  
-  // ## Syncs
-                   
-  
-  
-  // ## Exclusive locks
-                   
-  
-  
-  // ## Conditions
+  // ## Strings
                    
   
   
@@ -216,27 +96,7 @@ variables // Meta-variables
                 
   
   
-  // ## Postponing
-                   
-  
-  
-  // ## Sequences
-                   
-  
-  
-  // ## Typeconstructs
-                   
-  
-  
-  // ## Syncs
-                   
-  
-  
-  // ## Exclusive locks
-                   
-  
-  
-  // ## Conditions
+  // ## Strings
                    
   
   

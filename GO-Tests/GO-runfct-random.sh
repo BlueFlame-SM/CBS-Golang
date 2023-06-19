@@ -17,7 +17,8 @@ else
 fi
 
 # Run the command with the provided or generated values
-command="GO-runfct $filename --non-deterministic value-operations,rules,pattern-matching,interleaving-of-args --seed $integer"
+# Disable `pattern-matching` non-derterminism flag, seems to be broken...
+command="GO-runfct $filename --format-string-outputs --non-deterministic value-operations,rules,interleaving-of-args --seed $integer"
 echo "Seed:"
 echo "$integer"
 echo ""

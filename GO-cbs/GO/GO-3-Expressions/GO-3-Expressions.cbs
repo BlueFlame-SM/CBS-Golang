@@ -69,31 +69,32 @@ Rule
   [['(' Expression CommaExpression* ',' ')']] : arguments = [['(' Expression CommaExpression* ')']]
 
 Semantics
-  tuple-arguments[[_:arguments]] : =>tuple(values)
-
+  tuple-arguments[[_:arguments]] : =>tuples(values*)
 Rule
   tuple-arguments[['(' ')']] = tuple( )
-
 Rule
-  tuple-arguments[['(' Expression CommaExpression* ')']]
-    = tuple l-to-r(evaluate[[Expression]], evaluate-expressions[[CommaExpression*]])
-
+  tuple-arguments[['(' Expression ')']] = tuple(evaluate[[Expression]])
 Rule
-  tuple-arguments[['(' TypeExpr CommaExpression* ')']]
-    = tuple l-to-r(type-construct[[TypeExpr]], evaluate-expressions[[CommaExpression*]])
+  tuple-arguments[['(' TypeExpr ')']] = tuple(type[[TypeExpr]])
+Rule
+  tuple-arguments[['(' Expression CommaExpression+ ')']]
+    = tuple l-to-r(evaluate[[Expression]], evaluate-expressions[[CommaExpression+]])
+Rule
+  tuple-arguments[['(' TypeExpr CommaExpression+ ')']]
+    = tuple l-to-r(type[[TypeExpr]], evaluate-expressions[[CommaExpression+]])
 
 Syntax
   CommaExpression : commaExpression ::= ',' expression
 
 Semantics
-  evaluate-expressions[[_:commaExpression*]] : =>values*
+  evaluate-expressions[[_:commaExpression+]] : =>values+
 
 Rule
-  evaluate-expressions[[ ]] = ( )
+  evaluate-expressions[[',' Expression]] = evaluate[[Expression]]
 
 Rule
-  evaluate-expressions[[',' Expression CommaExpression*]]
-    = evaluate[[Expression]], evaluate-expressions[[CommaExpression*]]
+  evaluate-expressions[[',' Expression CommaExpression+]]
+    = (evaluate[[Expression]], evaluate-expressions[[CommaExpression+]])
 
 
 ## Operators
@@ -195,4 +196,4 @@ Rule
   evaluate[['!' UnaryExpr]] = not evaluate[[UnaryExpr]]
 
 Rule
-  evaluate[['<-' UnaryExpr]] = channel-recv-else-wait evaluate[[UnaryExpr]]
+  evaluate[['<-' UnaryExpr]] = channel-receive-else-wait evaluate[[UnaryExpr]]

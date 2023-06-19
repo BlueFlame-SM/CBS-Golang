@@ -8,8 +8,8 @@ imports
 
 imports
   cbs-gen/GO-3-Expressions
-  cbs-gen/GO-B-Funcons
   cbs-gen/GO-1-Lexemes
+  cbs-gen/GO-B-Funcons
 
 // Language "Golang"
 
@@ -23,22 +23,18 @@ rules
                  
 
 to-funcons:
-  |[ type[: (:TypeExpr:) :] ]| ->
-  |[ type-construct-type (type-construct[: (:TypeExpr:) :]) ]|
+  |[ type[: ((:TypeExpr:)) :] ]| ->
+  |[ type[: (:TypeExpr:) :] ]|
 to-funcons:
-  |[ type-construct[: ((:TypeExpr:)) :] ]| ->
-  |[ type-construct[: (:TypeExpr:) :] ]|
-to-funcons:
-  |[ type-construct[: (:Identifier:) :] ]| ->
+  |[ type[: (:Identifier:) :] ]| ->
   |[ evaluate[: (:Identifier:) :] ]|
 
 // ## Channel Types
                  
 
 to-funcons:
-  |[ type-construct[: chan(:TypeExpr:) :] ]| ->
-  |[ type-construct (channels, 
-             type-construct[: (:TypeExpr:) :]) ]|
+  |[ type[: chan(:TypeExpr:) :] ]| ->
+  |[ channels ]|
 
 // ## Function Types
                  
@@ -65,7 +61,7 @@ to-funcons:
      bind-parameterdecls[: (:ParameterList:) :] ]|
 to-funcons:
   |[ bind-parameterdecl[: (:Identifier:)(:TypeExpr:) :] ]| ->
-  |[ pattern closure bind (id[: (:Identifier:) :], 
-                           alloc-init (type[: (:TypeExpr:) :], 
+  |[ pattern abstraction bind (id[: (:Identifier:) :], 
+                           alloc-init (values, 
                                    given)) ]|
 

@@ -17,27 +17,7 @@ rules
               
 
 
-// ## Postponing
-                 
-
-
-// ## Sequences
-                 
-
-
-// ## Typeconstructs
-                 
-
-
-// ## Syncs
-                 
-
-
-// ## Exclusive locks
-                 
-
-
-// ## Conditions
+// ## Strings
                  
 
 

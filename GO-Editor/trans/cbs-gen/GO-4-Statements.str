@@ -25,7 +25,7 @@ rules
 
 to-funcons:
   |[ execute[: go(:PrimaryExpr:)(:Arguments:) :] ]| ->
-  |[ effect thread-activate thread-detached supply (evaluate[: (:PrimaryExpr:) :], 
+  |[ thread-detach thread-activate thread-joinable supply (evaluate[: (:PrimaryExpr:) :], 
                                   tuple-arguments[: (:Arguments:) :]) ]|
 
 // ## Return statement
@@ -151,13 +151,8 @@ to-funcons:
   |[ assign[: (:Assignment:) :] ]|
 to-funcons:
   |[ assign[: (:Identifier:)=(:Expression:) :] ]| ->
-  |[ give (evaluate[: (:Expression:) :], 
-             sequential (check-true and (is-in-type (bound id[: (:Identifier:) :], 
-                                            variables), 
-                                    not is-in-type (given, 
-                                                   types)), 
-                     assign (bound id[: (:Identifier:) :], 
-                             given))) ]|
+  |[ assign (bound id[: (:Identifier:) :], 
+             evaluate[: (:Expression:) :]) ]|
 to-desugared:
   [: (:Identifier:)+=(:Expression:) :] : assignment ->
   [: (:Identifier:)=(:Identifier:)+((:Expression:)) :] : assignment

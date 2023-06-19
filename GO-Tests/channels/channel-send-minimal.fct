@@ -2,5 +2,9 @@ initialise-giving
 initialise-binding
 initialise-storing
 multithread
-channel-send-else-wait(channel-create(10), 10)
+give(
+  channel-create(1),
+  sequential(
+    channel-send-else-wait(given, 10),
+    channel-print(given)))
 

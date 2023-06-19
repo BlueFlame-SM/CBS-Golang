@@ -31,7 +31,7 @@ Syntax
 
 Rule
   execute[['go' PrimaryExpr Arguments]]
-    = effect thread-activate thread-detached
+    = thread-detach thread-activate thread-joinable
         supply(evaluate[[PrimaryExpr]], tuple-arguments[[Arguments]])
 
 
@@ -59,7 +59,7 @@ Rule
         sequential(execute-statements[[StatementSemic*]]))
 
 Semantics
-  allocate-statements[[_:statementSemic*]] : (=>environments)*
+  allocate-statements[[_:statementSemic*]] : =>environments*
 
 Rule
   allocate-statements[[ ]] = ( )
@@ -211,12 +211,7 @@ Semantics
 
 Rule
   assign[[Identifier '=' Expression]]
-    = give(evaluate[[Expression]],
-        sequential(
-          check-true and(
-            is-in-type(bound id[[Identifier]], variables),
-            not is-in-type(given, types)),
-          assign(bound id[[Identifier]], given)))
+    = assign(bound id[[Identifier]], evaluate[[Expression]])
 
 Rule
   [[Identifier '+=' Expression]] : assignment

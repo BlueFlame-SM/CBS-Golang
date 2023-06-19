@@ -7,10 +7,10 @@ imports
   pp/GO-pp
 
 imports
+  cbs-gen/GO-2-Types
   cbs-gen/GO-A-Disambiguation
   cbs-gen/GO-4-Statements
   cbs-gen/GO-3-Expressions
-  cbs-gen/GO-2-Types
   cbs-gen/GO-B-Funcons
   cbs-gen/GO-1-Lexemes
   cbs-gen/GO-5-Declarations
@@ -20,32 +20,25 @@ imports
 rules
 to-funcons:
   |[ start[: (:SourceFile:) :] ]| ->
-  |[ initialise-giving initialise-binding initialise-storing multithread scope ({"any" |-> values, 
-                                          "bool" |-> bools, 
-                                          "int" |-> int, 
-                                          "int8" |-> int8, 
-                                          "int16" |-> int16, 
-                                          "int32" |-> int32, 
-                                          "int64" |-> int64, 
-                                          "uint" |-> uint, 
-                                          "uint8" |-> uint8, 
-                                          "uint16" |-> uint16, 
-                                          "uint32" |-> uint32, 
-                                          "uint64" |-> uint64, 
-                                          "true" |-> true, 
-                                          "false" |-> false, 
-                                          "nil" |-> null, 
-                                          "print" |-> function closure print (tuple-elements given), 
-                                          "make" |-> function closure else (case-match (tuple (type-construct (channels, 
-                                                                                                                   pattern-bind "type")), 
-                                                                                                   channel-create (0)), 
-                                                                                           case-match (tuple (type-construct (channels, 
-                                                                                                                   pattern-bind "type"), 
-                                                                                                           pattern-bind "N"), 
-                                                                                                   checked when-true (is-greater-or-equal (bound "N", 
-                                                                                                                          0), 
-                                                                                                                  channel-create (bound "N"))))}, 
-                                         execute-sourcefile[: (:SourceFile:) :]) ]|
+  |[ initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope ({"any" |-> values, 
+                                                 "bool" |-> booleans, 
+                                                 "int" |-> integers, 
+                                                 "uint" |-> natural-numbers, 
+                                                 "true" |-> true, 
+                                                 "false" |-> false, 
+                                                 "nil" |-> null, 
+                                                 "print" |-> function closure print to-strings tuple-elements given, 
+                                                 "println" |-> function closure print to-strings (intersperse (" ", 
+                                                                                                                 tuple-elements given), 
+                                                                                                         "\n"), 
+                                                 "make" |-> function closure else (case-match (tuple (channels), 
+                                                                                                          channel-create (0)), 
+                                                                                                  case-match (tuple (channels, 
+                                                                                                                  pattern-bind "N"), 
+                                                                                                          checked when-true (is-greater-or-equal (bound "N", 
+                                                                                                                                 0), 
+                                                                                                                         channel-create (bound "N"))))}, 
+                                                execute-sourcefile[: (:SourceFile:) :]) ]|
 to-funcons:
   |[ execute-sourcefile[: package main;(:TopLevelDeclSemic*:) :] ]| ->
   |[ scope (collateral (allocate-topleveldecls[: (:TopLevelDeclSemic*:) :]), 
@@ -57,7 +50,7 @@ to-funcons-default:
              sequential (initialise-topleveldecls[: (:TopLevelDeclSemic*:) :])) ]|
 to-funcons:
   |[ allocate-topleveldecls[:  :] ]| ->
-  |[ map () ]|
+  |[ () ]|
 to-funcons:
   |[ allocate-topleveldecls[: (:TopLevelDecl:);(:TopLevelDeclSemic*:) :] ]| ->
   |[ allocate[: (:TopLevelDecl:) :], 

@@ -5,19 +5,6 @@ Language "Golang"
 
 ## Integer Types
 
-Type int8 ~> bounded-ints(int-neg(int-pow(2, 7)), int-add(int-pow(2, 7), -1))
-Type int16 ~> bounded-ints(int-neg(int-pow(2, 15)), int-add(int-pow(2, 15), -1))
-Type int32 ~> bounded-ints(int-neg(int-pow(2, 31)), int-add(int-pow(2, 31), -1))
-Type int64 ~> bounded-ints(int-neg(int-pow(2, 63)), int-add(int-pow(2, 63), -1))
-Alias int = int32
-
-Type uint8 ~> bounded-ints(0, int-add(int-pow(2, 8), -1))
-Type uint16 ~> bounded-ints(0, int-add(int-pow(2, 16), -1))
-Type uint32 ~> bounded-ints(0, int-add(int-pow(2, 32), -1))
-Type uint64 ~> bounded-ints(0, int-add(int-pow(2, 64), -1))
-Alias uint = uint32
-
-
 Syntax
   TypeExpr : typeExpr
     ::= '(' typeExpr ')'
@@ -39,17 +26,10 @@ Syntax
 
 Semantics
   type[[TypeExpr:typeExpr]] : =>types
-    = type-construct-type(type-construct[[TypeExpr]])
-
-Semantics
-  type-construct[[_:typeExpr]] : =>type-constructs
-
 Rule
-  type-construct[['(' TypeExpr ')']] = type-construct[[TypeExpr]]
-
+  type[['(' TypeExpr ')']] = type[[TypeExpr]]
 Rule
-  type-construct[[Identifier]] = evaluate[[Identifier]]
-
+  type[[Identifier]] = evaluate[[Identifier]]
 
 ## Channel Types
 
@@ -57,7 +37,7 @@ Syntax
   channelType ::= 'chan' typeExpr
 
 Rule
-  type-construct[['chan' TypeExpr]] = type-construct(channels, type-construct[[TypeExpr]])
+  type[['chan' TypeExpr]] = channels
 
 
 ## Function Types
@@ -100,7 +80,7 @@ Semantics
 
 Rule
   bind-parameterdecl[[Identifier TypeExpr]]
-    = pattern closure bind(id[[Identifier]], alloc-init(type[[TypeExpr]], given))
+    = pattern abstraction bind(id[[Identifier]], alloc-init(values, given))
 
 
 

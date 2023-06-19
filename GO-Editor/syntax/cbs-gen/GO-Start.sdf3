@@ -1,10 +1,10 @@
 module GO-Start
             
 imports 
+  GO-2-Types
   GO-A-Disambiguation
   GO-4-Statements
   GO-3-Expressions
-  GO-2-Types
   GO-B-Funcons
   GO-1-Lexemes
   GO-5-Declarations
@@ -32,9 +32,9 @@ context-free syntax // Semantics
     "start" "[:" L-start ":]"
   FCT.T-execute-sourcefile =
     "execute-sourcefile" "[:" L-sourceFile ":]"
-  FCT.T-allocate-topleveldecls =
+  FCT-SEQ.T-allocate-topleveldecls =
     "allocate-topleveldecls" "[:" L-topLevelDeclSemic* ":]"
-  FCT.T-initialise-topleveldecls =
+  FCT-SEQ.T-initialise-topleveldecls =
     "initialise-topleveldecls" "[:" L-topLevelDeclSemic* ":]"
   
 context-free syntax // Desugaring

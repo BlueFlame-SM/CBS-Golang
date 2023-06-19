@@ -210,7 +210,7 @@ context-free syntax // Semantics
   FCT.T-tuple-arguments =
     "tuple-arguments" "[:" L-arguments ":]"
   FCT.T-evaluate-expressions =
-    "evaluate-expressions" "[:" L-commaExpression* ":]"
+    "evaluate-expressions" "[:" L-commaExpression+ ":]"
   
   // ## Operators
                    

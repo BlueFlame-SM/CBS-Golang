@@ -2,8 +2,8 @@ module GO-2-Types
             
 imports 
   GO-3-Expressions
-  GO-B-Funcons
   GO-1-Lexemes
+  GO-B-Funcons
   Funcons
 
 // Language "Golang"
@@ -122,8 +122,6 @@ context-free syntax // Semantics
   
   FCT.T-type =
     "type" "[:" L-typeExpr ":]"
-  FCT.T-type-construct =
-    "type-construct" "[:" L-typeExpr ":]"
   
   // ## Channel Types
                    

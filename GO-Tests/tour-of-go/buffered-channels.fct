@@ -1,0 +1,90 @@
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
+  ({"any" |-> values,
+    "bool" |-> booleans,
+    "int" |-> integers,
+    "uint" |-> natural-numbers,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print to-strings tuple-elements
+                  given,
+    "println" |-> function closure print to-strings
+                    (intersperse
+                       (" ",
+                        tuple-elements given),
+                     "
+"),
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (channels),
+                     channel-create
+                       (0)),
+                  case-match
+                    (tuple
+                       (channels,
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         ( )),
+      sequential
+        (initialise-variable
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  bind
+                    ("ch",
+                     allocate-variable values),
+                  ( )),
+               handle-return sequential
+                 (initialise-variable
+                    (bound "ch",
+                     apply
+                       (current-value bound
+                          "make",
+                        tuple l-to-r
+                          (channels,
+                           decimal-natural "2"))),
+                  channel-send-else-wait
+                    (current-value bound
+                       "ch",
+                     decimal-natural "1"),
+                  channel-send-else-wait
+                    (current-value bound
+                       "ch",
+                     decimal-natural "2"),
+                  apply
+                    (current-value bound
+                       "println",
+                     tuple
+                       (channel-receive-else-wait current-value bound
+                          "ch")),
+                  apply
+                    (current-value bound
+                       "println",
+                     tuple
+                       (channel-receive-else-wait current-value bound
+                          "ch")),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))

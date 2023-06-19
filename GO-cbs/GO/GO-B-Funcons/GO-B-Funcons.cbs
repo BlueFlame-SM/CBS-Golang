@@ -2,262 +2,149 @@ Language "Golang"
 
 #B Funcons
 
-Meta-variables
-  T <: values
-
-## Postponing
+## Strings
 
 Funcon
-  after-multiple-effect(Res:=>T, Comp*:(=>null-value)*) : =>T
-   ~> give(Res, sequential(Comp*, given))
-
-
-## Sequences
-
-Funcon
-  find-first(_:values, _:values*) : =>positive-integers
+  to-strings(_:values*) : =>strings*
 Rule
-  find-first(V:values) ~> 1
+  to-strings( ) ~> ( )
 Rule
-  is-equal(V, V') == true
-  ------------------------------------------------
-  find-first(V:values, V':values, V*:values*) ~> 1
-Rule
-  is-equal(V, V') == false
-  -------------------------------------------
-  find-first(V:values, V':values, V*:values*)
-   ~> natural-successor find-first(V, V*)
-
-Funcon
-  drop-nth(N:natural-numbers, V*:(T)*) : =>(T)*
-Rule
-  drop-nth(0, V*:(T*)) ~> V*
-Rule
-  natural-predecessor(N) ~> N'
-  ----------------------------
-  drop-nth(N:positive-integers, V*:(T)*)
-   ~> (first-n(N', V*), drop-first-n(N, V*))
-
-Funcon
-  drop-first-match(V:values, V*:(T)*) : =>(T)*
-   ~> drop-nth(find-first(V, V*), V*)
-
-
-## Typeconstructs
-
-Datatype
-  type-constructs
-    ::= {_:types} | type-construct(_:types, _:type-constructs*)
-
-Funcon
-  type-construct-type(_:type-constructs) : =>types
-
-Rule
-  type-construct-type(T:types) ~> T
-
-Rule
-  type-construct-type(type-construct(T:types, _*:type-constructs*)) ~> T
-
-Funcon
-  type-construct-args(_:type-constructs) : =>types*
-
-Rule
-  type-construct-args(_:types) ~> ( )
-
-Rule
-  type-construct-args(type-construct(_, Args*)) ~> Args*
-
-
-## Syncs
-
-Auxiliary Funcon
-  sync-waiting-list-match-remove(SY:syncs, TID:thread-ids) : =>null-type
-   ~> assign(sync-feature(SY, sync-waiting-list),
-        [drop-first-match(TID, list-elements assigned sync-feature(SY, sync-waiting-list))])
-
-Auxiliary Funcon
-  sync-waiting-list-add-head(SY:syncs, V:values) : =>null-type
-   ~> assign(sync-feature(SY, sync-waiting-list),
-        list-append([V], assigned sync-feature(SY, sync-waiting-list)))
-
-Auxiliary Funcon
-  sync-feature-modify(SY:syncs, SF:sync-features, V:=>values) : =>null-type
-   ~> give(sync-feature(SY, SF), assign(given, give(assigned given, V)))
-
-Auxiliary Funcon
-  sync-count-increase(SY:syncs) : =>null-type
-   ~> sync-feature-modify(SY, sync-count, nat-succ given)
-
-Auxiliary Funcon
-  sync-count-decrease(SY:syncs) : =>null-type
-   ~> sync-feature-modify(SY, sync-count, nat-pred given)
-
-
-## Exclusive locks
-
-Funcon
-  exclusive-lock-grant(SY:syncs, TID:thread-ids) : =>null-type
-   ~> thread-atomic sequential(
-        check-true is-exclusive-lock-holder SY,
-        if-true-else(
-          is-in(TID, list-elements assigned sync-feature(SY, sync-waiting-list)),
-          sequential(
-            sync-waiting-list-match-remove(SY, TID),
-            assign(sync-feature(SY, sync-holder), TID),
-            thread-resume TID),
-          assign(sync-feature(SY, sync-holder), TID)))
-
-
-## Conditions
-
-Funcon
-  is-condition-empty(SY:syncs) : =>values
-   ~> thread-atomic is-equal(sync-feature(SY, sync-waiting-list), [])
-
-Funcon
-  condition-wait-head(SY:syncs) : =>null-type
-   ~> thread-atomic sequential(
-        sync-waiting-list-add-head(SY, current-thread),
-        thread-suspend current-thread)
-
-Funcon
-  condition-wait-head-with-lock(SY:syncs, L:syncs) : =>null-type
-   ~> sequential(
-        thread-atomic sequential(
-          exclusive-lock-release(L),
-          sync-waiting-list-add-head(SY, current-thread),
-          thread-suspend current-thread),
-        exclusive-lock-sync-else-wait(L))
-
-
+  to-strings(V:values, V*:values*)
+   ~> (to-string V, to-strings V*)
 
 ## Channels
 
-Funcon
-  channel-create(N:nats) : =>syncs
-   ~> give(
-        sync-create(
-          sync-feature-create sync-waiting-list,
-          sync-feature-create sync-count),
-        sequential(
-          sync-feature-modify(given, sync-count, N), given))
+Datatype
+  channels ::= channel(_:natural-numbers, _:variables, _:variables, _:variables)
 
 Funcon
-  channel-print(SY:syncs) : =>null-type
-   ~> print(
-        assigned sync-feature(SY, sync-count),
-        structural-assigned assigned sync-feature(SY, sync-waiting-list))
+  channel-create(Size:natural-numbers) : =>channels
+   ~> channel(Size,  // Size of the value buffer
+        alloc-init(lists(values), []),  // Value buffer (queue)
+        alloc-init(lists(pseudo-threads), []),  // Receiver queue
+        alloc-init(lists(pseudo-threads), []))  // Sender queue
 
 Funcon
-  channel-send(SY:syncs, V:values) : =>null-type
-   ~> thread-atomic give(
-        first-pseudo-thread-match(
-          assigned sync-feature(SY, sync-waiting-list), receiving),
-        sequential(
-          assign(pseudo-thread-value given, V),
-          sync-feature-modify(SY, sync-waiting-list,
-            drop-first-pseudo-thread-match(given, receiving)),
-          thread-resume pseudo-thread-id given))
+  channel-print(C:channels) : =>null-type
+   ~> print(structural-assigned C)
 
 Funcon
-  channel-receive(SY:syncs) : =>values
-   ~> thread-atomic give(
-        first-pseudo-thread-match(
-          assigned sync-feature(SY, sync-waiting-list), sending),
-        sequential(
-          sync-count-increase(SY),
-          sync-feature-modify(SY, sync-waiting-list,
-            drop-first-pseudo-thread-match(given, sending)),
-          if-true-else(
-            assigned pseudo-thread-waiting given,
-            thread-resume pseudo-thread-id given,
-            null-value),
-          assigned pseudo-thread-value given))
-
-Funcon
-  channel-send-else-wait(SY:syncs, V:values) : =>null-type
+  channel-send(C:channels, V:values) : =>null-type
    ~> thread-atomic else(
-        channel-send(SY, V),
-        if-true-else(
-          is-equal(assigned sync-feature(SY, sync-count), 0),
-          sequential(
-            sync-waiting-list-add(SY,
-              pseudo-thread-create(sending, V, true)),
-            thread-suspend current-thread),
-          sequential(
-            sync-waiting-list-add(SY,
-              pseudo-thread-create(sending, V, false)),
-            sync-count-decrease(SY))))
+        channel-send-directly(C, V),
+        channel-send-buffer(C, V))
+
 
 Funcon
-  channel-receive-else-wait(SY:syncs) : =>values
-   ~> give(
-        pseudo-thread-create(receiving),
+  channel-receive(C:channels) : =>values
+   ~> thread-atomic else(
+        channel-recv-buffer C,
+        channel-recv-directly C)
+
+Funcon
+  channel-send-else-wait(C:channels, V:values) : =>null-type
+   ~> sequential(
+        thread-atomic else(
+          channel-send(C, V),
+          channel-send-wait(C, pseudo-thread-create(V))),
+        postpone null)
+
+Funcon
+  channel-receive-else-wait(C:channels) : =>values
+   ~> give(pseudo-thread-create( ),
         sequential(
           thread-atomic else(
-            assign(
-              pseudo-thread-value given,
-              channel-receive(SY)),
-            sequential(
-              sync-waiting-list-add(SY, given),
-              print("why dis solve it???"),
-              thread-suspend current-thread)),
+            assign(pseudo-thread-value given, channel-receive C),
+            channel-recv-wait(C, given)),
+          postpone null,
           assigned pseudo-thread-value given))
 
-Auxiliary Datatype
-  pseudo-threads
-    ::= pseudo-thread(
-          Mode    : pseudo-thread-modes,
-          Value   : variables,
-          Id      : thread-ids,
-          Waiting : variables)
-
-Auxiliary Datatype
-  pseudo-thread-modes ::= sending | receiving
+Auxiliary Funcon
+  channel-send-directly(C:channels, V:values) : =>null-type
+Rule
+  channel-send-directly(channel(_, _, RecvQ, _), V)
+   ~> thread-atomic give(dequeue RecvQ,
+        sequential(
+          assign(pseudo-thread-value given, V),
+          thread-resume pseudo-thread-id given))
 
 Auxiliary Funcon
-  pseudo-thread-create(_:pseudo-thread-modes, _:values?, _:booleans?) : =>pseudo-threads
+  channel-recv-directly(C:channels) : =>values
 Rule
-  pseudo-thread-create(sending, V:values, W:booleans)
-   ~> pseudo-thread(sending, alloc-init(values, V), current-thread, alloc-init(booleans, W))
+  channel-recv-directly channel(_, _, _, SendQ)
+   ~> thread-atomic give(dequeue SendQ,
+        sequential(
+          thread-resume pseudo-thread-id given,
+          assigned pseudo-thread-value given))
+
+Auxiliary Funcon
+  channel-send-buffer(_:channels, _:values) : =>null-type
 Rule
-  pseudo-thread-create(receiving)
-   ~> pseudo-thread(receiving, alloc-init(values, null), current-thread, alloc-init(booleans, true))
+  channel-send-buffer(channel(Size, Buffer, _, _), V)
+   ~> thread-atomic sequential(
+        check-true is-less(list-length assigned Buffer, Size),
+        enqueue(Buffer, V))
+
+Auxiliary Funcon
+  channel-recv-buffer(_:channels) : =>values
+Rule
+  channel-recv-buffer channel(_, Buffer, _, SendQ)
+   ~> thread-atomic after-effect(
+        dequeue Buffer,
+        finalise-failing give(dequeue SendQ,
+          sequential(
+            enqueue(Buffer, pseudo-thread-value given),
+            thread-resume pseudo-thread-id given)))
+
+Auxiliary Funcon
+  channel-send-wait(_:channels, _:pseudo-threads) : =>null-type
+Rule
+  channel-send-wait(channel(_, _, _, SendQ), P)
+   ~> thread-atomic sequential(
+        enqueue(SendQ, P),
+        thread-suspend current-thread)
+
+Auxiliary Funcon
+  channel-recv-wait(_:channels, _:pseudo-threads) : =>null-type
+Rule
+  channel-recv-wait(channel(_, _, RecvQ, _), P)
+   ~> thread-atomic sequential(
+        enqueue(RecvQ, P),
+        thread-suspend current-thread)
+
+
+Auxiliary Funcon
+  dequeue(Q:variables) : =>values
+   ~> after-effect(
+        checked list-head assigned Q,
+        assign(Q, checked list-tail assigned Q))
+
+Auxiliary Funcon
+  enqueue(Q:variables, V*:values) : =>null-type
+   ~> assign(Q, list-append(assigned Q, [V*]))
+
+
+Auxiliary Datatype
+  pseudo-threads ::= pseudo-thread(_:variables, _:thread-ids)
+
+Auxiliary Funcon
+  pseudo-thread-create(_:values?) : =>pseudo-threads
+Rule
+  pseudo-thread-create( )
+   ~> pseudo-thread(alloc(values), current-thread)
+Rule
+  pseudo-thread-create(V:values)
+   ~> pseudo-thread(alloc-init(values, V), current-thread)
 
 Auxiliary Funcon
   pseudo-thread-value(_:pseudo-threads) : =>variables
 Rule
-  pseudo-thread-value pseudo-thread(_, V, _, _) ~> V
+  pseudo-thread-value pseudo-thread(V, _) ~> V
 
 Auxiliary Funcon
   pseudo-thread-id(_:pseudo-threads) : =>thread-ids
 Rule
-  pseudo-thread-id pseudo-thread(_, _, I, _) ~> I
-
-Auxiliary Funcon
-  pseudo-thread-waiting(_:pseudo-threads) : =>booleans
-Rule
-  pseudo-thread-waiting pseudo-thread(_, _, _, W) ~> W
-
-Auxiliary Funcon
-  first-pseudo-thread-match(_:lists(pseudo-threads), _:pseudo-thread-modes) : =>pseudo-threads
-Rule
-  first-pseudo-thread-match([pseudo-thread(M, V, T, W), P*], M')
-   ~> if-true-else(is-equal(M, M'),
-        pseudo-thread(M, V, T, W),
-        first-pseudo-thread-match([P*], M'))
-Rule
-  first-pseudo-thread-match([], _) ~> fail
-
-Auxiliary Funcon
-  drop-first-pseudo-thread-match(_:lists(pseudo-threads), _:pseudo-thread-modes) : =>lists(pseudo-threads)
-Rule
-  drop-first-pseudo-thread-match([pseudo-thread(M, V, T, W), P*], M')
-   ~> if-true-else(is-equal(M, M'), [P*],
-        cons(pseudo-thread(M, V, T, W), first-pseudo-thread-match([P*], M')))
-Rule
-  drop-first-pseudo-thread-match([], _) ~> fail
-
+  pseudo-thread-id pseudo-thread(_, I) ~> I
 
 
 

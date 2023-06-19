@@ -2,8 +2,8 @@ module GO-5-Declarations
             
 imports 
   GO-2-Types
-  GO-3-Expressions
   GO-4-Statements
+  GO-3-Expressions
   GO-1-Lexemes
   Funcons
 

@@ -47,7 +47,7 @@ Rule
 
 Rule
   initialise[['var' Identifier '=' Expression]]
-    = assign[[Identifier '=' Expression]]
+    = initialise-variable(bound id[[Identifier]], evaluate[[Expression]])
 
 
 ## Function declarations
@@ -61,11 +61,11 @@ Rule
 
 Rule
   allocate[['func' Identifier Parameters TypeExpr Block]]
-    = bind(id[[Identifier]], allocate-variable functions(tuples(values*), type[[TypeExpr]]))
+    = bind(id[[Identifier]], allocate-variable functions(tuples(values*), values))
 
 Rule
   initialise[['func' Identifier Parameters '{' StatementSemic* '}']]
-    = assign(
+    = initialise-variable(
         bound id[[Identifier]],
         function closure scope(
           collateral(
