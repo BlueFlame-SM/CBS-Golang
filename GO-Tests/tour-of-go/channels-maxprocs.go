@@ -1,5 +1,7 @@
 package main;
 
+import "runtime"
+
 func sum(n int, in chan int, out chan int) {
   sum := 0;
   for i := 0; i < n; i++ {
@@ -9,6 +11,7 @@ func sum(n int, in chan int, out chan int) {
 };
 
 func main() {
+  runtime.GOMAXPROCS(3);
   c1 := make(chan int, 3);
   c2 := make(chan int, 3);
   c3 := make(chan int);

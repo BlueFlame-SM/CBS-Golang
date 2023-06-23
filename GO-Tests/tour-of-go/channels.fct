@@ -1,0 +1,238 @@
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
+  ({"any" |-> values,
+    "bool" |-> booleans,
+    "int" |-> integers,
+    "uint" |-> natural-numbers,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print to-strings tuple-elements
+                  given,
+    "println" |-> function closure print to-strings
+                    (intersperse
+                       (" ",
+                        tuple-elements given),
+                     "
+"),
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (channels),
+                     channel-create
+                       (0)),
+                  case-match
+                    (tuple
+                       (channels,
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("sum",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         ( )),
+      sequential
+        (initialise-variable
+           (bound "sum",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       (pattern abstraction bind
+                          ("n",
+                           alloc-init
+                             (values,
+                              given)),
+                        pattern abstraction bind
+                          ("in",
+                           alloc-init
+                             (values,
+                              given)),
+                        pattern abstraction bind
+                          ("out",
+                           alloc-init
+                             (values,
+                              given)))),
+                  bind
+                    ("sum",
+                     allocate-variable values),
+                  ( )),
+               handle-return sequential
+                 (initialise-variable
+                    (bound "sum",
+                     decimal-natural "0"),
+                  scope
+                    (collateral
+                       (bind
+                          ("i",
+                           allocate-variable values),
+                        ( )),
+                     sequential
+                       (initialise-variable
+                          (bound "i",
+                           decimal-natural "0"),
+                        while
+                          (is-less l-to-r
+                             (current-value bound
+                                "i",
+                              current-value bound
+                                "n"),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (assign
+                                   (bound "sum",
+                                    int-add l-to-r
+                                      (current-value bound
+                                         "sum",
+                                       channel-receive-else-wait current-value bound
+                                         "in")),
+                                 assign
+                                   (bound "i",
+                                    int-add l-to-r
+                                      (current-value bound
+                                         "i",
+                                       decimal-natural "1")),
+                                 null-value))),
+                        null-value)),
+                  channel-send-else-wait
+                    (current-value bound
+                       "out",
+                     current-value bound
+                       "sum"),
+                  null-value))),
+         initialise-variable
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  bind
+                    ("c1",
+                     allocate-variable values),
+                  bind
+                    ("c2",
+                     allocate-variable values),
+                  bind
+                    ("c3",
+                     allocate-variable values),
+                  bind
+                    ("x",
+                     allocate-variable values),
+                  bind
+                    ("y",
+                     allocate-variable values),
+                  ( )),
+               handle-return sequential
+                 (initialise-variable
+                    (bound "c1",
+                     apply
+                       (current-value bound
+                          "make",
+                        tuple l-to-r
+                          (channels,
+                           decimal-natural "3"))),
+                  initialise-variable
+                    (bound "c2",
+                     apply
+                       (current-value bound
+                          "make",
+                        tuple l-to-r
+                          (channels,
+                           decimal-natural "3"))),
+                  initialise-variable
+                    (bound "c3",
+                     apply
+                       (current-value bound
+                          "make",
+                        tuple
+                          (channels))),
+                  channel-send-else-wait
+                    (current-value bound
+                       "c1",
+                     decimal-natural "7"),
+                  channel-send-else-wait
+                    (current-value bound
+                       "c1",
+                     decimal-natural "2"),
+                  channel-send-else-wait
+                    (current-value bound
+                       "c1",
+                     decimal-natural "8"),
+                  channel-send-else-wait
+                    (current-value bound
+                       "c2",
+                     integer-negate decimal-natural
+                       "9"),
+                  channel-send-else-wait
+                    (current-value bound
+                       "c2",
+                     decimal-natural "4"),
+                  channel-send-else-wait
+                    (current-value bound
+                       "c2",
+                     decimal-natural "0"),
+                  thread-detach thread-activate thread-joinable supply
+                    (current-value bound
+                       "sum",
+                     tuple l-to-r
+                       (decimal-natural "3",
+                        (current-value bound
+                           "c1",
+                         current-value bound
+                           "c3"))),
+                  thread-detach thread-activate thread-joinable supply
+                    (current-value bound
+                       "sum",
+                     tuple l-to-r
+                       (decimal-natural "3",
+                        (current-value bound
+                           "c2",
+                         current-value bound
+                           "c3"))),
+                  initialise-variable
+                    (bound "x",
+                     channel-receive-else-wait current-value bound
+                       "c3"),
+                  initialise-variable
+                    (bound "y",
+                     channel-receive-else-wait current-value bound
+                       "c3"),
+                  apply
+                    (current-value bound
+                       "println",
+                     tuple l-to-r
+                       (current-value bound
+                          "x",
+                        (current-value bound
+                           "y",
+                         int-add l-to-r
+                           (current-value bound
+                              "x",
+                            current-value bound
+                              "y")))),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))

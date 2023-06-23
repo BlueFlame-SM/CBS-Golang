@@ -1,0 +1,223 @@
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
+  ({"any" |-> values,
+    "bool" |-> booleans,
+    "int" |-> integers,
+    "uint" |-> natural-numbers,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print to-strings tuple-elements
+                  given,
+    "println" |-> function closure print to-strings
+                    (intersperse
+                       (" ",
+                        tuple-elements given),
+                     "
+"),
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (channels),
+                     channel-create
+                       (0)),
+                  case-match
+                    (tuple
+                       (channels,
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("math_Pow",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               values)),
+         bind
+           ("pow",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               values)),
+         bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         ( )),
+      sequential
+        (initialise-variable
+           (bound "math_Pow",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       (pattern abstraction bind
+                          ("x",
+                           alloc-init
+                             (values,
+                              given)),
+                        pattern abstraction bind
+                          ("n",
+                           alloc-init
+                             (values,
+                              given)))),
+                  bind
+                    ("res",
+                     allocate-variable values),
+                  ( )),
+               handle-return sequential
+                 (initialise-variable
+                    (bound "res",
+                     decimal-natural "1"),
+                  scope
+                    (collateral
+                       (bind
+                          ("i",
+                           allocate-variable values),
+                        ( )),
+                     sequential
+                       (initialise-variable
+                          (bound "i",
+                           decimal-natural "0"),
+                        while
+                          (is-less l-to-r
+                             (current-value bound
+                                "i",
+                              current-value bound
+                                "n"),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (assign
+                                   (bound "res",
+                                    int-mul l-to-r
+                                      (current-value bound
+                                         "res",
+                                       current-value bound
+                                         "x")),
+                                 assign
+                                   (bound "i",
+                                    int-add l-to-r
+                                      (current-value bound
+                                         "i",
+                                       decimal-natural "1")),
+                                 null-value))),
+                        null-value)),
+                  return current-value bound
+                    "res",
+                  null-value))),
+         initialise-variable
+           (bound "pow",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       (pattern abstraction bind
+                          ("x",
+                           alloc-init
+                             (values,
+                              given)),
+                        pattern abstraction bind
+                          ("n",
+                           alloc-init
+                             (values,
+                              given)),
+                        pattern abstraction bind
+                          ("lim",
+                           alloc-init
+                             (values,
+                              given)))),
+                  ( )),
+               handle-return sequential
+                 (scope
+                    (collateral
+                       (bind
+                          ("v",
+                           allocate-variable values),
+                        ( )),
+                     sequential
+                       (initialise-variable
+                          (bound "v",
+                           apply
+                             (current-value bound
+                                "math_Pow",
+                              tuple l-to-r
+                                (current-value bound
+                                   "x",
+                                 current-value bound
+                                   "n"))),
+                        if-else
+                          (is-less l-to-r
+                             (current-value bound
+                                "v",
+                              current-value bound
+                                "lim"),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (return current-value bound
+                                   "v",
+                                 null-value)),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (apply
+                                   (current-value bound
+                                      "println",
+                                    tuple l-to-r
+                                      (current-value bound
+                                         "v",
+                                       current-value bound
+                                         "lim")),
+                                 null-value))),
+                        null-value)),
+                  return current-value bound
+                    "lim",
+                  null-value))),
+         initialise-variable
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  ( )),
+               handle-return sequential
+                 (apply
+                    (current-value bound
+                       "println",
+                     tuple l-to-r
+                       (apply
+                          (current-value bound
+                             "pow",
+                           tuple l-to-r
+                             (decimal-natural "3",
+                              (decimal-natural "2",
+                               decimal-natural "10"))),
+                        apply
+                          (current-value bound
+                             "pow",
+                           tuple l-to-r
+                             (decimal-natural "3",
+                              (decimal-natural "3",
+                               decimal-natural "20"))))),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))

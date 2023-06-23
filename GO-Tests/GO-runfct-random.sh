@@ -10,7 +10,6 @@ filename="$1"
 
 # Check if the integer argument is provided
 if [ -z "$2" ]; then
-  # Generate a random integer between 1 and 1000 (inclusive)
   integer=$(od -An -N2 -tu2 /dev/random | awk '{print $1}')
 else
   integer="$2"

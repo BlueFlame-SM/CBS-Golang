@@ -125,7 +125,7 @@ Syntax  // TODO: range clause
   ForStmt : forStmt
     ::= 'for' block
       | 'for' expression block
-      | 'for' simpleStmt? ';' expression? ';' simpleStmt? block
+      | 'for' simpleStmt ';' expression? ';' simpleStmt block
 
 Rule
   execute[['for' Block]] = while(true, execute[[Block]])

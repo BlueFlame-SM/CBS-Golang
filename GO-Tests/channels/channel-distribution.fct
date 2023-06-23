@@ -1,0 +1,197 @@
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
+  ({"any" |-> values,
+    "bool" |-> booleans,
+    "int" |-> integers,
+    "uint" |-> natural-numbers,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print to-strings tuple-elements
+                  given,
+    "println" |-> function closure print to-strings
+                    (intersperse
+                       (" ",
+                        tuple-elements given),
+                     "
+"),
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (channels),
+                     channel-create
+                       (0)),
+                  case-match
+                    (tuple
+                       (channels,
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("i",
+            allocate-variable values),
+         bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         bind
+           ("sender",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         ( )),
+      sequential
+        (initialise-variable
+           (bound "i",
+            decimal-natural "0"),
+         initialise-variable
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  bind
+                    ("c",
+                     allocate-variable values),
+                  ( )),
+               handle-return sequential
+                 (initialise-variable
+                    (bound "c",
+                     apply
+                       (current-value bound
+                          "make",
+                        tuple l-to-r
+                          (channels,
+                           decimal-natural "20"))),
+                  scope
+                    (collateral
+                       (bind
+                          ("j",
+                           allocate-variable values),
+                        ( )),
+                     sequential
+                       (initialise-variable
+                          (bound "j",
+                           decimal-natural "0"),
+                        while
+                          (is-less l-to-r
+                             (current-value bound
+                                "j",
+                              decimal-natural "3"),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (thread-detach thread-activate thread-joinable supply
+                                   (current-value bound
+                                      "sender",
+                                    tuple l-to-r
+                                      (current-value bound
+                                         "c",
+                                       current-value bound
+                                         "j")),
+                                 assign
+                                   (bound "j",
+                                    int-add l-to-r
+                                      (current-value bound
+                                         "j",
+                                       decimal-natural "1")),
+                                 null-value))),
+                        null-value)),
+                  scope
+                    (collateral
+                       (bind
+                          ("j",
+                           allocate-variable values),
+                        ( )),
+                     sequential
+                       (initialise-variable
+                          (bound "j",
+                           decimal-natural "0"),
+                        while
+                          (is-less l-to-r
+                             (current-value bound
+                                "j",
+                              decimal-natural "20"),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (apply
+                                   (current-value bound
+                                      "println",
+                                    tuple
+                                      (channel-receive-else-wait current-value bound
+                                         "c")),
+                                 assign
+                                   (bound "j",
+                                    int-add l-to-r
+                                      (current-value bound
+                                         "j",
+                                       decimal-natural "1")),
+                                 null-value))),
+                        null-value)),
+                  null-value))),
+         initialise-variable
+           (bound "sender",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       (pattern abstraction bind
+                          ("c",
+                           alloc-init
+                             (values,
+                              given)),
+                        pattern abstraction bind
+                          ("j",
+                           alloc-init
+                             (values,
+                              given)))),
+                  ( )),
+               handle-return sequential
+                 (scope
+                    (collateral
+                       ( ),
+                     sequential
+                       (null-value,
+                        while
+                          (is-less l-to-r
+                             (current-value bound
+                                "i",
+                              decimal-natural "20"),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (channel-send-else-wait
+                                   (current-value bound
+                                      "c",
+                                    current-value bound
+                                      "j"),
+                                 assign
+                                   (bound "i",
+                                    int-add l-to-r
+                                      (current-value bound
+                                         "i",
+                                       decimal-natural "1")),
+                                 null-value))),
+                        null-value)),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))

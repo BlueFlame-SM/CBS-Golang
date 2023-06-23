@@ -1,0 +1,105 @@
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
+  ({"any" |-> values,
+    "bool" |-> booleans,
+    "int" |-> integers,
+    "uint" |-> natural-numbers,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print to-strings tuple-elements
+                  given,
+    "println" |-> function closure print to-strings
+                    (intersperse
+                       (" ",
+                        tuple-elements given),
+                     "
+"),
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (channels),
+                     channel-create
+                       (0)),
+                  case-match
+                    (tuple
+                       (channels,
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         ( )),
+      sequential
+        (initialise-variable
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  bind
+                    ("sum",
+                     allocate-variable values),
+                  ( )),
+               handle-return sequential
+                 (initialise-variable
+                    (bound "sum",
+                     decimal-natural "0"),
+                  scope
+                    (collateral
+                       (bind
+                          ("i",
+                           allocate-variable values),
+                        ( )),
+                     sequential
+                       (initialise-variable
+                          (bound "i",
+                           decimal-natural "0"),
+                        while
+                          (is-less l-to-r
+                             (current-value bound
+                                "i",
+                              decimal-natural "10"),
+                           scope
+                             (collateral
+                                ( ),
+                              sequential
+                                (assign
+                                   (bound "sum",
+                                    int-add l-to-r
+                                      (current-value bound
+                                         "sum",
+                                       current-value bound
+                                         "i")),
+                                 assign
+                                   (bound "i",
+                                    int-add l-to-r
+                                      (current-value bound
+                                         "i",
+                                       decimal-natural "1")),
+                                 null-value))),
+                        null-value)),
+                  apply
+                    (current-value bound
+                       "println",
+                     tuple
+                       (current-value bound
+                          "sum")),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))

@@ -1,0 +1,15 @@
+[
+	{
+		"command": "../GO-runfct-random.sh channels.fct",
+		"output": "channels.fct.log",
+		"repetitions": 0
+	}, {
+		"command": "go run channels.go",
+		"output": "channels.go.log",
+		"repetitions": 0
+	}, {
+		"command": "go run channels-gosched.go",
+		"output": "channels-gosched.go.log",
+		"repetitions": 2200
+	}
+]

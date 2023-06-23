@@ -1,0 +1,114 @@
+initialise-giving initialise-binding initialise-storing postpone-after-effect multithread scope
+  ({"any" |-> values,
+    "bool" |-> booleans,
+    "int" |-> integers,
+    "uint" |-> natural-numbers,
+    "true" |-> true,
+    "false" |-> false,
+    "nil" |-> null,
+    "print" |-> function closure print to-strings tuple-elements
+                  given,
+    "println" |-> function closure print to-strings
+                    (intersperse
+                       (" ",
+                        tuple-elements given),
+                     "
+"),
+    "make" |-> function closure else
+                 (case-match
+                    (tuple
+                       (channels),
+                     channel-create
+                       (0)),
+                  case-match
+                    (tuple
+                       (channels,
+                        pattern-bind "N"),
+                     checked when-true
+                       (is-greater-or-equal
+                          (bound "N",
+                           0),
+                        channel-create
+                          (bound "N"))))},
+   scope
+     (collateral
+        (bind
+           ("abs",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               values)),
+         bind
+           ("main",
+            allocate-variable functions
+              (tuples
+                 ((values)*),
+               null-type)),
+         ( )),
+      sequential
+        (initialise-variable
+           (bound "abs",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       (pattern abstraction bind
+                          ("x",
+                           alloc-init
+                             (values,
+                              given)))),
+                  ( )),
+               handle-return sequential
+                 (if-else
+                    (is-less l-to-r
+                       (current-value bound
+                          "x",
+                        decimal-natural "0"),
+                     scope
+                       (collateral
+                          ( ),
+                        sequential
+                          (return integer-negate current-value bound
+                             "x",
+                           null-value)),
+                     scope
+                       (collateral
+                          ( ),
+                        sequential
+                          (null-value))),
+                  return current-value bound
+                    "x",
+                  null-value))),
+         initialise-variable
+           (bound "main",
+            function closure scope
+              (collateral
+                 (match
+                    (given,
+                     tuple
+                       ( )),
+                  ( )),
+               handle-return sequential
+                 (apply
+                    (current-value bound
+                       "println",
+                     tuple l-to-r
+                       (apply
+                          (current-value bound
+                             "abs",
+                           tuple
+                             (decimal-natural "2")),
+                        apply
+                          (current-value bound
+                             "abs",
+                           tuple
+                             (integer-negate decimal-natural
+                                "4")))),
+                  null-value))),
+         null-value,
+         effect apply
+           (current-value bound
+              "main",
+            tuple
+              ( )))))

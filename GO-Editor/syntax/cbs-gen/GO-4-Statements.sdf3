@@ -186,8 +186,8 @@ context-free syntax // Language
     "for" L-block
   L-forStmt.L-forStmt--R-for-L-expression-L-block =
     "for" L-expression L-block
-  L-forStmt.L-forStmt--R-for-L-simpleStmt-Q-SEMI-L-expression-Q-SEMI-L-simpleStmt-Q-L-block =
-    "for" L-simpleStmt? ";" L-expression? ";" L-simpleStmt? L-block
+  L-forStmt.L-forStmt--R-for-L-simpleStmt-SEMI-L-expression-Q-SEMI-L-simpleStmt-L-block =
+    "for" L-simpleStmt ";" L-expression? ";" L-simpleStmt L-block
   
   
   // ## Simple Statements
